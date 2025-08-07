@@ -1,0 +1,23 @@
+################################################################################
+# Automatically-generated file. Do not edit!
+################################################################################
+
+# Add inputs and outputs from these tool invocations to the build variables
+C_SRCS += \
+../src/apps/uart/uart.c \
+../src/apps/uart/uartVoice.c 
+
+COMPILER_OBJS += \
+src/apps/uart/uart.obj \
+src/apps/uart/uartVoice.obj 
+
+# Each subdirectory must supply rules for building sources it contributes
+src/apps/uart/%.obj: ../src/apps/uart/%.c 
+	@echo 'Building file: $<'
+	@echo 'Invoking: Compiler'
+	@echo src\apps\uart\cSubCommand.tmp=
+	@sed -e "s/^/ /" "src\apps\uart\cSubCommand.tmp"
+	ccrx -subcommand="src\apps\uart\cSubCommand.tmp" "$<"
+	@echo 'Finished Building: $<'
+	@echo ''
+

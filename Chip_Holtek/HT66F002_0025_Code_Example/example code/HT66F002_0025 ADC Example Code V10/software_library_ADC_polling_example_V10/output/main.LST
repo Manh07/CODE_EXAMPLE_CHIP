@@ -1,0 +1,138 @@
+"File: main.c        Holtek Cross-Assembler  Version 3.00      Page 1
+
+
+
+;  52: {
+  52  0000              __stm0ah EQU [02dH]
+  52  0000              __stm0al EQU [02cH]
+  52  0000              __stm0dh EQU [02bH]
+  52  0000              __stm0dl EQU [02aH]
+  52  0000              __stm0c1 EQU [029H]
+  52  0000              __stm0c0 EQU [028H]
+  52  0000              __pasr EQU [026H]
+  52  0000              __rstc EQU [025H]
+  52  0000              __sadc2 EQU [024H]
+  52  0000              __sadc1 EQU [023H]
+  52  0000              __sadc0 EQU [022H]
+  52  0000              __sadoh EQU [021H]
+  52  0000              __sadol EQU [020H]
+  52  0000              __eed EQU [01fH]
+  52  0000              __eea EQU [01eH]
+  52  0000              __smod1 EQU [01cH]
+  52  0000              __tbc EQU [01bH]
+  52  0000              __wdtc EQU [019H]
+  52  0000              __ifs0 EQU [018H]
+  52  0000              __pawu EQU [017H]
+  52  0000              __papu EQU [016H]
+  52  0000              __pac EQU [015H]
+  52  0000              __pa EQU [014H]
+  52  0000              __mfi0 EQU [011H]
+  52  0000              __intc1 EQU [0fH]
+  52  0000              __intc0 EQU [0eH]
+  52  0000              __integ EQU [0dH]
+  52  0000              __smod EQU [0bH]
+  52  0000              __status EQU [0aH]
+  52  0000              __tblh EQU [08H]
+  52  0000              __tblp EQU [07H]
+  52  0000              __pcl EQU [06H]
+  52  0000              __acc EQU [05H]
+  52  0000              __bp EQU [04H]
+  52  0000              __mp1 EQU [03H]
+  52  0000              __iar1 EQU [02H]
+  52  0000              __mp0 EQU [01H]
+  52  0000              __iar0 EQU [00H]
+  52  0000              @MAIN .SECTION 'CODE'
+  52  0000              _main PROC
+  52  0000              begin:
+
+;  60: 	ADC_Init();	
+  60  0000  2000     E  CALL _ADC_Init
+
+;  63: 	ADC_SelectChannel(ADC_CH0);
+  63  0001  0F00        MOV A,00h
+  63  0002  0080     E  MOV ADC_SelectChannel0,A
+  63  0003  2000     E  CALL _ADC_SelectChannel
+
+;  66: 	ADC_ENABLE();
+  66  0004  32A2        SET [022H].5
+
+;  68: 	_delay(2000);	//wait system stable
+  68  0005  0F01        MOV A,01H
+  68  0006  0080     E  MOV RH,A
+"File: main.c        Holtek Cross-Assembler  Version 3.00      Page 2 
+
+  68  0007  0FF2        MOV A,0f2H
+  68  0008  2000     E  CALL __DELAYY1
+  68  0009  2800     R  JMP L8
+  68  000A              L7:
+
+;  73: 		_clrwdt();
+  73  000A  0001        CLR WDT
+
+;  76: 		g_nConversionValue = ADC_GetValue();
+  76  000B  2000     E  CALL _ADC_GetValue
+  76  000C  0080     R  MOV b0_1,A
+  76  000D  0700     E  MOV A,RH
+  76  000E  0080     R  MOV b0_1[1],A
+  76  000F  0F00     R  MOV A,BANK _g_nConversionValue
+  76  0010  0084        MOV [04H],A
+  76  0011  0F00     R  MOV A,OFFSET _g_nConversionValue
+  76  0012  0083        MOV [03H],A
+  76  0013  0700     R  MOV A,b0_1
+  76  0014  0082        MOV [02H],A
+  76  0015  0700     R  MOV A,b0_1[1]
+  76  0016  1483        INC [03H]
+  76  0017  0082        MOV [02H],A
+
+;  88: 		_delay(4000);		//delay 2ms
+  88  0018  0F03        MOV A,03H
+  88  0019  0080     E  MOV RH,A
+  88  001A  0FE5        MOV A,0e5H
+  88  001B  2000     E  CALL __DELAYY1
+  88  001C              L8:
+
+;  71: 	while(1)
+  71  001C  2800     R  JMP L7
+  71  001D              L6:
+
+;  90: }
+  90  001D  2800     R  JMP $
+  90  0000  0002[       LOCAL b0_1 DB 2 DUP(?)
+            00
+            ]
+  90  001E              _main ENDP
+  90  001E              EXTERN ADC_SelectChannel0:BYTE
+
+;  41: u16 g_nConversionValue;		//AD conversion value
+  41  001E              PUBLIC _g_nConversionValue
+  41  0000              @g_nConversionValue .SECTION 'DATA'
+  41  0000  0002[       _g_nConversionValue DB 2 DUP (?) ;g_nConversionValue
+            00
+            ]
+  41  0002              EXTERN _ADC_GetValue:NEAR
+  41  0002              EXTERN _ADC_SelectChannel:NEAR
+  41  0002              EXTERN _ADC_Init:NEAR
+
+;  51: void main()
+  51  0000              STARTSEC .SECTION  COM_L 'CODE'
+  51  0000              STARTUP:
+  51  0000              STARTSEC .SECTION  COM_E 'CODE'
+  51  0000  0003        RET
+  51  0001              EXTERN RH:BYTE
+  51  0001              EXTERN __DELAYY0:NEAR
+  51  0001              EXTERN __DELAYY1:NEAR
+"File: main.c        Holtek Cross-Assembler  Version 3.00      Page 3 
+
+  51  0001              EXTERN __DELAYY2:NEAR
+  51  0001              EXTERN __DELAYY3:NEAR
+  51  0001              EXTERN __DELAYY4:NEAR
+  51  0001              EXTERN __DELAYY5:NEAR
+  51  0000              @CODE .SECTION AT 0 'CODE'
+  51  0000  2000     R  CALL STARTUP
+  51  0001  2800     R  JMP begin
+  51  0002              @DUMMY PROC
+  51  0002  2000     R  CALL _main
+  51  0003              @DUMMY ENDP
+
+
+        0 Errors

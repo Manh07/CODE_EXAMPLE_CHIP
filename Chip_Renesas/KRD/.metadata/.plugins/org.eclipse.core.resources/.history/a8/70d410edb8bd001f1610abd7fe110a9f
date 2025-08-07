@@ -1,0 +1,14 @@
+-MAKEUD=C:\Users\Admin\Downloads\KRD Renesas\BU_TDS\HardwareDebug\\BU_TDS_c.ud
+-input="BU_TDS.abs"
+-form=hexadecimal
+-output="BU_TDS.hex"
+-byte_count=FF
+-nologo
+-nomessage
+-end
+-input="BU_TDS.abs"
+-form=binary
+-output="BU_TDS.bin"
+-nologo
+-nomessage
+-exit

@@ -1,0 +1,120 @@
+"File: HT8_Simulation_UART.c  Holtek Cross-Assembler  Version 3.00      Page 1
+
+
+
+;  39: {
+  39  0000              __stm0ah EQU [02dH]
+  39  0000              __stm0al EQU [02cH]
+  39  0000              __stm0dh EQU [02bH]
+  39  0000              __stm0dl EQU [02aH]
+  39  0000              __stm0c1 EQU [029H]
+  39  0000              __stm0c0 EQU [028H]
+  39  0000              __pasr EQU [026H]
+  39  0000              __rstc EQU [025H]
+  39  0000              __sadc2 EQU [024H]
+  39  0000              __sadc1 EQU [023H]
+  39  0000              __sadc0 EQU [022H]
+  39  0000              __sadoh EQU [021H]
+  39  0000              __sadol EQU [020H]
+  39  0000              __eed EQU [01fH]
+  39  0000              __eea EQU [01eH]
+  39  0000              __smod1 EQU [01cH]
+  39  0000              __tbc EQU [01bH]
+  39  0000              __wdtc EQU [019H]
+  39  0000              __ifs0 EQU [018H]
+  39  0000              __pawu EQU [017H]
+  39  0000              __papu EQU [016H]
+  39  0000              __pac EQU [015H]
+  39  0000              __pa EQU [014H]
+  39  0000              __mfi0 EQU [011H]
+  39  0000              __intc1 EQU [0fH]
+  39  0000              __intc0 EQU [0eH]
+  39  0000              __integ EQU [0dH]
+  39  0000              __smod EQU [0bH]
+  39  0000              __status EQU [0aH]
+  39  0000              __tblh EQU [08H]
+  39  0000              __tblp EQU [07H]
+  39  0000              __pcl EQU [06H]
+  39  0000              __acc EQU [05H]
+  39  0000              __bp EQU [04H]
+  39  0000              __mp1 EQU [03H]
+  39  0000              __iar1 EQU [02H]
+  39  0000              __mp0 EQU [01H]
+  39  0000              __iar0 EQU [00H]
+  39  0000              @UART_SoftWareSendByte .SECTION 'CODE'
+  39  0000              PUBLIC _UART_SoftWareSendByte
+  39  0000              _UART_SoftWareSendByte PROC
+
+;  38: void UART_SoftWareSendByte(u8 TxData)
+  38  0000              PUBLIC UART_SoftWareSendByte0
+  38  0000  00          LOCAL UART_SoftWareSendByte0 DB ? ; TxData
+
+;  41: 	TXD = 0;					//start bit
+  41  0000  3794        CLR [014H].7
+
+;  42: 	_delay(BAUDRATE);
+  42  0001  0F2F        MOV A,02fH
+  42  0002  2000     E  CALL __DELAYX1
+
+;  44: 	for(i=0;i<8;i++)			//send 8-bit data
+  44  0003  1F00     R  CLR CR1
+  44  0004  2800     R  JMP L10
+"File: HT8_Simulation_UART.c  Holtek Cross-Assembler  Version 3.00      Page 2 
+
+  44  0005              L7:
+
+;  47: 		if(TxData & 0x01)
+  47  0005  3800     R  SNZ UART_SoftWareSendByte0.0
+  47  0006  2800     R  JMP L11
+
+;  49: 			TXD = 1;
+  49  0007  3394        SET [014H].7
+
+;  50: 		}
+  50  0008  2800     R  JMP L12
+  50  0009              L11:
+
+;  53: 			TXD = 0;
+  53  0009  3794        CLR [014H].7
+  53  000A              L12:
+
+;  55: 		_delay(BAUDRATE);
+  55  000A  0F2F        MOV A,02fH
+  55  000B  2000     E  CALL __DELAYX1
+
+;  56: 		TxData >>= 1;
+  56  000C  340A        CLR [0AH].0
+  56  000D  1B80     R  RRC UART_SoftWareSendByte0
+  56  000E              L8:
+
+;  44: 	for(i=0;i<8;i++)			//send 8-bit data
+  44  000E  1480     R  INC CR1
+  44  000F              L10:
+  44  000F  0700     R  MOV A,CR1
+  44  0010  0A08        SUB A,08h
+  44  0011  380A        SNZ [0ah].0
+  44  0012  2800     R  JMP L7
+
+;  58: 	TXD = 1;					//stop bit
+  58  0013  3394        SET [014H].7
+
+;  59: 	_delay(BAUDRATE);
+  59  0014  0F2F        MOV A,02fH
+  59  0015  2000     E  CALL __DELAYX1
+  59  0016              L6:
+  59  0016  0003        RET
+
+;  40: 	u8 i;
+  40  0001  00          LOCAL CR1 DB ? ; i
+  40  0017              _UART_SoftWareSendByte ENDP
+  40  0017              EXTERN RH:BYTE
+  40  0017              EXTERN __DELAYX0:NEAR
+  40  0017              EXTERN __DELAYX1:NEAR
+  40  0017              EXTERN __DELAYX2:NEAR
+  40  0017              EXTERN __DELAYX3:NEAR
+  40  0017              EXTERN __DELAYX4:NEAR
+  40  0017              EXTERN __DELAYX5:NEAR
+  40  0017              EXTERN __DELAYX6:NEAR
+
+
+        0 Errors

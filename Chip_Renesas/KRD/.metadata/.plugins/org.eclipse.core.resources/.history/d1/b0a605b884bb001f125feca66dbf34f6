@@ -1,0 +1,21 @@
+################################################################################
+# Automatically-generated file. Do not edit!
+################################################################################
+
+# Add inputs and outputs from these tool invocations to the build variables
+C_SRCS += \
+../src/apps/watchdog/wtd.c 
+
+COMPILER_OBJS += \
+src/apps/watchdog/wtd.obj 
+
+# Each subdirectory must supply rules for building sources it contributes
+src/apps/watchdog/%.obj: ../src/apps/watchdog/%.c src/apps/watchdog/Compiler.sub
+	@echo 'Building file: $<'
+	@echo 'Invoking: Compiler'
+	@echo src\apps\watchdog\cSubCommand.tmp=
+	@sed -e "s/^/ /" "src\apps\watchdog\cSubCommand.tmp"
+	ccrx -subcommand="src\apps\watchdog\cSubCommand.tmp" "$<"
+	@echo 'Finished Building: $<'
+	@echo ''
+

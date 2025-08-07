@@ -1,0 +1,14 @@
+***** 2020/12/28 15:47:44 *****
+QE Version                                        :1.1.0.v20190628-0524
+Project Path                                      :D:\MAKIPOS\PROJECT\IRO\AIOTEC43\AIOTEC43
+Configuration File                                :AIOTEC43
+[Button(self) 0]
+TS                                                : TS07,
+[Button(self) 1]
+TS                                                : TS08,
+[Button(self) 2]
+TS                                                : TS09,
+[Button(self) 3]
+TS                                                : TS10,
+
+<<<< Tuning Type : Normal >>>>

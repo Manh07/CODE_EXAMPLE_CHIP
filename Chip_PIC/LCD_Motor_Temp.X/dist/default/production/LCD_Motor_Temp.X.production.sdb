@@ -1,0 +1,440 @@
+[p GLOBOPT AUTOSTATIC IEEE_DBL IEEE_FLT PIC14 PICREGULAR PICMID ]
+[d version 1.1 ]
+[d edition pro ]
+[d chip 16F877A ]
+[d frameptr 0 ]
+"1 C:\Program Files\Microchip\xc8\v3.00\pic\sources\c99\common\abs.c
+[v _abs abs `(i  1 e 2 0 ]
+"5 C:\Program Files\Microchip\xc8\v3.00\pic\sources\c99\common\aldiv.c
+[v ___aldiv __aldiv `(l  1 e 4 0 ]
+"5 C:\Program Files\Microchip\xc8\v3.00\pic\sources\c99\common\awdiv.c
+[v ___awdiv __awdiv `(i  1 e 2 0 ]
+"5 C:\Program Files\Microchip\xc8\v3.00\pic\sources\c99\common\awmod.c
+[v ___awmod __awmod `(i  1 e 2 0 ]
+"1177 C:\Program Files\Microchip\xc8\v3.00\pic\sources\c99\common\doprnt.c
+[v _vfpfcnvrt vfpfcnvrt `(v  1 s 1 vfpfcnvrt ]
+"1817
+[v _vfprintf vfprintf `(i  1 e 2 0 ]
+"4 C:\Program Files\Microchip\xc8\v3.00\pic\sources\c99\common\flge.c
+[v ___flge __flge `(b  1 e 0 0 ]
+"43 C:\Program Files\Microchip\xc8\v3.00\pic\sources\c99\common\fltol.c
+[v ___fltol __fltol `(l  1 e 4 0 ]
+"8 C:\Program Files\Microchip\xc8\v3.00\pic\sources\c99\common\nf_fputc.c
+[v _fputc fputc `(i  1 e 2 0 ]
+"8 C:\Program Files\Microchip\xc8\v3.00\pic\sources\c99\common\nf_fputs.c
+[v _fputs fputs `(i  1 e 2 0 ]
+"9 C:\Program Files\Microchip\xc8\v3.00\pic\sources\c99\common\nf_sprintf.c
+[v _sprintf sprintf `(i  1 e 2 0 ]
+"7 C:\Program Files\Microchip\xc8\v3.00\pic\sources\c99\common\putch.c
+[v _putch putch `(v  1 e 1 0 ]
+"10 C:\Program Files\Microchip\xc8\v3.00\pic\sources\c99\common\sprcadd.c
+[v ___fladd __fladd `(d  1 e 4 0 ]
+"242
+[v ___flsub __flsub `(d  1 e 4 0 ]
+"8 C:\Program Files\Microchip\xc8\v3.00\pic\sources\c99\common\sprcdiv.c
+[v ___fldiv __fldiv `(d  1 e 4 0 ]
+"8 C:\Program Files\Microchip\xc8\v3.00\pic\sources\c99\common\sprcmul.c
+[v ___flmul __flmul `(d  1 e 4 0 ]
+"4 C:\Program Files\Microchip\xc8\v3.00\pic\sources\c99\common\Umul8_16.c
+[v __Umul8_16 _Umul8_16 `(ui  1 e 2 0 ]
+"10 C:\Program Files\Microchip\xc8\v3.00\pic\sources\c99\common\xxtofl.c
+[v ___xxtofl __xxtofl `(d  1 e 4 0 ]
+"6 C:\Program Files\Microchip\xc8\v3.00\pic\sources\c99\pic\__eeprom.c
+[v ___eecpymem __eecpymem `(v  1 e 1 0 ]
+"39
+[v ___memcpyee __memcpyee `(v  1 e 1 0 ]
+"43 C:\Users\Admin\Documents\GitHub\GIT_PIC\LCD_Motor_Temp.X\newmain.c
+[v _main main `(v  1 e 1 0 ]
+"148
+[v _LCD_Enable LCD_Enable `(v  1 e 1 0 ]
+"157
+[v _LCD_Command LCD_Command `(v  1 e 1 0 ]
+"177
+[v _LCD_Char LCD_Char `(v  1 e 1 0 ]
+"197
+[v _LCD_String LCD_String `(v  1 e 1 0 ]
+"206
+[v _LCD_Clear LCD_Clear `(v  1 e 1 0 ]
+"213
+[v _LCD_Init LCD_Init `(v  1 e 1 0 ]
+"225
+[v _ADC_Initialize ADC_Initialize `(v  1 e 1 0 ]
+"231
+[v _ADC_Read ADC_Read `(ui  1 e 2 0 ]
+"242
+[v _PWM_Initialize PWM_Initialize `(v  1 e 1 0 ]
+"253
+[v _PWM_Duty PWM_Duty `(v  1 e 1 0 ]
+"892 C:/Program Files/Microchip/MPLABX/v6.25/packs/Microchip/PIC16Fxxx_DFP/1.6.156/xc8\pic\include\proc/pic16f877a.h
+[v _CCPR1L CCPR1L `VEuc  1 e 1 @21 ]
+"1152
+[v _ADRESH ADRESH `VEuc  1 e 1 @30 ]
+"1159
+[v _ADCON0 ADCON0 `VEuc  1 e 1 @31 ]
+"1325
+[v _TRISA TRISA `VEuc  1 e 1 @133 ]
+"1375
+[v _TRISB TRISB `VEuc  1 e 1 @134 ]
+"1437
+[v _TRISC TRISC `VEuc  1 e 1 @135 ]
+"1499
+[v _TRISD TRISD `VEuc  1 e 1 @136 ]
+"1816
+[v _PR2 PR2 `VEuc  1 e 1 @146 ]
+"2222
+[v _ADRESL ADRESL `VEuc  1 e 1 @158 ]
+"2229
+[v _ADCON1 ADCON1 `VEuc  1 e 1 @159 ]
+"2450
+[v _CCP1M2 CCP1M2 `VEb  1 e 0 @186 ]
+"2453
+[v _CCP1M3 CCP1M3 `VEb  1 e 0 @187 ]
+"2456
+[v _CCP1X CCP1X `VEb  1 e 0 @189 ]
+"2459
+[v _CCP1Y CCP1Y `VEb  1 e 0 @188 ]
+"2582
+[v _GO_nDONE GO_nDONE `VEb  1 e 0 @250 ]
+"2678
+[v _RB0 RB0 `VEb  1 e 0 @48 ]
+"2681
+[v _RB1 RB1 `VEb  1 e 0 @49 ]
+"2684
+[v _RB2 RB2 `VEb  1 e 0 @50 ]
+"2687
+[v _RB3 RB3 `VEb  1 e 0 @51 ]
+"2690
+[v _RB4 RB4 `VEb  1 e 0 @52 ]
+"2693
+[v _RB5 RB5 `VEb  1 e 0 @53 ]
+"2696
+[v _RB6 RB6 `VEb  1 e 0 @54 ]
+"2699
+[v _RB7 RB7 `VEb  1 e 0 @55 ]
+"2753
+[v _RD0 RD0 `VEb  1 e 0 @64 ]
+"2756
+[v _RD1 RD1 `VEb  1 e 0 @65 ]
+"2759
+[v _RD2 RD2 `VEb  1 e 0 @66 ]
+"2876
+[v _T2CKPS0 T2CKPS0 `VEb  1 e 0 @144 ]
+"2879
+[v _T2CKPS1 T2CKPS1 `VEb  1 e 0 @145 ]
+"2906
+[v _TMR2ON TMR2ON `VEb  1 e 0 @146 ]
+"2969
+[v _TRISC2 TRISC2 `VEb  1 e 0 @1082 ]
+"153 C:\Program Files\Microchip\xc8\v3.00\pic\sources\c99\common\doprnt.c
+[v _prec prec `i  1 s 2 prec ]
+[v _width width `i  1 s 2 width ]
+"154
+[v _flags flags `uc  1 s 1 flags ]
+"185
+[v _dbuf dbuf `[32]uc  1 s 32 dbuf ]
+"28 C:\Users\Admin\Documents\GitHub\GIT_PIC\LCD_Motor_Temp.X\newmain.c
+[v _PWM_freq PWM_freq `l  1 e 4 0 ]
+"29
+[v _speed_percent speed_percent `ui  1 e 2 0 ]
+"30
+[v _pwm_value pwm_value `f  1 e 4 0 ]
+"43
+[v _main main `(v  1 e 1 0 ]
+{
+"140
+[v main@tbuf tbuf `[8]uc  1 a 8 27 ]
+"135
+[v main@buf buf `[8]uc  1 a 8 19 ]
+"68
+[v main@temp temp `f  1 a 4 50 ]
+"67
+[v main@adc_value adc_value `ui  1 a 2 39 ]
+"60
+[v main@last_temp last_temp `f  1 a 4 45 ]
+"61
+[v main@mode mode `uc  1 a 1 49 ]
+"62
+[v main@last_mode last_mode `uc  1 a 1 44 ]
+"59
+[v main@last_speed_percent last_speed_percent `uc  1 a 1 43 ]
+"145
+} 0
+"9 C:\Program Files\Microchip\xc8\v3.00\pic\sources\c99\common\nf_sprintf.c
+[v _sprintf sprintf `(i  1 e 2 0 ]
+{
+[u S581 . 2 `*.39uc 1 buffer 2 0 `*.1DCuc 1 source 1 0 ]
+"13
+[s S584 _IO_FILE 11 `S581 1 . 2 0 `i 1 count 2 2 `[3]uc 1 ungetbuf 3 4 `i 1 ungetcnt 2 7 `i 1 limit 2 9 ]
+[v sprintf@f f `S584  1 a 11 5 ]
+"12
+[v sprintf@ap ap `[1]*.4v  1 a 1 4 ]
+"9
+[v sprintf@s s `*.4uc  1 p 1 0 ]
+[v sprintf@fmt fmt `*.24DCuc  1 p 1 1 ]
+"23
+} 0
+"1817 C:\Program Files\Microchip\xc8\v3.00\pic\sources\c99\common\doprnt.c
+[v _vfprintf vfprintf `(i  1 e 2 0 ]
+{
+"1820
+[v vfprintf@cfmt cfmt `*.24uc  1 a 1 13 ]
+[s S616 _IO_FILE 0 ]
+"1817
+[v vfprintf@fp fp `*.39S616  1 p 2 13 ]
+[v vfprintf@fmt fmt `*.24DCuc  1 p 1 15 ]
+[v vfprintf@ap ap `*.4*.4v  1 p 1 16 ]
+"1840
+} 0
+"1177
+[v _vfpfcnvrt vfpfcnvrt `(v  1 s 1 vfpfcnvrt ]
+{
+[u S629 . 4 `i 1 sint 2 0 `ui 1 uint 2 0 `d 1 f 4 0 ]
+"1188
+[v vfpfcnvrt@convarg convarg `S629  1 a 4 8 ]
+"1179
+[v vfpfcnvrt@c c `uc  1 a 1 12 ]
+[v vfpfcnvrt@cp cp `*.24uc  1 a 1 7 ]
+"1180
+[v vfpfcnvrt@done done `a  1 a 1 6 ]
+[s S616 _IO_FILE 0 ]
+"1177
+[v vfpfcnvrt@fp fp `*.39S616  1 p 2 0 ]
+[v vfpfcnvrt@fmt fmt `*.30*.24uc  1 p 1 2 ]
+[v vfpfcnvrt@ap ap `*.4*.4v  1 p 1 3 ]
+"1814
+} 0
+"8 C:\Program Files\Microchip\xc8\v3.00\pic\sources\c99\common\nf_fputc.c
+[v _fputc fputc `(i  1 e 2 0 ]
+{
+[v fputc@c c `i  1 p 2 0 ]
+[u S581 . 2 `*.39uc 1 buffer 2 0 `*.1DCuc 1 source 1 0 ]
+[s S584 _IO_FILE 11 `S581 1 . 2 0 `i 1 count 2 2 `[3]uc 1 ungetbuf 3 4 `i 1 ungetcnt 2 7 `i 1 limit 2 9 ]
+[v fputc@fp fp `*.39S584  1 p 2 2 ]
+"24
+} 0
+"7 C:\Program Files\Microchip\xc8\v3.00\pic\sources\c99\common\putch.c
+[v _putch putch `(v  1 e 1 0 ]
+{
+"9
+} 0
+"1 C:\Program Files\Microchip\xc8\v3.00\pic\sources\c99\common\abs.c
+[v _abs abs `(i  1 e 2 0 ]
+{
+[v abs@a a `i  1 p 2 6 ]
+"4
+} 0
+"5 C:\Program Files\Microchip\xc8\v3.00\pic\sources\c99\common\awmod.c
+[v ___awmod __awmod `(i  1 e 2 0 ]
+{
+"10
+[v ___awmod@sign sign `uc  1 a 1 5 ]
+[v ___awmod@counter counter `uc  1 a 1 4 ]
+"5
+[v ___awmod@divisor divisor `i  1 p 2 0 ]
+[v ___awmod@dividend dividend `i  1 p 2 2 ]
+"34
+} 0
+"5 C:\Program Files\Microchip\xc8\v3.00\pic\sources\c99\common\awdiv.c
+[v ___awdiv __awdiv `(i  1 e 2 0 ]
+{
+"10
+[v ___awdiv@quotient quotient `i  1 a 2 6 ]
+"11
+[v ___awdiv@sign sign `uc  1 a 1 5 ]
+[v ___awdiv@counter counter `uc  1 a 1 4 ]
+"5
+[v ___awdiv@divisor divisor `i  1 p 2 0 ]
+[v ___awdiv@dividend dividend `i  1 p 2 2 ]
+"41
+} 0
+"242 C:\Program Files\Microchip\xc8\v3.00\pic\sources\c99\common\sprcadd.c
+[v ___flsub __flsub `(d  1 e 4 0 ]
+{
+[v ___flsub@a a `d  1 p 4 8 ]
+[v ___flsub@b b `d  1 p 4 12 ]
+"250
+} 0
+"10
+[v ___fladd __fladd `(d  1 e 4 0 ]
+{
+"17
+[v ___fladd@grs grs `uc  1 a 1 11 ]
+"15
+[v ___fladd@bexp bexp `uc  1 a 1 10 ]
+"16
+[v ___fladd@aexp aexp `uc  1 a 1 9 ]
+"13
+[v ___fladd@signs signs `uc  1 a 1 8 ]
+"10
+[v ___fladd@b b `d  1 p 4 0 ]
+[v ___fladd@a a `d  1 p 4 4 ]
+"237
+} 0
+"4 C:\Program Files\Microchip\xc8\v3.00\pic\sources\c99\common\flge.c
+[v ___flge __flge `(b  1 e 0 0 ]
+{
+[v ___flge@ff1 ff1 `d  1 p 4 16 ]
+[v ___flge@ff2 ff2 `d  1 p 4 20 ]
+"19
+} 0
+"242 C:\Users\Admin\Documents\GitHub\GIT_PIC\LCD_Motor_Temp.X\newmain.c
+[v _PWM_Initialize PWM_Initialize `(v  1 e 1 0 ]
+{
+"251
+} 0
+"253
+[v _PWM_Duty PWM_Duty `(v  1 e 1 0 ]
+{
+[v PWM_Duty@duty duty `ui  1 p 2 78 ]
+"262
+} 0
+"10 C:\Program Files\Microchip\xc8\v3.00\pic\sources\c99\common\xxtofl.c
+[v ___xxtofl __xxtofl `(d  1 e 4 0 ]
+{
+[v ___xxtofl@sign sign `uc  1 p 1 wreg ]
+"13
+[v ___xxtofl@arg arg `ul  1 a 4 12 ]
+"12
+[v ___xxtofl@exp exp `uc  1 a 1 11 ]
+"10
+[v ___xxtofl@sign sign `uc  1 p 1 wreg ]
+[v ___xxtofl@val val `l  1 p 4 6 ]
+"15
+[v ___xxtofl@sign sign `uc  1 p 1 10 ]
+"44
+} 0
+"43 C:\Program Files\Microchip\xc8\v3.00\pic\sources\c99\common\fltol.c
+[v ___fltol __fltol `(l  1 e 4 0 ]
+{
+"45
+[v ___fltol@exp1 exp1 `uc  1 a 1 77 ]
+[v ___fltol@sign1 sign1 `uc  1 a 1 76 ]
+"43
+[v ___fltol@f1 f1 `d  1 p 4 68 ]
+"70
+} 0
+"8 C:\Program Files\Microchip\xc8\v3.00\pic\sources\c99\common\sprcmul.c
+[v ___flmul __flmul `(d  1 e 4 0 ]
+{
+[s S434 . 4 `uc 1 a 1 0 `uc 1 b 1 1 `uc 1 c 1 2 `uc 1 d 1 3 ]
+"13
+[s S439 . 4 `s 1 wordA 2 0 `s 1 wordB 2 2 ]
+[u S442 . 4 `l 1 i 4 0 `d 1 f 4 0 `S434 1 fAsBytes 4 0 `S439 1 fAsWords 4 0 ]
+[v ___flmul@prod prod `S442  1 a 4 36 ]
+"12
+[v ___flmul@grs grs `ul  1 a 4 30 ]
+[s S511 . 2 `uc 1 a 1 0 `uc 1 b 1 1 ]
+"14
+[u S514 . 2 `s 1 i 2 0 `us 1 n 2 0 `S511 1 nAsBytes 2 0 ]
+[v ___flmul@temp temp `S514  1 a 2 40 ]
+"10
+[v ___flmul@bexp bexp `uc  1 a 1 35 ]
+"11
+[v ___flmul@aexp aexp `uc  1 a 1 34 ]
+"9
+[v ___flmul@sign sign `uc  1 a 1 29 ]
+"8
+[v ___flmul@b b `d  1 p 4 16 ]
+[v ___flmul@a a `d  1 p 4 20 ]
+"205
+} 0
+"4 C:\Program Files\Microchip\xc8\v3.00\pic\sources\c99\common\Umul8_16.c
+[v __Umul8_16 _Umul8_16 `(ui  1 e 2 0 ]
+{
+[v __Umul8_16@multiplier multiplier `uc  1 p 1 wreg ]
+"6
+[v __Umul8_16@word_mpld word_mpld `us  1 a 2 6 ]
+"5
+[v __Umul8_16@product product `us  1 a 2 4 ]
+"4
+[v __Umul8_16@multiplier multiplier `uc  1 p 1 wreg ]
+[v __Umul8_16@multiplicand multiplicand `uc  1 p 1 0 ]
+[v __Umul8_16@multiplier multiplier `uc  1 p 1 8 ]
+"60
+} 0
+"8 C:\Program Files\Microchip\xc8\v3.00\pic\sources\c99\common\sprcdiv.c
+[v ___fldiv __fldiv `(d  1 e 4 0 ]
+{
+"21
+[v ___fldiv@grs grs `ul  1 a 4 62 ]
+"22
+[v ___fldiv@rem rem `ul  1 a 4 55 ]
+"20
+[v ___fldiv@new_exp new_exp `s  1 a 2 60 ]
+"19
+[v ___fldiv@aexp aexp `uc  1 a 1 67 ]
+"18
+[v ___fldiv@bexp bexp `uc  1 a 1 66 ]
+"16
+[v ___fldiv@sign sign `uc  1 a 1 59 ]
+"8
+[v ___fldiv@a a `d  1 p 4 42 ]
+[v ___fldiv@b b `d  1 p 4 46 ]
+"185
+} 0
+"5 C:\Program Files\Microchip\xc8\v3.00\pic\sources\c99\common\aldiv.c
+[v ___aldiv __aldiv `(l  1 e 4 0 ]
+{
+"10
+[v ___aldiv@quotient quotient `l  1 a 4 2 ]
+"11
+[v ___aldiv@sign sign `uc  1 a 1 1 ]
+[v ___aldiv@counter counter `uc  1 a 1 0 ]
+"5
+[v ___aldiv@divisor divisor `l  1 p 4 0 ]
+[v ___aldiv@dividend dividend `l  1 p 4 4 ]
+"41
+} 0
+"197 C:\Users\Admin\Documents\GitHub\GIT_PIC\LCD_Motor_Temp.X\newmain.c
+[v _LCD_String LCD_String `(v  1 e 1 0 ]
+{
+[v LCD_String@str str `*.26DCuc  1 p 2 4 ]
+"203
+} 0
+"177
+[v _LCD_Char LCD_Char `(v  1 e 1 0 ]
+{
+[v LCD_Char@data data `uc  1 p 1 wreg ]
+[v LCD_Char@data data `uc  1 p 1 wreg ]
+"179
+[v LCD_Char@data data `uc  1 p 1 3 ]
+"194
+} 0
+"213
+[v _LCD_Init LCD_Init `(v  1 e 1 0 ]
+{
+"223
+} 0
+"206
+[v _LCD_Clear LCD_Clear `(v  1 e 1 0 ]
+{
+"210
+} 0
+"157
+[v _LCD_Command LCD_Command `(v  1 e 1 0 ]
+{
+[v LCD_Command@cmd cmd `uc  1 p 1 wreg ]
+[v LCD_Command@cmd cmd `uc  1 p 1 wreg ]
+"159
+[v LCD_Command@cmd cmd `uc  1 p 1 3 ]
+"174
+} 0
+"148
+[v _LCD_Enable LCD_Enable `(v  1 e 1 0 ]
+{
+"154
+} 0
+"231
+[v _ADC_Read ADC_Read `(ui  1 e 2 0 ]
+{
+[v ADC_Read@channel channel `uc  1 p 1 wreg ]
+[v ADC_Read@channel channel `uc  1 p 1 wreg ]
+"233
+[v ADC_Read@channel channel `uc  1 p 1 4 ]
+"240
+} 0
+"225
+[v _ADC_Initialize ADC_Initialize `(v  1 e 1 0 ]
+{
+"229
+} 0

@@ -1,0 +1,334 @@
+"File: HT8_ADC.c     Holtek Cross-Assembler  Version 3.00      Page 1
+
+
+
+;  38: {
+  38  0000              __stm0ah EQU [02dH]
+  38  0000              __stm0al EQU [02cH]
+  38  0000              __stm0dh EQU [02bH]
+  38  0000              __stm0dl EQU [02aH]
+  38  0000              __stm0c1 EQU [029H]
+  38  0000              __stm0c0 EQU [028H]
+  38  0000              __pasr EQU [026H]
+  38  0000              __rstc EQU [025H]
+  38  0000              __sadc2 EQU [024H]
+  38  0000              __sadc1 EQU [023H]
+  38  0000              __sadc0 EQU [022H]
+  38  0000              __sadoh EQU [021H]
+  38  0000              __sadol EQU [020H]
+  38  0000              __eed EQU [01fH]
+  38  0000              __eea EQU [01eH]
+  38  0000              __smod1 EQU [01cH]
+  38  0000              __tbc EQU [01bH]
+  38  0000              __wdtc EQU [019H]
+  38  0000              __ifs0 EQU [018H]
+  38  0000              __pawu EQU [017H]
+  38  0000              __papu EQU [016H]
+  38  0000              __pac EQU [015H]
+  38  0000              __pa EQU [014H]
+  38  0000              __mfi0 EQU [011H]
+  38  0000              __intc1 EQU [0fH]
+  38  0000              __intc0 EQU [0eH]
+  38  0000              __integ EQU [0dH]
+  38  0000              __smod EQU [0bH]
+  38  0000              __status EQU [0aH]
+  38  0000              __tblh EQU [08H]
+  38  0000              __tblp EQU [07H]
+  38  0000              __pcl EQU [06H]
+  38  0000              __acc EQU [05H]
+  38  0000              __bp EQU [04H]
+  38  0000              __mp1 EQU [03H]
+  38  0000              __iar1 EQU [02H]
+  38  0000              __mp0 EQU [01H]
+  38  0000              __iar0 EQU [00H]
+  38  0000              @ADC_Init .SECTION 'CODE'
+  38  0000              PUBLIC _ADC_Init
+  38  0000              _ADC_Init PROC
+
+; 104: 				_sack2 = 0; _sack1 = 1; _sack0 = 1;
+ 104  0000  3523        CLR [023H].2
+ 104  0001  30A3        SET [023H].1
+ 104  0002  3023        SET [023H].0
+
+; 136: 			_adrfs = 1;
+ 136  0003  3222        SET [022H].4
+
+; 150: 			_savrs3 = 0; _savrs2 = 0; _savrs1 = 0; _savrs0 = 0;
+ 150  0004  35A4        CLR [024H].3
+ 150  0005  3524        CLR [024H].2
+ 150  0006  34A4        CLR [024H].1
+ 150  0007  3424        CLR [024H].0
+ 150  0008              L6:
+"File: HT8_ADC.c     Holtek Cross-Assembler  Version 3.00      Page 2 
+
+ 150  0008  0003        RET
+ 150  0009              _ADC_Init ENDP
+
+; 207: {
+ 207  0000              @ADC_SelectChannel .SECTION 'CODE'
+ 207  0000              PUBLIC _ADC_SelectChannel
+ 207  0000              _ADC_SelectChannel PROC
+
+; 206: void ADC_SelectChannel(u8 ADC_Channel)
+ 206  0000              PUBLIC ADC_SelectChannel0
+ 206  0000  00          LOCAL ADC_SelectChannel0 DB ? ; ADC_Channel
+
+; 208: 	_sadc1 &= 0b00011111;
+ 208  0000  0F1F        MOV A,01fh
+ 208  0001  06A3        ANDM A,__sadc1
+
+; 209: 	if(ADC_Channel < 4)
+ 209  0002  0700     R  MOV A,ADC_SelectChannel0
+ 209  0003  0A04        SUB A,04h
+ 209  0004  3C0A        SZ [0ah].0
+ 209  0005  2800     R  JMP L8
+
+; 212: 		_sadc0 &= 0b11111100;
+ 212  0006  0FFC        MOV A,0fch
+ 212  0007  06A2        ANDM A,__sadc0
+
+; 215: 		_sadc0 |= ADC_Channel;
+ 215  0008  0700     R  MOV A,ADC_SelectChannel0
+ 215  0009  05A2        ORM A,__sadc0
+
+; 218: 		switch(ADC_Channel)
+ 218  000A  0700     R  MOV A,ADC_SelectChannel0
+ 218  000B  0080     R  MOV b0_2,A
+ 218  000C  1080     R  SZ b0_2
+ 218  000D  2800     R  JMP L16
+ 218  000E  2800     R  JMP L12
+ 218  000F              L16:
+ 218  000F  0700     R  MOV A,b0_2
+ 218  0010  0C01        XOR A,01h
+ 218  0011  3D0A        SZ [0ah].2
+ 218  0012  2800     R  JMP L13
+ 218  0013  0700     R  MOV A,b0_2
+ 218  0014  0C02        XOR A,02h
+ 218  0015  3D0A        SZ [0ah].2
+ 218  0016  2800     R  JMP L14
+ 218  0017  0700     R  MOV A,b0_2
+ 218  0018  0C03        XOR A,03h
+ 218  0019  3D0A        SZ [0ah].2
+ 218  001A  2800     R  JMP L15
+ 218  001B  2800     R  JMP L9
+ 218  001C              L12:
+
+; 220: 			case ADC_CH0 : _pas1 = 1; _pas0 = 1; break;
+ 220  001C  30A6        SET [026H].1
+ 220  001D  3026        SET [026H].0
+ 220  001E  2800     R  JMP L9
+ 220  001F              L13:
+
+; 221: 			case ADC_CH1 : _pas3 = 1; _pas2 = 1; break;
+ 221  001F  31A6        SET [026H].3
+"File: HT8_ADC.c     Holtek Cross-Assembler  Version 3.00      Page 3 
+
+ 221  0020  3126        SET [026H].2
+ 221  0021  2800     R  JMP L9
+ 221  0022              L14:
+
+; 222: 			case ADC_CH2 : _pas5 = 1; _pas4 = 1; break;
+ 222  0022  32A6        SET [026H].5
+ 222  0023  3226        SET [026H].4
+ 222  0024  2800     R  JMP L9
+ 222  0025              L15:
+
+; 223: 			case ADC_CH3 : _pas7 = 1; _pas6 = 1; break;	
+ 223  0025  33A6        SET [026H].7
+ 223  0026  3326        SET [026H].6
+
+; 226: 	}
+ 226  0027  2800     R  JMP L9
+ 226  0028              L8:
+
+; 230: 		_sadc1 |= ADC_Channel;		
+ 230  0028  0700     R  MOV A,ADC_SelectChannel0
+ 230  0029  05A3        ORM A,__sadc1
+ 230  002A              L9:
+ 230  002A              L7:
+ 230  002A  0003        RET
+ 230  0001  00          LOCAL b0_2 DB ?
+ 230  002B              _ADC_SelectChannel ENDP
+
+; 241: {
+ 241  0000              @ADC_GetValue .SECTION 'CODE'
+ 241  0000              PUBLIC _ADC_GetValue
+ 241  0000              _ADC_GetValue PROC
+
+; 245: 	ADC_START();
+ 245  0000  37A2        CLR [022H].7
+ 245  0001  33A2        SET [022H].7
+ 245  0002  37A2        CLR [022H].7
+ 245  0003              L18:
+ 245  0003              L19:
+
+; 248: 	while(1 == _adbz);	
+ 248  0003  3F22        SZ [022H].6
+ 248  0004  2800     R  JMP L18
+
+; 254: 			Value = ((u16)_sadoh <<8) | _sadol;
+ 254  0005  0721        MOV A,__sadoh
+ 254  0006  0080     R  MOV b0_3[1],A
+ 254  0007  1F00     R  CLR b0_3
+ 254  0008  0720        MOV A,__sadol
+ 254  0009  0080     R  MOV b1_3,A
+ 254  000A  1F00     R  CLR b1_3[1]
+ 254  000B  0700     R  MOV A,b0_3
+ 254  000C  0500     R  OR A,b1_3
+ 254  000D  0080     R  MOV CR2,A
+ 254  000E  0700     R  MOV A,b0_3[1]
+ 254  000F  0500     R  OR A,b1_3[1]
+ 254  0010  0080     R  MOV CR2[1],A
+
+; 264: 	return Value;
+ 264  0011  0700     R  MOV A,CR2[1]
+ 264  0012  0080     E  MOV RH,A
+"File: HT8_ADC.c     Holtek Cross-Assembler  Version 3.00      Page 4 
+
+ 264  0013  0700     R  MOV A,CR2
+ 264  0014              L17:
+ 264  0014  0003        RET
+ 264  0000  0002[       LOCAL b0_3 DB 2 DUP(?)
+            00
+            ]
+ 264  0002  0002[       LOCAL b1_3 DB 2 DUP(?)
+            00
+            ]
+
+; 242: 	u16 Value;
+ 242  0004  0002[       LOCAL CR2 DB 2 DUP (?) ; Value
+            00
+            ]
+ 242  0015              _ADC_GetValue ENDP
+
+; 278: {
+ 278  0000              @ADC_GetChannelValue .SECTION 'CODE'
+ 278  0000              PUBLIC _ADC_GetChannelValue
+ 278  0000              _ADC_GetChannelValue PROC
+
+; 277: u16 ADC_GetChannelValue(u8 ADC_Channel)
+ 277  0000              PUBLIC ADC_GetChannelValue0
+ 277  0000  00          LOCAL ADC_GetChannelValue0 DB ? ; ADC_Channel
+
+; 281: 	_sadc1 &= 0b00011111;
+ 281  0000  0F1F        MOV A,01fh
+ 281  0001  06A3        ANDM A,__sadc1
+
+; 282: 	if(ADC_Channel < 4)
+ 282  0002  0700     R  MOV A,ADC_GetChannelValue0
+ 282  0003  0A04        SUB A,04h
+ 282  0004  3C0A        SZ [0ah].0
+ 282  0005  2800     R  JMP L22
+
+; 285: 		_sadc0 &= 0b11111000;
+ 285  0006  0FF8        MOV A,0f8h
+ 285  0007  06A2        ANDM A,__sadc0
+
+; 287: 		_sadc0 |= ADC_Channel;
+ 287  0008  0700     R  MOV A,ADC_GetChannelValue0
+ 287  0009  05A2        ORM A,__sadc0
+
+; 290: 		switch(ADC_Channel)
+ 290  000A  0700     R  MOV A,ADC_GetChannelValue0
+ 290  000B  0080     R  MOV b0_4,A
+ 290  000C  1080     R  SZ b0_4
+ 290  000D  2800     R  JMP L33
+ 290  000E  2800     R  JMP L26
+ 290  000F              L33:
+ 290  000F  0700     R  MOV A,b0_4
+ 290  0010  0C01        XOR A,01h
+ 290  0011  3D0A        SZ [0ah].2
+ 290  0012  2800     R  JMP L27
+ 290  0013  0700     R  MOV A,b0_4
+ 290  0014  0C02        XOR A,02h
+ 290  0015  3D0A        SZ [0ah].2
+ 290  0016  2800     R  JMP L28
+ 290  0017  0700     R  MOV A,b0_4
+ 290  0018  0C03        XOR A,03h
+"File: HT8_ADC.c     Holtek Cross-Assembler  Version 3.00      Page 5 
+
+ 290  0019  3D0A        SZ [0ah].2
+ 290  001A  2800     R  JMP L29
+ 290  001B  2800     R  JMP L23
+ 290  001C              L26:
+
+; 292: 			case ADC_CH0 : _pas1 = 1; _pas0 = 1; break;
+ 292  001C  30A6        SET [026H].1
+ 292  001D  3026        SET [026H].0
+ 292  001E  2800     R  JMP L23
+ 292  001F              L27:
+
+; 293: 			case ADC_CH1 : _pas3 = 1; _pas2 = 1; break;
+ 293  001F  31A6        SET [026H].3
+ 293  0020  3126        SET [026H].2
+ 293  0021  2800     R  JMP L23
+ 293  0022              L28:
+
+; 294: 			case ADC_CH2 : _pas5 = 1; _pas4 = 1; break;
+ 294  0022  32A6        SET [026H].5
+ 294  0023  3226        SET [026H].4
+ 294  0024  2800     R  JMP L23
+ 294  0025              L29:
+
+; 295: 			case ADC_CH3 : _pas7 = 1; _pas6 = 1; break;	
+ 295  0025  33A6        SET [026H].7
+ 295  0026  3326        SET [026H].6
+
+; 298: 	}
+ 298  0027  2800     R  JMP L23
+ 298  0028              L22:
+
+; 302: 		_sadc1 |= ADC_Channel;		
+ 302  0028  0700     R  MOV A,ADC_GetChannelValue0
+ 302  0029  05A3        ORM A,__sadc1
+ 302  002A              L23:
+
+; 306: 	ADC_START();
+ 306  002A  37A2        CLR [022H].7
+ 306  002B  33A2        SET [022H].7
+ 306  002C  37A2        CLR [022H].7
+ 306  002D              L30:
+ 306  002D              L31:
+
+; 309: 	while(1 == _adbz);	
+ 309  002D  3F22        SZ [022H].6
+ 309  002E  2800     R  JMP L30
+
+; 315: 			AD_ConverterValue = ((u16)_sadoh <<8) | _sadol;
+ 315  002F  0721        MOV A,__sadoh
+ 315  0030  0080     R  MOV b0_4[1],A
+ 315  0031  1F00     R  CLR b0_4
+ 315  0032  0720        MOV A,__sadol
+ 315  0033  0080     R  MOV b1_4,A
+ 315  0034  1F00     R  CLR b1_4[1]
+ 315  0035  0700     R  MOV A,b0_4
+ 315  0036  0500     R  OR A,b1_4
+ 315  0037  0080     R  MOV CR3,A
+ 315  0038  0700     R  MOV A,b0_4[1]
+ 315  0039  0500     R  OR A,b1_4[1]
+ 315  003A  0080     R  MOV CR3[1],A
+"File: HT8_ADC.c     Holtek Cross-Assembler  Version 3.00      Page 6 
+
+
+; 326: 		return AD_ConverterValue;
+ 326  003B  0700     R  MOV A,CR3[1]
+ 326  003C  0080     E  MOV RH,A
+ 326  003D  0700     R  MOV A,CR3
+ 326  003E              L21:
+ 326  003E  0003        RET
+ 326  0001  0002[       LOCAL b0_4 DB 2 DUP(?)
+            00
+            ]
+ 326  0003  0002[       LOCAL b1_4 DB 2 DUP(?)
+            00
+            ]
+
+; 279: 	u16 AD_ConverterValue;
+ 279  0005  0002[       LOCAL CR3 DB 2 DUP (?) ; AD_ConverterValue
+            00
+            ]
+ 279  003F              _ADC_GetChannelValue ENDP
+ 279  003F              EXTERN RH:BYTE
+
+
+        0 Errors

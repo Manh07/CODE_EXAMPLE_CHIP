@@ -1,0 +1,25 @@
+################################################################################
+# Automatically-generated file. Do not edit!
+################################################################################
+
+# Add inputs and outputs from these tool invocations to the build variables
+C_SRCS += \
+../src/apps/uart_wifi/uartHandle.c \
+../src/apps/uart_wifi/updateParam.c \
+../src/apps/uart_wifi/voiceCmd.c 
+
+COMPILER_OBJS += \
+src/apps/uart_wifi/uartHandle.obj \
+src/apps/uart_wifi/updateParam.obj \
+src/apps/uart_wifi/voiceCmd.obj 
+
+# Each subdirectory must supply rules for building sources it contributes
+src/apps/uart_wifi/%.obj: ../src/apps/uart_wifi/%.c src/apps/uart_wifi/Compiler.sub
+	@echo 'Building file: $<'
+	@echo 'Invoking: Compiler'
+	@echo src\apps\uart_wifi\cSubCommand.tmp=
+	@sed -e "s/^/ /" "src\apps\uart_wifi\cSubCommand.tmp"
+	ccrx -subcommand="src\apps\uart_wifi\cSubCommand.tmp" "$<"
+	@echo 'Finished Building: $<'
+	@echo ''
+

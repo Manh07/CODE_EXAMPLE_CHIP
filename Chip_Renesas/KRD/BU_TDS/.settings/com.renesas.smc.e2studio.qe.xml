@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<QE>
+    <Segment id="Project">
+        <Setting id="SrcGeneratedPath" value="src/smc_gen"/>
+    </Segment>
+    <Segment id="Pin">
+        <Setting id="PB3" value="PB3"/>
+        <Setting id="PB5" value="PB5"/>
+        <Setting id="PB7" value="PB7"/>
+        <Setting id="PB6" value="PB6"/>
+        <Setting id="AVCC0" value="AVCC0"/>
+        <Setting id="AVSS0" value="AVSS0"/>
+        <Setting id="P43" value="AN003"/>
+        <Setting id="P42" value="AN002"/>
+        <Setting id="P45" value="AN005"/>
+        <Setting id="P44" value="AN004"/>
+        <Setting id="P46" value="AN006"/>
+        <Setting id="P26" value="TXD1"/>
+        <Setting id="PE2" value="IRQ7"/>
+        <Setting id="PE1" value="AN017"/>
+        <Setting id="PA0" value="PA0"/>
+        <Setting id="PC2" value="PC2"/>
+        <Setting id="PE3" value="PE3"/>
+        <Setting id="PA1" value="MTIOC0B"/>
+        <Setting id="PC3" value="PC3"/>
+        <Setting id="PC5" value="PC5"/>
+        <Setting id="P30" value="RXD1"/>
+        <Setting id="P54" value="P54"/>
+        <Setting id="P55" value="P55"/>
+        <Setting id="P14" value="P14"/>
+        <Setting id="P17" value="P17"/>
+        <Setting id="PH1" value="PH1"/>
+        <Setting id="PH0" value="PH0"/>
+        <Setting id="PH3" value="PH3"/>
+        <Setting id="PH2" value="PH2"/>
+        <Setting id="PB1" value="TXD6"/>
+        <Setting id="PB0" value="RXD6"/>
+    </Segment>
+    <Segment id="Device">
+        <Setting id="Series" value="RX100"/>
+        <Setting id="Group" value="RX130"/>
+        <Setting id="Board" value="Custom User Board"/>
+        <Setting id="PartNo" value="R5F51303AxFM"/>
+        <Setting id="PinCount" value="64"/>
+    </Segment>
+    <Segment id="Clock">
+        <Setting id="PCLKD" value="32000.0"/>
+        <Setting id="PCLKB" value="32000.0"/>
+        <Setting id="CacHocoCLK" value="32000.0"/>
+        <Setting id="VCC" value="3.3"/>
+        <Setting id="ICLK" value="32000.0"/>
+        <Setting id="FCLK" value="32000.0"/>
+        <Setting id="SysCLKSrc" value="1.0"/>
+        <Setting id="ExtCLK" value="8000.0"/>
+    </Segment>
+    <Segment id="Component">
+        <Setting id="Config_SCI1" value="CG"/>
+        <Setting id="r_bsp" value="FIT"/>
+        <Setting id="Config_S12AD0" value="CG"/>
+        <Setting id="Config_ICU" value="CG"/>
+        <Setting id="Config_PORT" value="CG"/>
+        <Setting id="Config_CMT1" value="CG"/>
+        <Setting id="r_gpio_rx" value="FIT"/>
+        <Setting id="r_mpc_rx" value="FIT"/>
+        <Setting id="Config_CMT0" value="CG"/>
+        <Setting id="Config_MTU0" value="CG"/>
+        <Setting id="r_flash_rx" value="FIT"/>
+        <Setting id="Config_SCI6" value="CG"/>
+    </Segment>
+</QE>

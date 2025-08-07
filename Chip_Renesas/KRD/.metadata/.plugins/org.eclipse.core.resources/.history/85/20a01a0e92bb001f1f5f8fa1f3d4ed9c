@@ -1,0 +1,1010 @@
+/******************************************************************************
+ *
+ * Embedded software team.
+ * (c) Copyright 2018.
+ * ALL RIGHTS RESERVED.
+ *
+ ***************************************************************************/
+/*!
+ *
+ * @file        temp.c
+ *
+ * @author    trongkn
+ *
+ * @version   1.0
+ *
+ * @date
+ *
+ * @brief
+ *
+ *******************************************************************************
+ *
+ * Detailed Description of the file. If not used, remove the separator above.
+ *
+ ******************************************************************************/
+
+#include <config.h>
+#include <gpio.h>
+#include "adc.h"
+#include "timeCheck.h"
+#include "Config_MTU0.h"
+#include "pumpControl.h"
+#include "getWater.h"
+#include "heatControl.h"
+#include "flowSensor.h"
+#include "Config_ICU.h"
+#include "r_cg_port.h"
+#include "r_cg_s12ad.h"
+/******************************************************************************
+ * External objects
+ ******************************************************************************/
+
+/******************************************************************************
+ * Global variables
+ ******************************************************************************/
+
+/******************************************************************************
+ * Constants and macros
+ ******************************************************************************/
+
+/******************************************************************************
+ * Local types
+ ******************************************************************************/
+
+/******************************************************************************
+ * Local function prototypes
+ ******************************************************************************/
+
+/******************************************************************************
+ * Local variables
+ ******************************************************************************/
+
+gpio_port_pin_t listGpioPinOut[] = {PIN_VDT_2, PIN_VDT_3, PIN_VDT_4, PIN_VDT_5, PIN_VDT_6, PIN_VDT_7, PIN_VDT_8};
+
+/******************************************************************************
+ * Local functions
+ ******************************************************************************/
+/**
+ * @brief One line documentation
+ *
+ * A more detailed documentation
+ *
+ * @param arg1 the first function argument
+ * @param arg2 the second function argument
+ *
+ * @return descrition for the function return value
+ */
+
+/******************************************************************************
+ * Global functions
+ ******************************************************************************/
+
+/**
+ * @brief One line documentation
+ *
+ * A more detailed documentation
+ *
+ * @param arg1 the first function argument
+ * @param arg2 the second function argument
+ *
+ * @return descrition for the function return value
+ */
+PUBLIC void GPIO_Init(void)
+{
+}
+extern bool g_ioTestEn;
+bool isEnableHot = true;
+bool isEnableCold = true;
+bool isReset = true;
+
+bool isSucRuaLoiA = false;
+uint32_t timeStartSucRuaLoiA = 0;
+uint32_t timeStartCheck3000 = 0;
+uint32_t timeStartCheckLonHon3000 = 0;
+bool isWaterOuting = false;
+uint32_t t = 0;
+uint32_t timeStartNeedOffBom = 0;
+bool isNeedOffBom = false;
+bool isStartChuTrinhCanBang = false;
+bool isStartChuTrinhLonHon3000 = false;
+void userGpio_controlBlock()
+{
+    if (g_ioTestEn)
+    {
+        return;
+    }
+
+    if (isSucRuaLoiA)
+    {
+        TURN_ON_VDT_8;
+        t = elapsedTime(g_sysTime, timeStartSucRuaLoiA);
+        if (t > (300000 + 3000))
+        {
+            if ((ADC_GetTdsValueDisplay(TDS_BU_VALUE) > 700) && (ADC_GetTdsValueDisplay(TDS_BU_VALUE) < 1700))
+            {
+                isSucRuaLoiA = false;
+                TURN_OFF_VDT_8;
+                TURN_OFF_BOM_HUT;
+                TURN_OFF_VDT_6;
+            }
+        }
+        else if (t > 300000) //
+        {
+            TURN_OFF_VDT_5;
+            TURN_ON_VDT_6;
+            TURN_ON_BOM_HUT;
+        }
+        else
+        {
+            TURN_ON_VDT_5;
+            TURN_OFF_VDT_6;
+            TURN_OFF_BOM_HUT;
+        }
+        return;
+    }
+    if (isWaterOuting)
+    {
+        return;
+    }
+    if (isStartChuTrinhCanBang)
+    {
+        if (elapsedTime(g_sysTime, timeStartCheck3000) > 6000)
+        {
+            if (ADC_GetTdsValueDisplay(TDS_BU_VALUE) > 700)
+            {
+                isStartChuTrinhCanBang = false;
+            }
+            else
+            {
+                TURN_ON_BOM_HUT;
+                TURN_OFF_VDT_8;
+                TURN_OFF_VDT_5;
+                TURN_OFF_VDT_6;
+            }
+            TURN_OFF_VDT_8;
+            TURN_OFF_VDT_5;
+            timeStartCheck3000 = g_sysTime;
+        }
+        else if (elapsedTime(g_sysTime, timeStartCheck3000) > 5500)
+        {
+            TURN_ON_VDT_5;
+            TURN_ON_VDT_8;
+            if (ADC_GetTdsValueDisplay(TDS_BU_VALUE) > 700)
+            {
+                //                TURN_OFF_BOM_HUT;
+            }
+        }
+    }
+    else if (isStartChuTrinhLonHon3000)
+    {
+        if (elapsedTime(g_sysTime, timeStartCheckLonHon3000) > 6000)
+        {
+            if (ADC_GetTdsValueDisplay(TDS_BU_VALUE) < 1700)
+            {
+                isStartChuTrinhLonHon3000 = false;
+            }
+            else
+            {
+                TURN_ON_BOM_HUT;
+                TURN_OFF_VDT_8;
+                TURN_OFF_VDT_5;
+                TURN_OFF_VDT_6;
+            }
+            TURN_OFF_VDT_8;
+            TURN_OFF_VDT_6;
+            timeStartCheckLonHon3000 = g_sysTime;
+        }
+        else if (elapsedTime(g_sysTime, timeStartCheckLonHon3000) > 5000)
+        {
+            TURN_ON_VDT_6;
+            TURN_ON_VDT_8;
+            if (ADC_GetTdsValueDisplay(TDS_BU_VALUE) < 1700)
+            {
+                //               TURN_OFF_BOM_HUT;
+            }
+        }
+    }
+    if (ADC_GetTdsValueDisplay(TDS_BU_VALUE) > 1700)
+    {
+        if (!isStartChuTrinhLonHon3000)
+        {
+            isStartChuTrinhLonHon3000 = true;
+            timeStartCheckLonHon3000 = g_sysTime;
+            TURN_ON_BOM_HUT;
+            TURN_OFF_VDT_8;
+            TURN_OFF_VDT_5;
+            TURN_OFF_VDT_6;
+        }
+        //        TURN_ON_VDT_6;
+        //        TURN_OFF_VDT_5;
+        //        TURN_ON_VDT_8;
+        //        TURN_ON_BOM_HUT;
+    }
+    else if (ADC_GetTdsValueDisplay(TDS_BU_VALUE) < 700)
+    {
+        if (!isStartChuTrinhCanBang)
+        {
+            isStartChuTrinhCanBang = true;
+            timeStartCheck3000 = g_sysTime;
+            TURN_ON_BOM_HUT;
+            TURN_OFF_VDT_8;
+            TURN_OFF_VDT_5;
+            TURN_OFF_VDT_6;
+        }
+        //        uint32_t t = elapsedTime(g_sysTime, timeStartCheck3000);
+        //        if(t> 5000)
+        //        {
+        //            timeStartCheck3000 = g_sysTime;
+        //            TURN_ON_VDT_5;
+        //            TURN_OFF_BOM_HUT;
+        //        }
+        //        else if(t > 2000)
+        //        {
+        //            TURN_OFF_VDT_8;
+        //            TURN_ON_BOM_HUT;
+        //        }
+        //        else if(t > 1000)
+        //        {
+        //            TURN_OFF_VDT_5;
+        //            TURN_ON_VDT_8;
+        //        }
+        ////        TURN_ON_BOM_HUT;
+        ////        TURN_ON_VDT_8;
+        ////        TURN_ON_VDT_5;
+        //        TURN_OFF_VDT_6;
+    }
+    else
+    {
+        TURN_OFF_VDT_8;
+        TURN_OFF_VDT_5;
+        if (!isNeedOffBom)
+        {
+            isNeedOffBom = true;
+            timeStartNeedOffBom = g_sysTime;
+        }
+        if (isNeedOffBom)
+        {
+            if (elapsedTime(g_sysTime, timeStartNeedOffBom) > 30000)
+            {
+                TURN_OFF_BOM_HUT;
+                isNeedOffBom = false;
+            }
+        }
+        TURN_OFF_VDT_6;
+    }
+}
+void userGpio_isHaveSucRuaLoiA()
+{
+    timeStartSucRuaLoiA = g_sysTime;
+    isSucRuaLoiA = true;
+}
+void userGpio_isHaveGetWater(bool isOn) // check lai van 6
+{
+    if (isSucRuaLoiA)
+        return;
+    isWaterOuting = isOn;
+    isNeedOffBom = false;
+    if (isOn)
+    {
+        TURN_ON_BOM_HUT;
+        TURN_ON_VDT_6;
+        TURN_ON_VDT_7;
+        TURN_OFF_VDT_5;
+        TURN_OFF_VDT_8;
+    }
+    else
+    {
+        TURN_OFF_VDT_7;
+        TURN_OFF_VDT_6;
+    }
+}
+
+#define PWM_PERIOD 3199 // 10kHz
+#define PWM_START              \
+    {                          \
+        MTU0.TCNT = 0;         \
+        R_Config_MTU0_Start(); \
+    }
+#define PWM_STOP_0                                              \
+    {                                                           \
+        R_Config_MTU0_Stop();                                   \
+        MTU0.TIORH.BYTE = _00_MTU_IOA_DISABLE | _20_MTU_IOB_LH; \
+    }
+void userGpio_initPwmDienPhan()
+{
+}
+void userGpio_turnPwm(uint8_t percent)
+{
+    if (percent == 0)
+    {
+        R_Config_MTU0_Stop();
+        MTU0.TIORH.BYTE = _00_MTU_IOA_DISABLE | _20_MTU_IOB_LH;
+        return;
+    }
+    if (percent > 99)
+    {
+        percent = 99;
+    }
+    MTU0.TGRB = (MTU0.TGRA * (100 - percent)) / 100;
+    R_Config_MTU0_Start();
+}
+
+bool h2Cap_isOn = false;
+uint32_t timeH2CapLastOn = 0;
+void userGpio_checkH2CAP()
+{
+}
+
+extern bool vanXaIsOn;
+uint32_t lastimeCheckSucXa = 0;
+uint32_t timeStartXaSuc = 0;
+bool needXaSucWhenNotPump = false;
+bool needXaSucWhenResetFilterC = false;
+bool needXaSucWhenPowerOn = false;
+bool needCheckXaSucWhenResetFilterC = false;
+uint8_t cntXaSucWhenResetFilterC = 0;
+bool needXaSucInterval24h = false;
+bool needXaSucFollowFlowSensor = false;
+bool needXasucAfterResetFilter = false;
+uint32_t timeXaSucAfterResetFilter = 0;
+uint32_t timeCheckXaSucInterval = 0;
+uint32_t timeCheckXaSucFollowFlowSensor = 0;
+bool isStartXaSucAfterResetFilter = false;
+bool isXaSuc = false;
+bool isDayBinhAp = false;
+
+bool needXaBeforeGetWater = false;
+extern bool needTurnXa2sAlkaline;
+uint32_t timeStartXaBeforeGetWater = 0;
+bool xaSucAfterGetWaterRealRun = false;
+
+uint32_t timeStartBuMuoi = 0;
+bool buMuoiProcess = false;
+
+static uint32_t timeAuto = 0;
+static uint8_t step = 0;
+static uint8_t cntNewMachine = 3;
+void gpio_needXaSucAutoResetLoiC()
+{
+    needXaSucWhenPowerOn = false;
+    timeAuto = g_sysTime;
+    step = 4;
+    cntNewMachine = 3;
+    TURN_OFF_VDT_4;
+    TURN_OFF_VDT_6;
+    TURN_OFF_VDT_3;
+    TURN_OFF_VDT_7;
+}
+void gpio_xaSucPowerOnAuto()
+{
+    // if(g_ioTestEn) return;
+    switch (step)
+    {
+    case 0:
+        TURN_ON_VDT_2;
+        TURN_ON_VDT_4;
+        TURN_ON_VDT_5;
+        // TURN_ON_VDT_7;
+        // TURN_ON_VDT_6;
+        // TURN_ON_VDT_9;
+        // TURN_ON_VDT_6;
+        step = 1;
+        timeAuto = g_sysTime;
+        // getWater_setCurrent(600);
+        break;
+    case 1:
+        if ((uint32_t)(g_sysTime - timeAuto) > 5000)
+        {
+            if (g_ioTestEn)
+            {
+                getWater_setCurrent(0);
+                TURN_OFF_VDT_2;
+				TURN_OFF_VDT_4;
+				TURN_OFF_VDT_5;
+            }
+            else
+            {
+                getWater_setCurrent(1000);
+            }
+        }
+
+        if ((uint32_t)(g_sysTime - timeAuto) > 120000)
+        {
+            TURN_OFF_VDT_2;
+            TURN_OFF_VDT_4;
+            TURN_OFF_VDT_5;
+            // TURN_OFF_VDT_7;
+            // TURN_OFF_VDT_6;
+            // TURN_OFF_VDT_9;
+            getWater_setCurrent(0);
+            timeAuto = g_sysTime;
+            step = 2;
+        }
+        break;
+    case 2:
+        if ((uint32_t)(g_sysTime - timeAuto) > 1200000)
+        {
+            step = 0;
+        }
+        break;
+    case 3:
+        TURN_OFF_VDT_2;
+        TURN_OFF_VDT_4;
+        TURN_OFF_VDT_5;
+        getWater_setCurrent(0);
+        step = 0;
+        break;
+    default:
+    {
+        break;
+    }
+    }
+}
+
+void userGpio_checkAutoFunction()
+{
+    // if(g_ioTestEn) return;
+    if (flowSensor_getFlowRateCurrent_ll1() < 0.1)
+    {
+        if (!g_ioTestEn)
+        {
+            g_ioTestEn = true;
+        }
+    }
+    else
+    {
+        if (g_ioTestEn)
+        {
+            g_ioTestEn = false;
+        }
+    }
+    //     if(getWater_waterIsOuting() || heatControl_waterIsOuting()) // lay nuoc
+    //     {
+    //         lastimeCheckSucXa = g_sysTime;
+    //     }
+    //     else
+    //     {
+    //         if(!needXaSucWhenResetFilterC && !needXaSucWhenNotPump && elapsedTime(g_sysTime, lastimeCheckSucXa) > 86400000) //24h
+    //         {
+    // //            needXaSucWhenNotPump = true;  //->update UI
+    // //            lastimeCheckSucXa = g_sysTime;            //check for 24h tiep theo
+    // //            if(!vanXaIsOn)
+    // //            {
+    // //                TURN_ON_VDT_4;
+    // //                setOutput(OUT_VAN, true);
+    // //                vanXaIsOn = true;
+    // //            }
+
+    //             timeStartXaSuc = g_sysTime;
+    //         }
+    //     }
+    //     if(isStartXaSucAfterResetFilter)
+    //     {
+    //         timeXaSucAfterResetFilter = g_sysTime;
+    //     }
+    //     if(needCheckXaSucWhenResetFilterC)
+    //     {
+    // //        if(/*!CHECK_CO_AP_CAO && */!needXaSucWhenNotPump)
+    // //        {
+    // //            needXaSucWhenResetFilterC = true;
+    // //            needCheckXaSucWhenResetFilterC = false;
+    // //            isDayBinhAp = true;
+    // //        }
+    //     }
+
+    //     static bool iswaitH2capDone = false;
+    //     if(needXaSucWhenResetFilterC && !iswaitH2capDone)        //theo event reset loi C
+    //     {
+    //         if(isDayBinhAp && !isXaSuc && cntXaSucWhenResetFilterC < 3)
+    //         {
+    //             if(!vanXaIsOn)
+    //             {
+    //                 TURN_ON_VDT_4;
+    //                 setOutput(OUT_VAN, true);
+    //                 vanXaIsOn = true;
+    //             }
+    //             isXaSuc = true;
+    //             timeStartXaSuc = g_sysTime;
+    //             isDayBinhAp = false;
+    //         }
+
+    //         if(elapsedTime(g_sysTime, timeStartXaSuc) > 300000)//5phut
+    //         {
+    //             if(isXaSuc)
+    //             {
+    //                 if(vanXaIsOn)
+    //                 {
+    //                     TURN_OFF_VDT_4;
+    //                     setOutput(OUT_VAN, false);
+    //                     vanXaIsOn = false;
+    //                     cntXaSucWhenResetFilterC++;         //dem so lan xa
+    //                 }
+    //                 isXaSuc = false;
+    //             }
+    //             if(!CHECK_CO_AP_CAO)        //doi day binh ap sau khi xa 5 phut
+    //             {
+    //                 isDayBinhAp = true;
+    //             }
+    //         }
+
+    //         if(cntXaSucWhenResetFilterC == 3)
+    //         {
+    //             //needXaSucWhenResetFilterC = false; //chuyen thanh doi h2cap chay xong thi moi ket thuc  //->update UI
+    //             cntXaSucWhenResetFilterC = 0;
+    //             if(!h2Cap_isOn)
+    //             {
+    //                 h2Cap_isOn = true;
+    //                 TURN_ON_H2CAP;
+    //                 iswaitH2capDone = true;
+    //             }
+    //             timeH2CapLastOn = g_sysTime;
+    //         }
+    //     }
+    //     else
+    //     {
+    //         cntXaSucWhenResetFilterC = 0;
+    //     }
+    //     if(needXaSucWhenResetFilterC)
+    //     {
+    //         if(iswaitH2capDone)
+    //         {
+    //             if(!h2Cap_isOn)
+    //             {
+    //                 iswaitH2capDone = false;
+    //                 needXaSucWhenResetFilterC = false;
+    //             }
+    //         }
+    //     }
+
+    //     if(needXaSucWhenNotPump)
+    //     {
+    //         if(elapsedTime(g_sysTime, timeStartXaSuc) > 60000)//1phut
+    //         {
+    //             needXaSucWhenNotPump = false; //->update UI
+    //             if(vanXaIsOn)
+    //             {
+    //                TURN_OFF_VDT_4;
+    //                 setOutput(OUT_VAN, false);
+    //                 vanXaIsOn = false;
+    //             }
+
+    //             if(!h2Cap_isOn)
+    //             {
+    //                 h2Cap_isOn = true;
+    //                 TURN_ON_H2CAP;
+    //             }
+    //             timeH2CapLastOn = g_sysTime;
+    //         }
+    //     }
+    //     // gpio_xaSucPowerOnAuto();
+    //     if(needXasucAfterResetFilter)
+    //     {
+    //         if(elapsedTime(g_sysTime, timeXaSucAfterResetFilter) < 600000)
+    //         {
+    //             if(!vanXaIsOn)
+    //             {
+    //                 TURN_ON_VDT_5;
+    //                 setOutput(OUT_VAN, true);
+    //                 vanXaIsOn = true;
+    //             }
+    //         }
+    //         else
+    //         {
+    //             TURN_OFF_VDT_5;
+    //             setOutput(OUT_VAN, false);
+    //             vanXaIsOn = false;
+    //             needXasucAfterResetFilter = false;
+    //         }
+    //         isStartXaSucAfterResetFilter = false;
+    //     }
+    //     else{
+    //         vanXaIsOn = false;
+    //     }
+    //     if(needXaSucInterval24h)
+    //     {
+    //         // if(!vanXaIsOn)
+    //         // {
+    //         //     setOutput(OUT_VAN, true);
+    //         //     TURN_ON_VDT_6;
+    //         //     TURN_ON_VDT_2;
+    //         //     getWater_setCurrent(2500);
+    //         //     vanXaIsOn = true;
+    //         // }
+    //         // if(elapsedTime(g_sysTime, timeCheckXaSucInterval) > 120000)
+    //         // {
+    //             needXaSucInterval24h = false;
+    //         //     setOutput(OUT_VAN, false);
+    //         //     vanXaIsOn = false;
+    //         //     TURN_OFF_VDT_6;
+    //         //     TURN_OFF_VDT_2;
+    //         //     getWater_setCurrent(0);
+    //         // }
+    //     }
+    //     else
+    //     {
+    //         timeCheckXaSucInterval = g_sysTime;
+    //     }
+
+    //     static bool isTurnPh = false;
+    //     if(needXaSucFollowFlowSensor && (xaSucAfterGetWaterRealRun == false))   //dan trong 30s delay ma lay nuoc thi tinh lai tu dau
+    //     {
+    //         if(elapsedTime(g_sysTime, timeCheckXaSucFollowFlowSensor) < 30000)
+    //         {
+    //             if(getWater_isAlkalineOuting())
+    //             {
+    //                 needXaSucFollowFlowSensor = false;
+    //             }
+    //             else if(getWater_isOutingButNotAlkalineOuting())
+    //             {
+    //                 timeCheckXaSucFollowFlowSensor = g_sysTime;
+    //             }
+    //         }
+    //     }
+    //     if(needXaSucFollowFlowSensor)
+    //     {
+    //         if(elapsedTime(g_sysTime, timeCheckXaSucFollowFlowSensor) > 7000)
+    // 		{
+    //             isTurnPh = false;
+    //             needXaSucFollowFlowSensor = false;
+    //             getWater_setCurrent(0);
+    //         }
+    //         else if(elapsedTime(g_sysTime, timeCheckXaSucFollowFlowSensor) > 5000)      //sau tiep 10s thi tat van, va bat dien phan
+    // 		{
+    //             if(!isTurnPh)
+    //             {
+    //                 isTurnPh = true;
+    //                 getWater_setCurrent(1000);
+    //                 TURN_OFF_VDT_6;
+    //                 TURN_OFF_VDT_2;
+    //                 TURN_OFF_VDT_5;
+    //             }
+    //         }
+    //         // if(!vanXaIsOn && elapsedTime(g_sysTime, timeCheckXaSucFollowFlowSensor) > 30000)
+    //         // {
+    //         //     setOutput(OUT_VAN, true);
+    //         //     TURN_ON_VDT_5;
+    //         //     TURN_ON_VDT_6;
+    //         //     TURN_ON_VDT_2;
+    //         //     TURN_ON_SWAP;
+    //         //     getWater_setCurrent(3000);
+    //         //     vanXaIsOn = true;
+    //         //     xaSucAfterGetWaterRealRun = true;
+    //         // }
+    //         // if(elapsedTime(g_sysTime, timeCheckXaSucFollowFlowSensor) > 60000)      //sau 10 thi tat dien phan
+    // 		// {
+    //         //     needXaSucFollowFlowSensor = false;
+    //         //     isTurnPh = false;
+    //         //     getWater_controlPh(WATER_TYPE_PH95, false);
+    //         //     vanXaIsOn = false;
+    //         //     setOutput(OUT_VAN, false);
+    //         //     TURN_OFF_VDT_6;
+    //         //     TURN_OFF_VDT_2;
+    //         //     TURN_OFF_VDT_5;
+    //         //     xaSucAfterGetWaterRealRun = false;
+    //         // }
+    //         // else if(elapsedTime(g_sysTime, timeCheckXaSucFollowFlowSensor) > 50000)      //sau tiep 10s thi tat van, va bat dien phan
+    // 		// {
+    //         //     if(!isTurnPh)
+    //         //     {
+    //         //         isTurnPh = true;
+    //         //         getWater_controlPh(WATER_TYPE_PH95, true);
+    //         //         TURN_OFF_VDT_6;
+    //         //         TURN_OFF_VDT_2;
+    //         //         TURN_OFF_VDT_5;
+    //         //     }
+    //         // }
+    //         // else if(elapsedTime(g_sysTime, timeCheckXaSucFollowFlowSensor) > 40000) //sau 10s thi tat dao dien cuc
+    //         // {
+    //         //     TURN_OFF_SWAP;
+    //         //     getWater_setCurrent(0);
+    //         // }
+    //     }
+    //     else
+    //     {
+    //         timeCheckXaSucFollowFlowSensor = g_sysTime;
+    // //         if(!flowSensor_isRunning() && flowSensor_getFlowCurrent() > 3000)
+    // //         {
+    // //             if(!getWater_waterIsOuting() && !heatControl_waterIsOuting())
+    // //             {
+    // //                 flowSensor_resetFlow();
+    // // //                needXaSucFollowFlowSensor = true;
+    // //             }
+    // //         }
+    //     }
+    //     if(needXaBeforeGetWater)
+    //     {
+    //         needTurnXa2sAlkaline = true;
+    //         if(elapsedTime(g_sysTime, timeStartXaBeforeGetWater) > 2000)
+    //         {
+    //             TURN_OFF_VDT_6;
+    //             TURN_OFF_VDT_4;
+    //             needXaBeforeGetWater = false;
+    //         }
+    //     }
+    if (flowSensor_checkRemain_ll1())
+    {
+        buMuoiProcess = true;
+        timeStartBuMuoi = g_sysTime;
+    }
+    if (buMuoiProcess)
+    {
+        TURN_ON_VDT_4;
+        if (elapsedTime(g_sysTime, timeStartBuMuoi) > 2000)
+        {
+            TURN_OFF_VDT_4;
+            buMuoiProcess = false;
+        }
+    }
+}
+uint32_t timeXaSucHadRun = 0;
+bool isRemainXaSucProcess = false;
+void gpio_setResumePauseXaSucAfterGetWater(bool isResume, bool isXaBefore)
+{
+    if (!isResume)
+    {
+        if (needXaSucFollowFlowSensor)
+        {
+            needXaSucFollowFlowSensor = false;
+            if (xaSucAfterGetWaterRealRun)
+            {
+                xaSucAfterGetWaterRealRun = false;
+                isRemainXaSucProcess = true;
+                timeXaSucHadRun = (uint32_t)(elapsedTime(g_sysTime, timeCheckXaSucFollowFlowSensor) - 30000); // total process hien tai la 30s, nhung tre 30 moi control
+                // tam dung lai
+                getWater_controlPh(WATER_TYPE_PH95, false);
+                vanXaIsOn = false;
+                setOutput(OUT_VAN, false);
+                if (isXaBefore && timeXaSucHadRun < 20000)
+                {
+                    needXaBeforeGetWater = true;
+                    timeStartXaBeforeGetWater = g_sysTime;
+                }
+                else
+                {
+                    TURN_OFF_VDT_2;
+                    TURN_OFF_VDT_6;
+                }
+            }
+        }
+    }
+    else
+    {
+        if (isRemainXaSucProcess)
+        {
+            needTurnXa2sAlkaline = false;
+            isRemainXaSucProcess = false;
+            needXaSucFollowFlowSensor = true;
+            xaSucAfterGetWaterRealRun = true;
+            timeCheckXaSucFollowFlowSensor = (uint32_t)((uint32_t)(g_sysTime - timeXaSucHadRun) - 30000); // nhung tre 30 moi control
+            if (timeXaSucHadRun < 10000)                                                                  // da process truoc do chua dc 10s
+            {
+                if (!vanXaIsOn)
+                {
+                    setOutput(OUT_VAN, true);
+                    TURN_ON_VDT_6;
+                    TURN_ON_VDT_2;
+                    // TURN_ON_SWAP;
+                    getWater_setCurrent(0);
+                    vanXaIsOn = true;
+                }
+            }
+            else if (timeXaSucHadRun < 20000) // da process truoc do hon 10s
+            {
+                vanXaIsOn = true;
+                setOutput(OUT_VAN, true);
+            }
+            else if (timeXaSucHadRun < 30000) // da process truoc do hon 20s
+            {
+                vanXaIsOn = true;
+                setOutput(OUT_VAN, true);
+                getWater_controlPh(WATER_TYPE_PH95, true);
+                TURN_OFF_VDT_6;
+                TURN_OFF_VDT_2;
+            }
+        }
+    }
+}
+
+void gpio_setNeedXaSucWhenResetFilterC()
+{
+    //    needCheckXaSucWhenResetFilterC = true;
+    //    cntXaSucWhenResetFilterC = 0;
+    // needXaSucWhenResetFilterC = true;
+    // gpio_needXaSucAutoResetLoiC();
+}
+
+void gpio_setNeedXaSucAfterResetFilter()
+{
+    needXasucAfterResetFilter = true;
+    isStartXaSucAfterResetFilter = true;
+}
+
+uint32_t timeStartXaSucInterval = 0;
+bool needDelayXaSucWhenWaterRunning = false;
+void gpio_setNeedXaSucInterval()
+{
+    if (getWater_isAlkalineOuting() || getWater_isOutingButNotAlkalineOuting())
+    {
+        needDelayXaSucWhenWaterRunning = true;
+        return;
+    }
+    needXaSucInterval24h = true;
+    timeStartXaSucInterval = g_sysTime;
+}
+void gpio_setNeedXaSucFollowFlowSensor()
+{
+    isRemainXaSucProcess = false;
+    needXaSucFollowFlowSensor = true;
+}
+void gpio_resetAllXaSuc()
+{
+    needXaSucWhenResetFilterC = false;
+    needXaSucWhenPowerOn = false;
+    needXaSucWhenNotPump = false;
+    needXasucAfterResetFilter = false;
+    step = 255;
+}
+bool gpio_isXaSuc()
+{
+    if (needXaSucWhenNotPump || needXaSucWhenPowerOn || needXaSucWhenResetFilterC || needXaSucInterval24h || xaSucAfterGetWaterRealRun || needXasucAfterResetFilter)
+    {
+        return true;
+    }
+    return false;
+}
+uint8_t gpio_xaSucType()
+{
+    if (xaSucAfterGetWaterRealRun)
+    {
+        return 5;
+    }
+    else if (needXaSucInterval24h)
+    {
+        return 4;
+    }
+    else if (needXaSucWhenResetFilterC)
+    {
+        return 3;
+    }
+    else if (needXaSucWhenPowerOn)
+    {
+        return 2;
+    }
+    else if (needXaSucWhenNotPump)
+    {
+        return 1;
+    }
+    else if (needXasucAfterResetFilter)
+    {
+        return 6;
+    }
+    else
+    {
+        return 0;
+    }
+}
+
+extern bool isWifiDisconnected;
+uint32_t lastTimeWifiConnected = 0;
+bool wifiDisconnect = true;
+uint32_t timeStartCheckOnVanWhenDisconnect = 0;
+void pumpControl_checkFirstTime()
+{
+    if (isWifiDisconnected == false)
+    {
+        lastTimeWifiConnected = g_sysTime;
+        wifiDisconnect = false;
+    }
+    if (elapsedTime(g_sysTime, lastTimeWifiConnected) > 600000) // mat wifi 10phut
+    {
+        if (!wifiDisconnect)
+        {
+            timeStartCheckOnVanWhenDisconnect = g_sysTime;
+        }
+        wifiDisconnect = true;
+    }
+
+    if (isReset)
+    {
+        if (elapsedTime(g_sysTime, timeStartCheckOnVanWhenDisconnect) > 43200000) // 12 tieng sau khi mat wifi 10p
+        {
+            if (wifiDisconnect)
+            {
+                gpio_setNeedXaSucInterval();
+            }
+            isReset = false;
+        }
+    }
+    else
+    {
+        if (wifiDisconnect && elapsedTime(g_sysTime, timeStartXaSucInterval) > (86400000))
+        {
+            gpio_setNeedXaSucInterval();
+        }
+    }
+}
+
+uint8_t init = 2;
+void TDS_Pin_ADC_to_Output()
+{
+    if (init == 1)
+        return;
+    init = 1;
+    // deinit ADC
+    S12AD.ADANSA0.BIT.ANSA002 = 0;
+    S12AD.ADSSTR2 = 0x0DU;
+    MPC.P42PFS.BYTE = 0x00U;
+
+    // init Output
+    PORT4.PDR.BIT.B2 = 1;
+    PORT4.PODR.BIT.B2 = 0;
+    PORT4.PMR.BIT.B2 = 0;
+}
+
+void TDS_Pin_Output_to_ADC()
+{
+    if (init == 2)
+        return;
+    init = 2;
+    // deinit Output
+    PORT4.PDR.BIT.B2 = 0;
+    // init ADC
+    S12AD.ADANSA0.BIT.ANSA002 = 1;
+    S12AD.ADSSTR2 = 0x06U;
+    MPC.P42PFS.BYTE = 0x80U;
+}
+
+bool needSetOutput = false;
+uint8_t cntBlink = 0;
+void userGpio_testPinOption()
+{
+    if (!g_ioTestEn)
+        return;
+    // if(g_ioTestEn && !needSetOutput)
+    // {
+
+    // 	  needSetOutput = true;
+    // 	  R_Config_ICU_IRQ7_Stop();
+    //       R_GPIO_PinDirectionSet(PIN_LL,GPIO_DIRECTION_OUTPUT);
+    //       //pin ADC FB -> GPIO
+    //       MPC.PE1PFS.BYTE = 0x00U;
+    //       PORTE.PDR.BIT.B1 = 1;
+    // }
+    if (g_ioTestEn)
+    {
+        //
+        uint8_t i = 0;
+        if (cntBlink == 7)
+        {
+            for (i = 0; i < cntBlink; i++)
+            {
+                R_GPIO_PinWrite(listGpioPinOut[i], GPIO_LEVEL_LOW);
+            }
+            cntBlink = 0; // s88 5 van
+        }
+        // uint8_t i = 0;
+        // for(i = 4; i < 14; i++)
+        // {
+        // 	R_GPIO_PinWrite(listGpioPinOut[i],GPIO_LEVEL_LOW);
+        // }
+        // R_GPIO_PinWrite(listGpioPinOut[4 + cntBlink],GPIO_LEVEL_HIGH);
+        // cntBlink++;
+        // userGpio_turnPwm((cntBlink%2 == 0) ? 0 : 100);
+        // R_GPIO_PinWrite(PIN_DIEN_PHAN_SWAP,(cntBlink%2 == 0) ? GPIO_LEVEL_HIGH : GPIO_LEVEL_LOW);
+        // R_GPIO_PinWrite(PIN_LL,(cntBlink%2 == 0) ? GPIO_LEVEL_LOW : GPIO_LEVEL_HIGH);
+        // PORTE.PODR.BIT.B1 = (cntBlink%2 == 0) ? 1 : 0;
+
+        R_GPIO_PinWrite(listGpioPinOut[cntBlink], GPIO_LEVEL_HIGH);
+        cntBlink++;
+    }
+}
+/**
+ * @brief One line documentation
+ *
+ * A more detailed documentation
+ *
+ * @param arg1 the first function argument
+ * @param arg2 the second function argument
+ *
+ * @return descrition for the function return value
+ */

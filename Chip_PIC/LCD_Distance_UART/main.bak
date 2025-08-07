@@ -1,0 +1,94 @@
+#include "main.h"
+
+#define DIS_MIN_PUMP_ON 210 // Change if you want !
+#define DIS_MAX_PUMP_OFF 220 // Change if you want !
+
+long get_pulse_width() {
+    long time = 0;
+
+    while(!input(ECHO)); 
+    while(input(ECHO)) {
+        time++;
+        delay_us(1);
+    }
+    return time;
+}
+
+float get_distance() {
+    output_high(TRIG);
+    delay_us(10);
+    output_low(TRIG);
+
+    long duration = get_pulse_width();
+    float distance = duration * 0.017;
+
+    return distance;
+}
+
+void main()
+{
+
+   setup_adc_ports(NO_ANALOGS);
+   setup_adc(ADC_CLOCK_DIV_2);
+   setup_psp(PSP_DISABLED);
+   setup_spi(SPI_SS_DISABLED);
+   setup_timer_0(RTCC_INTERNAL|RTCC_DIV_1);
+   setup_timer_1(T1_DISABLED);
+   setup_timer_2(T2_DISABLED,0,1);
+   setup_comparator(NC_NC_NC_NC);
+   setup_vref(FALSE);
+   
+   lcd_init();
+   delay_ms(50);
+   
+   LED(1);
+   PUMP(0);
+   char buf_dis[20] = "";
+   for(;;) {
+      
+      float distance = get_distance();
+      if (DIS_MIN_PUMP_ON >= distance) {
+         sprintf(buf_dis, "Distance: %.2f", distance);
+         printf("%s cm\r\n", buf_dis);
+         printf("PUMP ON \r\n");
+         // clear
+         lcd_gotoxy(1,1);
+         lcd_putc("\f");
+         lcd_gotoxy(1,2);
+         lcd_putc("\f");
+         
+         int i;
+         lcd_gotoxy(1,1);
+         for(i = 0; buf_dis[i] != '\0'; i++) {
+            lcd_gotoxy(i + 1,1);
+            lcd_putc(buf_dis[i]);
+         }
+         lcd_gotoxy(1,2);
+         lcd_putc("PUMP ON");
+         PUMP(1);
+      }
+      
+      if (DIS_MAX_PUMP_OFF <= distance) {
+         sprintf(buf_dis, "Distance: %.2f", distance);
+         printf("%s \r\n", buf_dis);
+         printf("PUMP OFF \r\n");
+         // clear
+         lcd_gotoxy(1,1);
+         lcd_putc("\f");
+         lcd_gotoxy(1,2);
+         lcd_putc("\f");
+         
+         int j;
+         lcd_gotoxy(1,1);
+         for(j = 0; buf_dis[j] != '\0'; j++) {
+            lcd_gotoxy(j + 1,1);
+            lcd_putc(buf_dis[j]);
+         }
+         lcd_gotoxy(1,2);
+         lcd_putc("PUMP OFF");
+         PUMP(0);
+      }
+      
+      delay_ms(500);        
+   }
+}

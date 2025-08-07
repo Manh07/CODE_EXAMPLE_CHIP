@@ -1,0 +1,48 @@
+-isa=rxv1
+-nofpu
+-MAKEUD="C:\Users\Admin\Downloads\KRD Renesas\BU_TDS\HardwareDebug\src\apps\UIControl"
+-include="C:\Program Files (x86)\Renesas\RX\3_6_0\include"
+-include="C:\Users\Admin\Downloads\KRD Renesas\BU_TDS\src\apps"
+-include="C:\Users\Admin\Downloads\KRD Renesas\BU_TDS\src\apps\adc"
+-include="C:\Users\Admin\Downloads\KRD Renesas\BU_TDS\src\apps\errorCheck"
+-include="C:\Users\Admin\Downloads\KRD Renesas\BU_TDS\src\apps\flash"
+-include="C:\Users\Admin\Downloads\KRD Renesas\BU_TDS\src\apps\gpio"
+-include="C:\Users\Admin\Downloads\KRD Renesas\BU_TDS\src\apps\timer"
+-include="C:\Users\Admin\Downloads\KRD Renesas\BU_TDS\src\apps\uart"
+-include="C:\Users\Admin\Downloads\KRD Renesas\BU_TDS\src\apps\uart_wifi"
+-include="C:\Users\Admin\Downloads\KRD Renesas\BU_TDS\src\apps\UIControl"
+-include="C:\Users\Admin\Downloads\KRD Renesas\BU_TDS\src\apps\util"
+-include="C:\Users\Admin\Downloads\KRD Renesas\BU_TDS\src\apps\watchdog"
+-include="C:\Users\Admin\Downloads\KRD Renesas\BU_TDS\src"
+-include="C:\Users\Admin\Downloads\KRD Renesas\BU_TDS\src\apps\heatControl"
+-include="C:\Users\Admin\Downloads\KRD Renesas\BU_TDS\src\apps\thermoModule"
+-include="C:\Users\Admin\Downloads\KRD Renesas\BU_TDS\src\smc_gen\Config_CMT0"
+-include="C:\Users\Admin\Downloads\KRD Renesas\BU_TDS\src\smc_gen\Config_SCI6"
+-include="C:\Users\Admin\Downloads\KRD Renesas\BU_TDS\src\smc_gen\general"
+-include="C:\Users\Admin\Downloads\KRD Renesas\BU_TDS\src\smc_gen\Config_CMT1"
+-include="C:\Users\Admin\Downloads\KRD Renesas\BU_TDS\src\smc_gen\Config_ICU"
+-include="C:\Users\Admin\Downloads\KRD Renesas\BU_TDS\src\smc_gen\Config_S12AD0"
+-include="C:\Users\Admin\Downloads\KRD Renesas\BU_TDS\src\smc_gen\Config_MTU0"
+-include="C:\Users\Admin\Downloads\KRD Renesas\BU_TDS\src\smc_gen\Config_PORT"
+-include="C:\Users\Admin\Downloads\KRD Renesas\BU_TDS\src\smc_gen\Config_SCI1"
+-include="C:\Users\Admin\Downloads\KRD Renesas\BU_TDS\src\smc_gen\r_pincfg"
+-include="C:\Users\Admin\Downloads\KRD Renesas\BU_TDS\src\smc_gen\r_bsp"
+-include="C:\Users\Admin\Downloads\KRD Renesas\BU_TDS\src\smc_gen\r_config"
+-include="C:\Users\Admin\Downloads\KRD Renesas\BU_TDS\src\smc_gen\r_gpio_rx"
+-include="C:\Users\Admin\Downloads\KRD Renesas\BU_TDS\src\smc_gen\r_gpio_rx\src"
+-include="C:\Users\Admin\Downloads\KRD Renesas\BU_TDS\src\smc_gen\r_mpc_rx"
+-include="C:\Users\Admin\Downloads\KRD Renesas\BU_TDS\src\smc_gen\r_mpc_rx\src"
+-include="C:\Users\Admin\Downloads\KRD Renesas\BU_TDS\src\smc_gen\r_flash_rx"
+-include="C:\Users\Admin\Downloads\KRD Renesas\BU_TDS\src\smc_gen\r_flash_rx\src"
+-include="C:\Users\Admin\Downloads\KRD Renesas\BU_TDS\src\smc_gen\r_flash_rx\src\flash_type_1"
+-include="C:\Users\Admin\Downloads\KRD Renesas\BU_TDS\src\smc_gen\r_flash_rx\src\flash_type_3"
+-include="C:\Users\Admin\Downloads\KRD Renesas\BU_TDS\src\smc_gen\r_flash_rx\src\flash_type_4"
+-include="C:\Users\Admin\Downloads\KRD Renesas\BU_TDS\src\smc_gen\r_flash_rx\src\targets" 
+-lang=c99
+-utf8
+-nomessage
+-output=obj
+-obj_path="src/apps/UIControl"
+-debug
+-outcode=utf8
+-nologo 

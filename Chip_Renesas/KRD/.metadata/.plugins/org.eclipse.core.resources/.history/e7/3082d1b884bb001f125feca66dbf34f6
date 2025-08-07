@@ -1,0 +1,225 @@
+################################################################################
+# Automatically-generated file. Do not edit!
+################################################################################
+
+-include makefile.init
+
+RM := rm -rf *.sni *.dbg *.lst *.lis *.lpp *.map *.x *.lbp *.bls *.libelf *.rel *.lbk *.abs *.mi *.jmp *.fsy *.ud *.udm 1st/*.abs 1st/*.jmp 1st/*.fsy
+
+# All of the sources participating in the build are defined here
+-include sources.mk
+-include src/smc_gen/r_flash_rx/src/flash_type_4/subdir.mk
+-include src/apps/UIControl/subdir.mk
+-include src/apps/uart_wifi/subdir.mk
+-include src/smc_gen/r_gpio_rx/src/targets/rx130/subdir.mk
+-include src/apps/errorCheck/subdir.mk
+-include src/smc_gen/r_flash_rx/src/subdir.mk
+-include src/smc_gen/Config_CMT0/subdir.mk
+-include src/smc_gen/r_bsp/board/generic_rx130/subdir.mk
+-include src/smc_gen/r_gpio_rx/src/subdir.mk
+-include src/smc_gen/Config_SCI6/subdir.mk
+-include src/smc_gen/r_flash_rx/src/flash_type_1/subdir.mk
+-include src/smc_gen/r_pincfg/subdir.mk
+-include src/apps/watchdog/subdir.mk
+-include src/smc_gen/Config_ICU/subdir.mk
+-include src/smc_gen/r_bsp/mcu/rx130/subdir.mk
+-include src/apps/gpio/subdir.mk
+-include src/apps/heatControl/subdir.mk
+-include src/apps/thermoModule/subdir.mk
+-include src/smc_gen/r_bsp/mcu/all/subdir.mk
+-include src/apps/flash/subdir.mk
+-include src/smc_gen/general/subdir.mk
+-include src/smc_gen/r_mpc_rx/src/subdir.mk
+-include src/smc_gen/r_flash_rx/src/flash_type_3/subdir.mk
+-include src/apps/uart/subdir.mk
+-include src/smc_gen/Config_MTU0/subdir.mk
+-include src/apps/util/subdir.mk
+-include src/apps/timer/subdir.mk
+-include src/smc_gen/Config_PORT/subdir.mk
+-include src/smc_gen/Config_CMT1/subdir.mk
+-include src/subdir.mk
+-include src/apps/adc/subdir.mk
+-include src/smc_gen/Config_S12AD0/subdir.mk
+-include src/smc_gen/Config_SCI1/subdir.mk
+
+ifneq ($(MAKECMDGOALS),clean)
+ifneq ($(strip $(C_DEPS)),)
+-include $(C_DEPS)
+endif 
+ifneq ($(strip $(C_UPPER_DEPS)),)
+-include $(C_UPPER_DEPS)
+endif 
+ifneq ($(strip $(CPP_DEPS)),)
+-include $(CPP_DEPS)
+endif 
+ifneq ($(strip $(CXX_DEPS)),)
+-include $(CXX_DEPS)
+endif 
+ifneq ($(strip $(CC_DEPS)),)
+-include $(CC_DEPS)
+endif 
+ifneq ($(strip $(C++_DEPS)),)
+-include $(C++_DEPS)
+endif 
+ifneq ($(strip $(S_UPPER_DEPS)),)
+-include $(S_UPPER_DEPS)
+endif 
+ifneq ($(strip $(ASM_DEPS)),)
+-include $(ASM_DEPS)
+endif 
+ifneq ($(strip $(SX_DEPS)),)
+-include $(SX_DEPS)
+endif 
+ifneq ($(strip $(JMP_DEPS)),)
+-include $(JMP_DEPS)
+endif 
+ifneq ($(strip $(SRC_DEPS)),)
+-include $(SRC_DEPS)
+endif 
+ifneq ($(strip $(PP_DEPS)),)
+-include $(PP_DEPS)
+endif 
+ifneq ($(strip $(P_DEPS)),)
+-include $(P_DEPS)
+endif 
+ifneq ($(strip $(FSY_DEPS)),)
+-include $(FSY_DEPS)
+endif 
+endif
+
+ifneq ($(strip $(SRC_UPPER_SRCS)),)
+ALL_ASMS += $(SRC_UPPER_SRCS) 
+endif
+ifneq ($(strip $(SRC_SRCS)),)
+ALL_ASMS += $(SRC_SRCS) 
+endif
+ifneq ($(strip $(S_UPPER_SRCS)),)
+ALL_ASMS += $(S_UPPER_SRCS) 
+endif
+ifneq ($(strip $(S_SRCS)),)
+ALL_ASMS += $(S_SRCS) 
+endif
+
+
+-include ../makefile.defs
+
+# Add inputs and outputs from these tool invocations to the build variables
+LINKER_OUTPUT_OUTPUTS += \
+BU_TDS.abs
+
+LIBRARY_GENERATOR_OUTPUTTYPE_OUTPUTS += \
+BU_TDS.lib
+
+CONVERTOR_OUTPUT_OUTPUTS += \
+BU_TDS.hex BU_TDS.bin
+
+OBJS := \
+$(COMPILER_OBJS) \
+$(INDIVIDUAL_COMPILER_OBJS) \
+$(ASSEMBLER_OBJS) \
+$(CUSTOM_OBJS)
+
+# All Target
+all: $(CONVERTOR_OUTPUT_OUTPUTS) BU_TDS.x BU_TDS.udm
+
+	@echo 'Build complete.'
+
+%.hex %.bin: $(LINKER_OUTPUT_OUTPUTS) Converter.sub
+	@echo 'Invoking: Converter'
+	@echo 'Building target:'
+	@echo ConverterBU_TDS.tmp=
+	@sed -e "s/^/    /" "ConverterBU_TDS.tmp"
+	rlink -subcommand="ConverterBU_TDS.tmp"
+	@echo 'Finished building target:'
+	@echo ''
+
+
+BU_TDS.abs: $(OBJS)  $(ALL_ASMS) $(LIBRARY_GENERATOR_OUTPUTTYPE_OUTPUTS) 
+	@echo 'Invoking: Linker'
+	@echo LinkerBU_TDS.tmp=
+	@sed -e "s/^/    /" "LinkerBU_TDS.tmp"
+	rlink -subcommand="LinkerBU_TDS.tmp"
+	@echo 'Finished building:'
+	@echo ''
+
+
+BU_TDS.lib: 
+	@echo 'Invoking: Library Generator'
+	@echo LibraryGeneratorBU_TDS.tmp=
+	@sed -e "s/^/    /" "LibraryGeneratorBU_TDS.tmp"
+	lbgrx -subcommand="LibraryGeneratorBU_TDS.tmp"
+	@echo 'Finished building:'
+	@echo ''
+
+BU_TDS.x: BU_TDS.abs
+		-C:\Users\Admin\.eclipse\com.renesas.platform_1435879475\Utilities\\ccrx\renesas_cc_converter.exe BU_TDS.abs BU_TDS.x
+
+BU_TDS.udm: $(LINKER_OUTPUT_OUTPUTS) $(CONVERTOR_OUTPUT_OUTPUTS)
+	udcollector -subcommand=udSubcommand.tmp -output=BU_TDS.udm
+
+# Other Targets
+clean:
+	-$(RM) $(LINKER_OUTPUT_OUTPUTS) $(LIBRARY_GENERATOR_OUTPUTTYPE_OUTPUTS) $(CONVERTOR_OUTPUT_OUTPUTS)
+ifneq ($(strip $(OBJS)),)
+	-$(file > clean_OBJS.tmp, $(OBJS))
+	-@xargs -s 4000 -t -a clean_OBJS.tmp rm -rf
+	-@rm -rf clean_OBJS.tmp
+endif
+ifneq ($(strip $(C_DEPS)),)
+	-$(file > clean_C_DEPS.tmp, $(C_DEPS))
+	-@xargs -s 4000 -t -a clean_C_DEPS.tmp rm -rf
+	-@rm -rf clean_C_DEPS.tmp
+endif
+ifneq ($(strip $(CPP_DEPS)),)
+	-$(file > clean_CPP_DEPS.tmp, $(CPP_DEPS))
+	-@xargs -s 4000 -t -a clean_CPP_DEPS.tmp rm -rf
+	-@rm -rf clean_CPP_DEPS.tmp
+endif
+ifneq ($(strip $(ASM_DEPS)),)
+	-$(file > clean_ASM_DEPS.tmp, $(ASM_DEPS))
+	-@xargs -s 4000 -t -a clean_ASM_DEPS.tmp rm -rf
+	-@rm -rf clean_ASM_DEPS.tmp
+endif
+ifneq ($(strip $(DSP_DEPS)),)
+	-$(file > clean_DSP_DEPS.tmp, $(DSP_DEPS))
+	-@xargs -s 4000 -t -a clean_DSP_DEPS.tmp rm -rf
+	-@rm -rf clean_DSP_DEPS.tmp
+endif
+	-rm -rf src/smc_gen/r_flash_rx/src/flash_type_4/*.asm src/smc_gen/r_flash_rx/src/flash_type_4/*.p src/smc_gen/r_flash_rx/src/flash_type_4/*.pp src/smc_gen/r_flash_rx/src/flash_type_4/*.src src/smc_gen/r_flash_rx/src/flash_type_4/*.jmp src/smc_gen/r_flash_rx/src/flash_type_4/*.lst src/smc_gen/r_flash_rx/src/flash_type_4/*.prn src/smc_gen/r_flash_rx/src/flash_type_4/*.i src/smc_gen/r_flash_rx/src/flash_type_4/*.ud 
+	-rm -rf src/apps/UIControl/*.asm src/apps/UIControl/*.p src/apps/UIControl/*.pp src/apps/UIControl/*.src src/apps/UIControl/*.jmp src/apps/UIControl/*.lst src/apps/UIControl/*.prn src/apps/UIControl/*.i src/apps/UIControl/*.ud 
+	-rm -rf src/apps/uart_wifi/*.asm src/apps/uart_wifi/*.p src/apps/uart_wifi/*.pp src/apps/uart_wifi/*.src src/apps/uart_wifi/*.jmp src/apps/uart_wifi/*.lst src/apps/uart_wifi/*.prn src/apps/uart_wifi/*.i src/apps/uart_wifi/*.ud 
+	-rm -rf src/smc_gen/r_gpio_rx/src/targets/rx130/*.asm src/smc_gen/r_gpio_rx/src/targets/rx130/*.p src/smc_gen/r_gpio_rx/src/targets/rx130/*.pp src/smc_gen/r_gpio_rx/src/targets/rx130/*.src src/smc_gen/r_gpio_rx/src/targets/rx130/*.jmp src/smc_gen/r_gpio_rx/src/targets/rx130/*.lst src/smc_gen/r_gpio_rx/src/targets/rx130/*.prn src/smc_gen/r_gpio_rx/src/targets/rx130/*.i src/smc_gen/r_gpio_rx/src/targets/rx130/*.ud 
+	-rm -rf src/apps/errorCheck/*.asm src/apps/errorCheck/*.p src/apps/errorCheck/*.pp src/apps/errorCheck/*.src src/apps/errorCheck/*.jmp src/apps/errorCheck/*.lst src/apps/errorCheck/*.prn src/apps/errorCheck/*.i src/apps/errorCheck/*.ud 
+	-rm -rf src/smc_gen/r_flash_rx/src/*.asm src/smc_gen/r_flash_rx/src/*.p src/smc_gen/r_flash_rx/src/*.pp src/smc_gen/r_flash_rx/src/*.src src/smc_gen/r_flash_rx/src/*.jmp src/smc_gen/r_flash_rx/src/*.lst src/smc_gen/r_flash_rx/src/*.prn src/smc_gen/r_flash_rx/src/*.i src/smc_gen/r_flash_rx/src/*.ud 
+	-rm -rf src/smc_gen/Config_CMT0/*.asm src/smc_gen/Config_CMT0/*.p src/smc_gen/Config_CMT0/*.pp src/smc_gen/Config_CMT0/*.src src/smc_gen/Config_CMT0/*.jmp src/smc_gen/Config_CMT0/*.lst src/smc_gen/Config_CMT0/*.prn src/smc_gen/Config_CMT0/*.i src/smc_gen/Config_CMT0/*.ud 
+	-rm -rf src/smc_gen/r_bsp/board/generic_rx130/*.asm src/smc_gen/r_bsp/board/generic_rx130/*.p src/smc_gen/r_bsp/board/generic_rx130/*.pp src/smc_gen/r_bsp/board/generic_rx130/*.src src/smc_gen/r_bsp/board/generic_rx130/*.jmp src/smc_gen/r_bsp/board/generic_rx130/*.lst src/smc_gen/r_bsp/board/generic_rx130/*.prn src/smc_gen/r_bsp/board/generic_rx130/*.i src/smc_gen/r_bsp/board/generic_rx130/*.ud 
+	-rm -rf src/smc_gen/r_gpio_rx/src/*.asm src/smc_gen/r_gpio_rx/src/*.p src/smc_gen/r_gpio_rx/src/*.pp src/smc_gen/r_gpio_rx/src/*.src src/smc_gen/r_gpio_rx/src/*.jmp src/smc_gen/r_gpio_rx/src/*.lst src/smc_gen/r_gpio_rx/src/*.prn src/smc_gen/r_gpio_rx/src/*.i src/smc_gen/r_gpio_rx/src/*.ud 
+	-rm -rf src/smc_gen/Config_SCI6/*.asm src/smc_gen/Config_SCI6/*.p src/smc_gen/Config_SCI6/*.pp src/smc_gen/Config_SCI6/*.src src/smc_gen/Config_SCI6/*.jmp src/smc_gen/Config_SCI6/*.lst src/smc_gen/Config_SCI6/*.prn src/smc_gen/Config_SCI6/*.i src/smc_gen/Config_SCI6/*.ud 
+	-rm -rf src/smc_gen/r_flash_rx/src/flash_type_1/*.asm src/smc_gen/r_flash_rx/src/flash_type_1/*.p src/smc_gen/r_flash_rx/src/flash_type_1/*.pp src/smc_gen/r_flash_rx/src/flash_type_1/*.src src/smc_gen/r_flash_rx/src/flash_type_1/*.jmp src/smc_gen/r_flash_rx/src/flash_type_1/*.lst src/smc_gen/r_flash_rx/src/flash_type_1/*.prn src/smc_gen/r_flash_rx/src/flash_type_1/*.i src/smc_gen/r_flash_rx/src/flash_type_1/*.ud 
+	-rm -rf src/smc_gen/r_pincfg/*.asm src/smc_gen/r_pincfg/*.p src/smc_gen/r_pincfg/*.pp src/smc_gen/r_pincfg/*.src src/smc_gen/r_pincfg/*.jmp src/smc_gen/r_pincfg/*.lst src/smc_gen/r_pincfg/*.prn src/smc_gen/r_pincfg/*.i src/smc_gen/r_pincfg/*.ud 
+	-rm -rf src/apps/watchdog/*.asm src/apps/watchdog/*.p src/apps/watchdog/*.pp src/apps/watchdog/*.src src/apps/watchdog/*.jmp src/apps/watchdog/*.lst src/apps/watchdog/*.prn src/apps/watchdog/*.i src/apps/watchdog/*.ud 
+	-rm -rf src/smc_gen/Config_ICU/*.asm src/smc_gen/Config_ICU/*.p src/smc_gen/Config_ICU/*.pp src/smc_gen/Config_ICU/*.src src/smc_gen/Config_ICU/*.jmp src/smc_gen/Config_ICU/*.lst src/smc_gen/Config_ICU/*.prn src/smc_gen/Config_ICU/*.i src/smc_gen/Config_ICU/*.ud 
+	-rm -rf src/smc_gen/r_bsp/mcu/rx130/*.asm src/smc_gen/r_bsp/mcu/rx130/*.p src/smc_gen/r_bsp/mcu/rx130/*.pp src/smc_gen/r_bsp/mcu/rx130/*.src src/smc_gen/r_bsp/mcu/rx130/*.jmp src/smc_gen/r_bsp/mcu/rx130/*.lst src/smc_gen/r_bsp/mcu/rx130/*.prn src/smc_gen/r_bsp/mcu/rx130/*.i src/smc_gen/r_bsp/mcu/rx130/*.ud 
+	-rm -rf src/apps/gpio/*.asm src/apps/gpio/*.p src/apps/gpio/*.pp src/apps/gpio/*.src src/apps/gpio/*.jmp src/apps/gpio/*.lst src/apps/gpio/*.prn src/apps/gpio/*.i src/apps/gpio/*.ud 
+	-rm -rf src/apps/heatControl/*.asm src/apps/heatControl/*.p src/apps/heatControl/*.pp src/apps/heatControl/*.src src/apps/heatControl/*.jmp src/apps/heatControl/*.lst src/apps/heatControl/*.prn src/apps/heatControl/*.i src/apps/heatControl/*.ud 
+	-rm -rf src/apps/thermoModule/*.asm src/apps/thermoModule/*.p src/apps/thermoModule/*.pp src/apps/thermoModule/*.src src/apps/thermoModule/*.jmp src/apps/thermoModule/*.lst src/apps/thermoModule/*.prn src/apps/thermoModule/*.i src/apps/thermoModule/*.ud 
+	-rm -rf src/smc_gen/r_bsp/mcu/all/*.asm src/smc_gen/r_bsp/mcu/all/*.p src/smc_gen/r_bsp/mcu/all/*.pp src/smc_gen/r_bsp/mcu/all/*.src src/smc_gen/r_bsp/mcu/all/*.jmp src/smc_gen/r_bsp/mcu/all/*.lst src/smc_gen/r_bsp/mcu/all/*.prn src/smc_gen/r_bsp/mcu/all/*.i src/smc_gen/r_bsp/mcu/all/*.ud 
+	-rm -rf src/apps/flash/*.asm src/apps/flash/*.p src/apps/flash/*.pp src/apps/flash/*.src src/apps/flash/*.jmp src/apps/flash/*.lst src/apps/flash/*.prn src/apps/flash/*.i src/apps/flash/*.ud 
+	-rm -rf src/smc_gen/general/*.asm src/smc_gen/general/*.p src/smc_gen/general/*.pp src/smc_gen/general/*.src src/smc_gen/general/*.jmp src/smc_gen/general/*.lst src/smc_gen/general/*.prn src/smc_gen/general/*.i src/smc_gen/general/*.ud 
+	-rm -rf src/smc_gen/r_mpc_rx/src/*.asm src/smc_gen/r_mpc_rx/src/*.p src/smc_gen/r_mpc_rx/src/*.pp src/smc_gen/r_mpc_rx/src/*.src src/smc_gen/r_mpc_rx/src/*.jmp src/smc_gen/r_mpc_rx/src/*.lst src/smc_gen/r_mpc_rx/src/*.prn src/smc_gen/r_mpc_rx/src/*.i src/smc_gen/r_mpc_rx/src/*.ud 
+	-rm -rf src/smc_gen/r_flash_rx/src/flash_type_3/*.asm src/smc_gen/r_flash_rx/src/flash_type_3/*.p src/smc_gen/r_flash_rx/src/flash_type_3/*.pp src/smc_gen/r_flash_rx/src/flash_type_3/*.src src/smc_gen/r_flash_rx/src/flash_type_3/*.jmp src/smc_gen/r_flash_rx/src/flash_type_3/*.lst src/smc_gen/r_flash_rx/src/flash_type_3/*.prn src/smc_gen/r_flash_rx/src/flash_type_3/*.i src/smc_gen/r_flash_rx/src/flash_type_3/*.ud 
+	-rm -rf src/apps/uart/*.asm src/apps/uart/*.p src/apps/uart/*.pp src/apps/uart/*.src src/apps/uart/*.jmp src/apps/uart/*.lst src/apps/uart/*.prn src/apps/uart/*.i src/apps/uart/*.ud 
+	-rm -rf src/smc_gen/Config_MTU0/*.asm src/smc_gen/Config_MTU0/*.p src/smc_gen/Config_MTU0/*.pp src/smc_gen/Config_MTU0/*.src src/smc_gen/Config_MTU0/*.jmp src/smc_gen/Config_MTU0/*.lst src/smc_gen/Config_MTU0/*.prn src/smc_gen/Config_MTU0/*.i src/smc_gen/Config_MTU0/*.ud 
+	-rm -rf src/apps/util/*.asm src/apps/util/*.p src/apps/util/*.pp src/apps/util/*.src src/apps/util/*.jmp src/apps/util/*.lst src/apps/util/*.prn src/apps/util/*.i src/apps/util/*.ud 
+	-rm -rf src/apps/timer/*.asm src/apps/timer/*.p src/apps/timer/*.pp src/apps/timer/*.src src/apps/timer/*.jmp src/apps/timer/*.lst src/apps/timer/*.prn src/apps/timer/*.i src/apps/timer/*.ud 
+	-rm -rf src/smc_gen/Config_PORT/*.asm src/smc_gen/Config_PORT/*.p src/smc_gen/Config_PORT/*.pp src/smc_gen/Config_PORT/*.src src/smc_gen/Config_PORT/*.jmp src/smc_gen/Config_PORT/*.lst src/smc_gen/Config_PORT/*.prn src/smc_gen/Config_PORT/*.i src/smc_gen/Config_PORT/*.ud 
+	-rm -rf src/smc_gen/Config_CMT1/*.asm src/smc_gen/Config_CMT1/*.p src/smc_gen/Config_CMT1/*.pp src/smc_gen/Config_CMT1/*.src src/smc_gen/Config_CMT1/*.jmp src/smc_gen/Config_CMT1/*.lst src/smc_gen/Config_CMT1/*.prn src/smc_gen/Config_CMT1/*.i src/smc_gen/Config_CMT1/*.ud 
+	-rm -rf src/*.asm src/*.p src/*.pp src/*.src src/*.jmp src/*.lst src/*.prn src/*.i src/*.ud 
+	-rm -rf src/apps/adc/*.asm src/apps/adc/*.p src/apps/adc/*.pp src/apps/adc/*.src src/apps/adc/*.jmp src/apps/adc/*.lst src/apps/adc/*.prn src/apps/adc/*.i src/apps/adc/*.ud 
+	-rm -rf src/smc_gen/Config_S12AD0/*.asm src/smc_gen/Config_S12AD0/*.p src/smc_gen/Config_S12AD0/*.pp src/smc_gen/Config_S12AD0/*.src src/smc_gen/Config_S12AD0/*.jmp src/smc_gen/Config_S12AD0/*.lst src/smc_gen/Config_S12AD0/*.prn src/smc_gen/Config_S12AD0/*.i src/smc_gen/Config_S12AD0/*.ud 
+	-rm -rf src/smc_gen/Config_SCI1/*.asm src/smc_gen/Config_SCI1/*.p src/smc_gen/Config_SCI1/*.pp src/smc_gen/Config_SCI1/*.src src/smc_gen/Config_SCI1/*.jmp src/smc_gen/Config_SCI1/*.lst src/smc_gen/Config_SCI1/*.prn src/smc_gen/Config_SCI1/*.i src/smc_gen/Config_SCI1/*.ud 
+	@echo ''
+	@echo 'Clean complete.'
+
+.PHONY: all clean  $(LINKER_OUTPUT_OUTPUTS)  $(LIBRARY_GENERATOR_OUTPUTTYPE_OUTPUTS)  
+-include ../makefile.targets

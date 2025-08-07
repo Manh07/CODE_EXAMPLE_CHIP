@@ -1,0 +1,7 @@
+-MAKEUD_LBG="C:\Users\Admin\Downloads\KRD Renesas\BU_TDS\HardwareDebug\\BU_TDS_lbg.ud"
+-isa=rxv1
+-nofpu
+-lang=c99
+-head=runtime,stdio,stdlib,string,new
+-output="BU_TDS.lib"
+-nologo

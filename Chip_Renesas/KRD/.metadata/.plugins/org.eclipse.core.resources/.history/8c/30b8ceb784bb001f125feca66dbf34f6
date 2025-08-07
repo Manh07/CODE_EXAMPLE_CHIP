@@ -1,0 +1,21 @@
+################################################################################
+# Automatically-generated file. Do not edit!
+################################################################################
+
+# Add inputs and outputs from these tool invocations to the build variables
+C_SRCS += \
+../src/apps/errorCheck/errorCheck.c 
+
+COMPILER_OBJS += \
+src/apps/errorCheck/errorCheck.obj 
+
+# Each subdirectory must supply rules for building sources it contributes
+src/apps/errorCheck/%.obj: ../src/apps/errorCheck/%.c src/apps/errorCheck/Compiler.sub
+	@echo 'Building file: $<'
+	@echo 'Invoking: Compiler'
+	@echo src\apps\errorCheck\cSubCommand.tmp=
+	@sed -e "s/^/ /" "src\apps\errorCheck\cSubCommand.tmp"
+	ccrx -subcommand="src\apps\errorCheck\cSubCommand.tmp" "$<"
+	@echo 'Finished Building: $<'
+	@echo ''
+

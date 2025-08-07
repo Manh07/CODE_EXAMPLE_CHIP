@@ -1,0 +1,21 @@
+################################################################################
+# Automatically-generated file. Do not edit!
+################################################################################
+
+# Add inputs and outputs from these tool invocations to the build variables
+C_SRCS += \
+../src/apps/thermoModule/thermo.c 
+
+COMPILER_OBJS += \
+src/apps/thermoModule/thermo.obj 
+
+# Each subdirectory must supply rules for building sources it contributes
+src/apps/thermoModule/%.obj: ../src/apps/thermoModule/%.c src/apps/thermoModule/Compiler.sub
+	@echo 'Building file: $<'
+	@echo 'Invoking: Compiler'
+	@echo src\apps\thermoModule\cSubCommand.tmp=
+	@sed -e "s/^/ /" "src\apps\thermoModule\cSubCommand.tmp"
+	ccrx -subcommand="src\apps\thermoModule\cSubCommand.tmp" "$<"
+	@echo 'Finished Building: $<'
+	@echo ''
+

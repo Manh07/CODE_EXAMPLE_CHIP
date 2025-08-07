@@ -1,0 +1,25 @@
+DEVICE=DucManh7  TYPE=Mesh  NODE=1  ADDRESS=D8:3A:DD:52:2D:BC
+  ; LE characteristics when acting as an LE server
+  ; Specify UUIDs and let system allocate handles
+
+  PRIMARY_SERVICE = 1800                                ; 1800=Generic access
+    LECHAR = Device Name        PERMIT=02 SIZE=16 UUID=2A00   ; 2A00=Device name (index 0)
+    LECHAR = Appearance         PERMIT=02 SIZE=2  UUID=2A01   ; 2A01=Appearance (index 1)
+  
+  PRIMARY_SERVICE = 1801                                ; 1801=Generic attributes
+    LECHAR = Service changed    PERMIT=20 SIZE=4 UUID=2A05 ; 2A05=Service changed  (index 2)
+  
+  PRIMARY_SERVICE = 180A                                ; 180A=Device information
+    LECHAR = PnP ID             PERMIT=02 SIZE=7 UUID=2A50 ; 2A50=PnP ID  (index 3)
+  
+  PRIMARY_SERVICE = 000033445566778899AABBCCDDEEFF00    ; 112233445566778899AABBCCDDEEFF00=Ball information
+    LECHAR = Ball Speed         PERMIT=16 SIZE=8 UUID=0001483e36e14688b7f5ea07361b26a8        ; private characteristic, choose UUID (index 4)
+    LECHAR = Side Angle         PERMIT=16 SIZE=8 UUID=0002483e36e14688b7f5ea07361b26a8        ; private characteristic, choose UUID (index 5)
+  
+  PRIMARY_SERVICE = 000133445566778899AABBCCDDEEFF00    ; 000133445566778899AABBCCDDEEFF00=Club information
+    LECHAR = Club Speed         PERMIT=16 SIZE=8 UUID=0001628497e14688b7f5ea07361b26a8        ; private characteristic, choose UUID (index 6)
+    LECHAR = Angle of Attack    PERMIT=16 SIZE=8 UUID=0002628497e14688b7f5ea07361b26a8        ; private characteristic, choose UUID (index 7)
+
+  PRIMARY_SERVICE = 7E8844908D1743B5941E48AA2D8D618A    ; 7E8844908D1743B5941E48AA2D8D618A=Image information
+    LECHAR = Ball Image         PERMIT=16 SIZE=244 UUID=00028257848940b2affbad3783c89952        ; private characteristic, choose UUID (index 8)
+    

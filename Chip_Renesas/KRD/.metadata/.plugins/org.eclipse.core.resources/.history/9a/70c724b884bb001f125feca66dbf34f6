@@ -1,0 +1,27 @@
+################################################################################
+# Automatically-generated file. Do not edit!
+################################################################################
+
+# Add inputs and outputs from these tool invocations to the build variables
+C_SRCS += \
+../src/apps/gpio/flowSensor.c \
+../src/apps/gpio/getWater.c \
+../src/apps/gpio/gpio.c \
+../src/apps/gpio/pumpControl.c 
+
+COMPILER_OBJS += \
+src/apps/gpio/flowSensor.obj \
+src/apps/gpio/getWater.obj \
+src/apps/gpio/gpio.obj \
+src/apps/gpio/pumpControl.obj 
+
+# Each subdirectory must supply rules for building sources it contributes
+src/apps/gpio/%.obj: ../src/apps/gpio/%.c src/apps/gpio/Compiler.sub
+	@echo 'Building file: $<'
+	@echo 'Invoking: Compiler'
+	@echo src\apps\gpio\cSubCommand.tmp=
+	@sed -e "s/^/ /" "src\apps\gpio\cSubCommand.tmp"
+	ccrx -subcommand="src\apps\gpio\cSubCommand.tmp" "$<"
+	@echo 'Finished Building: $<'
+	@echo ''
+

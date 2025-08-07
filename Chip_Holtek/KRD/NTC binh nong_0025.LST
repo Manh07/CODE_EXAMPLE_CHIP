@@ -1,0 +1,710 @@
+"File: NTC binh nong_0025.c  Holtek Cross-Assembler  Version 3.00      Page 1
+
+
+
+;  14: {
+  14  0000              __stm0ah EQU [02dH]
+  14  0000              __stm0al EQU [02cH]
+  14  0000              __stm0dh EQU [02bH]
+  14  0000              __stm0dl EQU [02aH]
+  14  0000              __stm0c1 EQU [029H]
+  14  0000              __stm0c0 EQU [028H]
+  14  0000              __pasr EQU [026H]
+  14  0000              __rstc EQU [025H]
+  14  0000              __sadc2 EQU [024H]
+  14  0000              __sadc1 EQU [023H]
+  14  0000              __sadc0 EQU [022H]
+  14  0000              __sadoh EQU [021H]
+  14  0000              __sadol EQU [020H]
+  14  0000              __eed EQU [01fH]
+  14  0000              __eea EQU [01eH]
+  14  0000              __smod1 EQU [01cH]
+  14  0000              __tbc EQU [01bH]
+  14  0000              __wdtc EQU [019H]
+  14  0000              __ifs0 EQU [018H]
+  14  0000              __pawu EQU [017H]
+  14  0000              __papu EQU [016H]
+  14  0000              __pac EQU [015H]
+  14  0000              __pa EQU [014H]
+  14  0000              __mfi0 EQU [011H]
+  14  0000              __intc1 EQU [0fH]
+  14  0000              __intc0 EQU [0eH]
+  14  0000              __integ EQU [0dH]
+  14  0000              __smod EQU [0bH]
+  14  0000              __status EQU [0aH]
+  14  0000              __tblh EQU [08H]
+  14  0000              __tblp EQU [07H]
+  14  0000              __pcl EQU [06H]
+  14  0000              __acc EQU [05H]
+  14  0000              __bp EQU [04H]
+  14  0000              __mp1 EQU [03H]
+  14  0000              __iar1 EQU [02H]
+  14  0000              __mp0 EQU [01H]
+  14  0000              __iar0 EQU [00H]
+  14  0000              @@TB_ISR .SECTION AT 08H 'CODE'
+  14  0000  2800     R  JMP _TB_ISR
+  14  0000              @TB_ISR .SECTION 'CODE'
+  14  0000              _TB_ISR PROC
+  14  0000  0080     E  MOV V2A,A
+  14  0001  070A        MOV A,[0AH]
+  14  0002  0080     E  MOV V2S,A
+  14  0003  0703        MOV A,[03H]
+  14  0004  0080     E  MOV V2MP1,A
+  14  0005  0704        MOV A,[04H]
+  14  0006  0080     E  MOV V2BP,A
+
+;  16:     g_sysTime++;
+  16  0007  0F00     R  MOV A,BANK _g_sysTime
+  16  0008  0084        MOV [04H],A
+  16  0009  0F00     R  MOV A,OFFSET _g_sysTime
+  16  000A  0083        MOV [03H],A
+  16  000B  0F01        MOV A,01h
+"File: NTC binh nong_0025.c  Holtek Cross-Assembler  Version 3.00      Page 2 
+
+  16  000C  0382        ADDM A,[02H]
+  16  000D  0F00        MOV A,00h
+  16  000E  1483        INC [03H]
+  16  000F  1382        ADCM A,[02H]
+  16  0010  0F00        MOV A,00h
+  16  0011  1483        INC [03H]
+  16  0012  1382        ADCM A,[02H]
+  16  0013  0F00        MOV A,00h
+  16  0014  1483        INC [03H]
+  16  0015  1382        ADCM A,[02H]
+
+;  17:     flag1ms = 1;    
+  17  0016  0F00     R  MOV A,BANK _flag1ms
+  17  0017  0084        MOV [04H],A
+  17  0018  0F00     R  MOV A,OFFSET _flag1ms
+  17  0019  0083        MOV [03H],A
+  17  001A  0F01        MOV A,1
+  17  001B  0082        MOV [02H],A
+
+;  18:     _nop();
+  18  001C  0000        NOP
+  18  001D              L5:
+  18  001D  0700     E  MOV A,V2MP1
+  18  001E  0083        MOV [03H],A
+  18  001F  0700     E  MOV A,V2BP
+  18  0020  0084        MOV [04H],A
+  18  0021  0700     E  MOV A,V2S
+  18  0022  008A        MOV [0AH],A
+  18  0023  0700     E  MOV A,V2A
+  18  0024  0004        RETI
+  18  0025              _TB_ISR ENDP
+  18  0025              RAMBANK 0 @TB_ISR
+  18  0000              @TB_ISR .SECTION 'DATA'
+
+;  28: {
+  28  0000              @UART_SoftWareSendByte .SECTION 'CODE'
+  28  0000              PUBLIC _UART_SoftWareSendByte
+  28  0000              _UART_SoftWareSendByte PROC
+
+;  27: void UART_SoftWareSendByte(u8 TxData)
+  27  0000              PUBLIC UART_SoftWareSendByte0
+  27  0000  00          LOCAL UART_SoftWareSendByte0 DB ? ; TxData
+
+;  30: 	TXD = 0;					//start bit
+  30  0000  3414        CLR [014H].0
+
+;  31: 	_delay(BAUDRATE);
+  31  0001  0F2F        MOV A,02fH
+  31  0002  2000     E  CALL __DELAYX1
+
+;  32: 	for(i=0;i<8;i++)			//send 8-bit data
+  32  0003  1F00     R  CLR CR1
+  32  0004  2800     R  JMP L10
+  32  0005              L7:
+
+;  35: 		if(TxData & 0x01)TXD = 1;
+  35  0005  3800     R  SNZ UART_SoftWareSendByte0.0
+  35  0006  2800     R  JMP L11
+  35  0007  3014        SET [014H].0
+  35  0008  2800     R  JMP L12
+"File: NTC binh nong_0025.c  Holtek Cross-Assembler  Version 3.00      Page 3 
+
+  35  0009              L11:
+
+;  36: 		else TXD = 0;
+  36  0009  3414        CLR [014H].0
+  36  000A              L12:
+
+;  37: 		_delay(BAUDRATE);
+  37  000A  0F2F        MOV A,02fH
+  37  000B  2000     E  CALL __DELAYX1
+
+;  38: 		TxData >>= 1;
+  38  000C  340A        CLR [0AH].0
+  38  000D  1B80     R  RRC UART_SoftWareSendByte0
+  38  000E              L8:
+
+;  32: 	for(i=0;i<8;i++)			//send 8-bit data
+  32  000E  1480     R  INC CR1
+  32  000F              L10:
+  32  000F  0700     R  MOV A,CR1
+  32  0010  0A08        SUB A,08h
+  32  0011  380A        SNZ [0ah].0
+  32  0012  2800     R  JMP L7
+
+;  40: 	TXD = 1;					//stop bit
+  40  0013  3014        SET [014H].0
+
+;  41: 	_delay(BAUDRATE);
+  41  0014  0F2F        MOV A,02fH
+  41  0015  2000     E  CALL __DELAYX1
+  41  0016              L6:
+  41  0016  0003        RET
+
+;  29: 	u8 i;
+  29  0001  00          LOCAL CR1 DB ? ; i
+  29  0017              _UART_SoftWareSendByte ENDP
+
+;  45: {
+  45  0000              @EEPROM_Write_Byte .SECTION 'CODE'
+  45  0000              PUBLIC _EEPROM_Write_Byte
+  45  0000              _EEPROM_Write_Byte PROC
+
+;  44: void EEPROM_Write_Byte(u8 Data,u8 adr)
+  44  0000              PUBLIC EEPROM_Write_Byte0
+  44  0000  00          LOCAL EEPROM_Write_Byte0 DB ? ; Data
+  44  0000              PUBLIC EEPROM_Write_Byte1
+  44  0001  00          LOCAL EEPROM_Write_Byte1 DB ? ; adr
+
+;  47: 	_dmbp0 = 1;			
+  47  0000  3004        SET [04H].0
+
+;  48: 	_emi = 0;		//disable global interrupt
+  48  0001  340E        CLR [0EH].0
+
+;  49: 	_mp1 = 0x40;
+  49  0002  0F40        MOV A,040h
+  49  0003  0083        MOV __mp1,A
+
+;  52: 	_eea = adr;	
+  52  0004  0700     R  MOV A,EEPROM_Write_Byte1
+  52  0005  009E        MOV __eea,A
+"File: NTC binh nong_0025.c  Holtek Cross-Assembler  Version 3.00      Page 4 
+
+
+;  54: 	_eed = Data;	
+  54  0006  0700     R  MOV A,EEPROM_Write_Byte0
+  54  0007  009F        MOV __eed,A
+
+;  57: 	_iar1 |= 0x08;
+  57  0008  3182        SET __iar1.3
+
+;  58: 	_iar1 |= 0x04;
+  58  0009  3102        SET __iar1.2
+  58  000A              L14:
+  58  000A              L15:
+
+;  61: 	while(_iar1 & 0x04);
+  61  000A  3D02        SZ __iar1.2
+  61  000B  2800     R  JMP L14
+
+;  62: 	_iar1 = 0;
+  62  000C  1F02        CLR __iar1
+
+;  63: 	_dmbp0 = 0;
+  63  000D  3404        CLR [04H].0
+
+;  64: 	_emi = 1;		//enable global interrupt			
+  64  000E  300E        SET [0EH].0
+  64  000F              L13:
+  64  000F  0003        RET
+  64  0010              _EEPROM_Write_Byte ENDP
+
+;  74: {
+  74  0000              @EEPROM_Read_Byte .SECTION 'CODE'
+  74  0000              PUBLIC _EEPROM_Read_Byte
+  74  0000              _EEPROM_Read_Byte PROC
+
+;  73: u8 EEPROM_Read_Byte(u8 adr)
+  73  0000              PUBLIC EEPROM_Read_Byte0
+  73  0000  00          LOCAL EEPROM_Read_Byte0 DB ? ; adr
+
+;  77: 	_dmbp0 = 1;
+  77  0000  3004        SET [04H].0
+
+;  78: 	_mp1 = 0x40;
+  78  0001  0F40        MOV A,040h
+  78  0002  0083        MOV __mp1,A
+
+;  81: 	_eea = adr;
+  81  0003  0700     R  MOV A,EEPROM_Read_Byte0
+  81  0004  009E        MOV __eea,A
+
+;  84: 	_iar1 |= 0x02;
+  84  0005  3082        SET __iar1.1
+
+;  85: 	_iar1 |= 0x01;
+  85  0006  3002        SET __iar1.0
+  85  0007              L18:
+  85  0007              L19:
+
+;  88: 	while(_iar1 & 0x01);
+  88  0007  3C02        SZ __iar1.0
+  88  0008  2800     R  JMP L18
+"File: NTC binh nong_0025.c  Holtek Cross-Assembler  Version 3.00      Page 5 
+
+
+;  89: 	_iar1 = 0;
+  89  0009  1F02        CLR __iar1
+
+;  90: 	_dmbp0 = 0;
+  90  000A  3404        CLR [04H].0
+
+;  92: 	EP_Read_Data = _eed;		//Read data
+  92  000B  071F        MOV A,__eed
+  92  000C  0080     R  MOV CR2,A
+
+;  93: 	return EP_Read_Data;		
+  93  000D  0700     R  MOV A,CR2
+  93  000E              L17:
+  93  000E  0003        RET
+
+;  76: 	u8 EP_Read_Data;
+  76  0001  00          LOCAL CR2 DB ? ; EP_Read_Data
+  76  000F              _EEPROM_Read_Byte ENDP
+
+; 110: {
+ 110  0000              @ADC_GetChannelValue .SECTION 'CODE'
+ 110  0000              PUBLIC _ADC_GetChannelValue
+ 110  0000              _ADC_GetChannelValue PROC
+
+; 109: u16 ADC_GetChannelValue(u8 ADC_Channel)
+ 109  0000              PUBLIC ADC_GetChannelValue0
+ 109  0000  00          LOCAL ADC_GetChannelValue0 DB ? ; ADC_Channel
+
+; 112: 	_sadc1 &= 0b00011111;
+ 112  0000  0F1F        MOV A,01fh
+ 112  0001  06A3        ANDM A,__sadc1
+
+; 113: 	if(ADC_Channel < 4)
+ 113  0002  0700     R  MOV A,ADC_GetChannelValue0
+ 113  0003  0A04        SUB A,04h
+ 113  0004  3C0A        SZ [0ah].0
+ 113  0005  2800     R  JMP L23
+
+; 115: 		_sadc0 &= 0b11110000; /* clear ADC channel */
+ 115  0006  0FF0        MOV A,0f0h
+ 115  0007  06A2        ANDM A,__sadc0
+
+; 116: 		_sadc0 |= ADC_Channel; /* selection external ADC channel */
+ 116  0008  0700     R  MOV A,ADC_GetChannelValue0
+ 116  0009  05A2        ORM A,__sadc0
+
+; 117: 		switch(ADC_Channel) /* select IO in AD input */
+ 117  000A  0700     R  MOV A,ADC_GetChannelValue0
+ 117  000B  0080     R  MOV b0_5,A
+ 117  000C  1080     R  SZ b0_5
+ 117  000D  2800     R  JMP L34
+ 117  000E  2800     R  JMP L27
+ 117  000F              L34:
+ 117  000F  0700     R  MOV A,b0_5
+ 117  0010  0C01        XOR A,01h
+ 117  0011  3D0A        SZ [0ah].2
+ 117  0012  2800     R  JMP L28
+ 117  0013  0700     R  MOV A,b0_5
+ 117  0014  0C02        XOR A,02h
+"File: NTC binh nong_0025.c  Holtek Cross-Assembler  Version 3.00      Page 6 
+
+ 117  0015  3D0A        SZ [0ah].2
+ 117  0016  2800     R  JMP L29
+ 117  0017  0700     R  MOV A,b0_5
+ 117  0018  0C03        XOR A,03h
+ 117  0019  3D0A        SZ [0ah].2
+ 117  001A  2800     R  JMP L30
+ 117  001B  2800     R  JMP L24
+ 117  001C              L27:
+
+; 119: 			case ADC_CH0 : _pas1 = 1; _pas0 = 1; break;
+ 119  001C  30A6        SET [026H].1
+ 119  001D  3026        SET [026H].0
+ 119  001E  2800     R  JMP L24
+ 119  001F              L28:
+
+; 120: 			case ADC_CH1 : _pas3 = 1; _pas2 = 1; break;
+ 120  001F  31A6        SET [026H].3
+ 120  0020  3126        SET [026H].2
+ 120  0021  2800     R  JMP L24
+ 120  0022              L29:
+
+; 121: 			case ADC_CH2 : _pas5 = 1; _pas4 = 1; break;
+ 121  0022  32A6        SET [026H].5
+ 121  0023  3226        SET [026H].4
+ 121  0024  2800     R  JMP L24
+ 121  0025              L30:
+
+; 122: 			case ADC_CH3 : _pas7 = 1; _pas6 = 1; break;	
+ 122  0025  33A6        SET [026H].7
+ 122  0026  3326        SET [026H].6
+
+; 125: 	}
+ 125  0027  2800     R  JMP L24
+ 125  0028              L23:
+
+; 126: 	else _sadc1 |= ADC_Channel;		/* selection internal ADC channel */
+ 126  0028  0700     R  MOV A,ADC_GetChannelValue0
+ 126  0029  05A3        ORM A,__sadc1
+ 126  002A              L24:
+
+; 127: 	_start = 0; _start = 1; _start = 0; /* start AD convert */
+ 127  002A  37A2        CLR [022H].7
+ 127  002B  33A2        SET [022H].7
+ 127  002C  37A2        CLR [022H].7
+ 127  002D              L31:
+ 127  002D              L32:
+
+; 129: 	while(1 == _adbz);	
+ 129  002D  3F22        SZ [022H].6
+ 129  002E  2800     R  JMP L31
+
+; 130: 	m_adc = ((u16)_sadoh << 8) | _sadol;
+ 130  002F  0721        MOV A,__sadoh
+ 130  0030  0080     R  MOV b0_5[1],A
+ 130  0031  1F00     R  CLR b0_5
+ 130  0032  0720        MOV A,__sadol
+ 130  0033  0080     R  MOV b1_5,A
+ 130  0034  1F00     R  CLR b1_5[1]
+ 130  0035  0700     R  MOV A,b0_5
+ 130  0036  0500     R  OR A,b1_5
+"File: NTC binh nong_0025.c  Holtek Cross-Assembler  Version 3.00      Page 7 
+
+ 130  0037  0080     R  MOV CR3,A
+ 130  0038  0700     R  MOV A,b0_5[1]
+ 130  0039  0500     R  OR A,b1_5[1]
+ 130  003A  0080     R  MOV CR3[1],A
+
+; 131: 	return m_adc;
+ 131  003B  0700     R  MOV A,CR3[1]
+ 131  003C  0080     E  MOV RH,A
+ 131  003D  0700     R  MOV A,CR3
+ 131  003E              L22:
+ 131  003E  0003        RET
+ 131  0001  0002[       LOCAL b0_5 DB 2 DUP(?)
+            00
+            ]
+ 131  0003  0002[       LOCAL b1_5 DB 2 DUP(?)
+            00
+            ]
+
+; 111: 	u16 m_adc;
+ 111  0005  0002[       LOCAL CR3 DB 2 DUP (?) ; m_adc
+            00
+            ]
+ 111  003F              _ADC_GetChannelValue ENDP
+
+; 135: {
+ 135  0000              @MAIN .SECTION 'CODE'
+ 135  0000              _main PROC
+ 135  0000              begin:
+
+; 136: 	_wdtc = 0b10101000;		//disable watchdog timer
+ 136  0000  0FA8        MOV A,0a8h
+ 136  0001  0099        MOV __wdtc,A
+
+; 137:     RL_OUPUT; RL_OFF;
+ 137  0002  3695        CLR [015H].5
+ 137  0003  3694        CLR [014H].5
+
+; 140: 	SIMULATION_UART_INIT();
+ 140  0004  3014        SET [014H].0
+ 140  0005  3415        CLR [015H].0
+ 140  0006  3016        SET [016H].0
+
+; 141: 	UART_SoftWareSendByte(0xcc);
+ 141  0007  0FCC        MOV A,0cch
+ 141  0008  0080     R  MOV UART_SoftWareSendByte0,A
+ 141  0009  2000     R  CALL _UART_SoftWareSendByte
+
+; 144: 	g_sysTime = 0;
+ 144  000A  0F00     R  MOV A,BANK _g_sysTime
+ 144  000B  0084        MOV [04H],A
+ 144  000C  0F00     R  MOV A,OFFSET _g_sysTime
+ 144  000D  0083        MOV [03H],A
+ 144  000E  1F02        CLR [02H]
+ 144  000F  1483        INC [03H]
+ 144  0010  1F02        CLR [02H]
+ 144  0011  1483        INC [03H]
+ 144  0012  1F02        CLR [02H]
+ 144  0013  1483        INC [03H]
+ 144  0014  1F02        CLR [02H]
+
+; 145: 	flag1ms = 0;
+"File: NTC binh nong_0025.c  Holtek Cross-Assembler  Version 3.00      Page 8 
+
+ 145  0015  0F00     R  MOV A,BANK _flag1ms
+ 145  0016  0084        MOV [04H],A
+ 145  0017  0F00     R  MOV A,OFFSET _flag1ms
+ 145  0018  0083        MOV [03H],A
+ 145  0019  1F02        CLR [02H]
+
+; 146: 	cnt = 0;
+ 146  001A  0F00     R  MOV A,BANK _cnt
+ 146  001B  0084        MOV [04H],A
+ 146  001C  0F00     R  MOV A,OFFSET _cnt
+ 146  001D  0083        MOV [03H],A
+ 146  001E  1F02        CLR [02H]
+ 146  001F  1483        INC [03H]
+ 146  0020  1F02        CLR [02H]
+
+; 147: 	ntc_Adc = 0;
+ 147  0021  0F00     R  MOV A,BANK _ntc_Adc
+ 147  0022  0084        MOV [04H],A
+ 147  0023  0F00     R  MOV A,OFFSET _ntc_Adc
+ 147  0024  0083        MOV [03H],A
+ 147  0025  1F02        CLR [02H]
+ 147  0026  1483        INC [03H]
+ 147  0027  1F02        CLR [02H]
+
+; 150: 	_sains2 = 0; _sains1 = 0; _sains0 = 0;
+ 150  0028  37A3        CLR [023H].7
+ 150  0029  3723        CLR [023H].6
+ 150  002A  36A3        CLR [023H].5
+
+; 151: 	_sack2 = 0; _sack1 = 1; _sack0 = 1;
+ 151  002B  3523        CLR [023H].2
+ 151  002C  30A3        SET [023H].1
+ 151  002D  3023        SET [023H].0
+
+; 152: 	_adrfs = 1;
+ 152  002E  3222        SET [022H].4
+
+; 153:     _savrs3 = 0; _savrs2 = 0; _savrs1 = 0; _savrs0 = 0;      
+ 153  002F  35A4        CLR [024H].3
+ 153  0030  3524        CLR [024H].2
+ 153  0031  34A4        CLR [024H].1
+ 153  0032  3424        CLR [024H].0
+
+; 154: 	_enadc = 1;
+ 154  0033  32A2        SET [022H].5
+
+; 157: 	_tbck = 1;
+ 157  0034  331B        SET [01BH].6
+
+; 158: 	_tb02 = 0;	_tb01 = 1;	_tb00 = 1;
+ 158  0035  351B        CLR [01BH].2
+ 158  0036  309B        SET [01BH].1
+ 158  0037  301B        SET [01BH].0
+
+; 159: 	_tbon = 1;
+ 159  0038  339B        SET [01BH].7
+
+; 160: 	_tb0f = 0;
+ 160  0039  368E        CLR [0EH].5
+
+; 161: 	_tb0e = 1;
+"File: NTC binh nong_0025.c  Holtek Cross-Assembler  Version 3.00      Page 9 
+
+ 161  003A  310E        SET [0EH].2
+
+; 162: 	_emi = 1;
+ 162  003B  300E        SET [0EH].0
+ 162  003C  2800     R  JMP L37
+ 162  003D              L36:
+
+; 167: 		ntc_Adc  = ADC_GetChannelValue(ADC_CH2);	//PA7	//v_in  -VR1
+ 167  003D  0F02        MOV A,02h
+ 167  003E  0080     R  MOV ADC_GetChannelValue0,A
+ 167  003F  2000     R  CALL _ADC_GetChannelValue
+ 167  0040  0080     R  MOV b0_6,A
+ 167  0041  0700     E  MOV A,RH
+ 167  0042  0080     R  MOV b0_6[1],A
+ 167  0043  0F00     R  MOV A,BANK _ntc_Adc
+ 167  0044  0084        MOV [04H],A
+ 167  0045  0F00     R  MOV A,OFFSET _ntc_Adc
+ 167  0046  0083        MOV [03H],A
+ 167  0047  0700     R  MOV A,b0_6
+ 167  0048  0082        MOV [02H],A
+ 167  0049  0700     R  MOV A,b0_6[1]
+ 167  004A  1483        INC [03H]
+ 167  004B  0082        MOV [02H],A
+
+; 168: 		if(flag1ms == 1)
+ 168  004C  0F00     R  MOV A,BANK _flag1ms
+ 168  004D  0084        MOV [04H],A
+ 168  004E  0F00     R  MOV A,OFFSET _flag1ms
+ 168  004F  0083        MOV [03H],A
+ 168  0050  0702        MOV A,[02H]
+ 168  0051  0C01        XOR A,01h
+ 168  0052  390A        SNZ [0AH].2
+ 168  0053  2800     R  JMP L39
+
+; 170: 			flag1ms = 0;
+ 170  0054  0F00     R  MOV A,BANK _flag1ms
+ 170  0055  0084        MOV [04H],A
+ 170  0056  0F00     R  MOV A,OFFSET _flag1ms
+ 170  0057  0083        MOV [03H],A
+ 170  0058  1F02        CLR [02H]
+
+; 171: 			if(cnt++ > 1000)
+ 171  0059  0F00     R  MOV A,BANK _cnt
+ 171  005A  0084        MOV [04H],A
+ 171  005B  0F00     R  MOV A,OFFSET _cnt
+ 171  005C  0083        MOV [03H],A
+ 171  005D  0702        MOV A,[02H]
+ 171  005E  0080     R  MOV b0_6,A
+ 171  005F  1483        INC [03H]
+ 171  0060  0702        MOV A,[02H]
+ 171  0061  0080     R  MOV b0_6[1],A
+ 171  0062  1583        DEC [03H]
+ 171  0063  0F01        MOV A,1
+ 171  0064  0382        ADDM A,[02H]
+ 171  0065  1F05        CLR [05H]
+ 171  0066  1483        INC [03H]
+ 171  0067  1382        ADCM A,[02H]
+ 171  0068  0F03        MOV A,03h
+ 171  0069  0200     R  SUB A,b0_6[1]
+ 171  006A  380A        SNZ [0AH].0
+"File: NTC binh nong_0025.c  Holtek Cross-Assembler  Version 3.00      Page 10 
+
+ 171  006B  2800     R  JMP L43
+ 171  006C  390A        SNZ [0AH].2
+ 171  006D  2800     R  JMP L41
+ 171  006E  0FE8        MOV A,0e8h
+ 171  006F  0200     R  SUB A,b0_6
+ 171  0070  3C0A        SZ [0AH].0
+ 171  0071  2800     R  JMP L41
+ 171  0072              L43:
+
+; 174: 				cnt = 0;
+ 174  0072  0F00     R  MOV A,BANK _cnt
+ 174  0073  0084        MOV [04H],A
+ 174  0074  0F00     R  MOV A,OFFSET _cnt
+ 174  0075  0083        MOV [03H],A
+ 174  0076  1F02        CLR [02H]
+ 174  0077  1483        INC [03H]
+ 174  0078  1F02        CLR [02H]
+ 174  0079              L41:
+ 174  0079              L39:
+
+; 178: 		UART_SoftWareSendByte(0xaa);						//send head code to PC
+ 178  0079  0FAA        MOV A,0aah
+ 178  007A  0080     R  MOV UART_SoftWareSendByte0,A
+ 178  007B  2000     R  CALL _UART_SoftWareSendByte
+
+; 179: 		_delay(100);
+ 179  007C  0F18        MOV A,018H
+ 179  007D  2000     E  CALL __DELAYX0
+
+; 180: 		UART_SoftWareSendByte(ntc_Adc>>8);		//send AD conversion value high byte to PC
+ 180  007E  0F00     R  MOV A,BANK _ntc_Adc
+ 180  007F  0084        MOV [04H],A
+ 180  0080  0F00     R  MOV A,OFFSET _ntc_Adc
+ 180  0081  0083        MOV [03H],A
+ 180  0082  0702        MOV A,[02H]
+ 180  0083  0080     R  MOV b0_6,A
+ 180  0084  1483        INC [03H]
+ 180  0085  0702        MOV A,[02H]
+ 180  0086  0080     R  MOV b0_6[1],A
+ 180  0087  0700     R  MOV A,b0_6[1]
+ 180  0088  0080     R  MOV b0_6,A
+ 180  0089  1F00     R  CLR b0_6[1]
+ 180  008A  0700     R  MOV A,b0_6
+ 180  008B  0080     R  MOV UART_SoftWareSendByte0,A
+ 180  008C  2000     R  CALL _UART_SoftWareSendByte
+
+; 181: 		_delay(100);
+ 181  008D  0F18        MOV A,018H
+ 181  008E  2000     E  CALL __DELAYX0
+
+; 182: 		UART_SoftWareSendByte(ntc_Adc&0xff);		//send AD conversion value low byte to PC
+ 182  008F  0F00     R  MOV A,BANK _ntc_Adc
+ 182  0090  0084        MOV [04H],A
+ 182  0091  0F00     R  MOV A,OFFSET _ntc_Adc
+ 182  0092  0083        MOV [03H],A
+ 182  0093  0702        MOV A,[02H]
+ 182  0094  0EFF        AND A,0ffh
+ 182  0095  0080     R  MOV b0_6,A
+ 182  0096  1F00     R  CLR b0_6[1]
+ 182  0097  0700     R  MOV A,b0_6
+"File: NTC binh nong_0025.c  Holtek Cross-Assembler  Version 3.00      Page 11 
+
+ 182  0098  0080     R  MOV UART_SoftWareSendByte0,A
+ 182  0099  2000     R  CALL _UART_SoftWareSendByte
+
+; 184: 		_delay(250000);
+ 184  009A  0FF3        MOV A,0f3H
+ 184  009B  0080     E  MOV RH,A
+ 184  009C  0FA9        MOV A,0a9H
+ 184  009D  2000     E  CALL __DELAYY1
+
+; 185: 		_delay(250000);
+ 185  009E  0FF3        MOV A,0f3H
+ 185  009F  0080     E  MOV RH,A
+ 185  00A0  0FA9        MOV A,0a9H
+ 185  00A1  2000     E  CALL __DELAYY1
+ 185  00A2              L37:
+
+; 164: 	while (1)
+ 164  00A2  2800     R  JMP L36
+ 164  00A3              L35:
+
+; 192: }
+ 192  00A3  2800     R  JMP $
+ 192  0000  0002[       LOCAL b0_6 DB 2 DUP(?)
+            00
+            ]
+ 192  00A4              _main ENDP
+
+; 133: u16 ntc_Adc;		//AD conversion value   -->adc VR2
+ 133  00A4              PUBLIC _ntc_Adc
+ 133  0000              @ntc_Adc .SECTION 'DATA'
+ 133  0000  0002[       _ntc_Adc DB 2 DUP (?) ;ntc_Adc
+            00
+            ]
+
+;  11: u16 cnt;
+  11  0002              PUBLIC _cnt
+  11  0000              @cnt .SECTION 'DATA'
+  11  0000  0002[       _cnt DB 2 DUP (?) ;cnt
+            00
+            ]
+
+;  10: u8 flag1ms; 
+  10  0002              PUBLIC _flag1ms
+  10  0000              @flag1ms .SECTION 'DATA'
+  10  0000  00          _flag1ms DB ? ; flag1ms
+
+;   9: u32 g_sysTime;
+   9  0001              PUBLIC _g_sysTime
+   9  0000              @g_sysTime .SECTION 'DATA'
+   9  0000  0004[       _g_sysTime DB 4 DUP (?) ;g_sysTime
+            00
+            ]
+
+; 134: void main()
+ 134  0000              STARTSEC .SECTION  COM_L 'CODE'
+ 134  0000              STARTUP:
+ 134  0000              STARTSEC .SECTION  COM_E 'CODE'
+ 134  0000  0003        RET
+ 134  0001              EXTERN RH:BYTE
+ 134  0001              EXTERN V2A:BYTE
+"File: NTC binh nong_0025.c  Holtek Cross-Assembler  Version 3.00      Page 12 
+
+ 134  0001              EXTERN V2S:BYTE
+ 134  0001              EXTERN V2MP1:BYTE
+ 134  0001              EXTERN V2BP:BYTE
+ 134  0001              EXTERN __DELAYX0:NEAR
+ 134  0001              EXTERN __DELAYX1:NEAR
+ 134  0001              EXTERN __DELAYX2:NEAR
+ 134  0001              EXTERN __DELAYX3:NEAR
+ 134  0001              EXTERN __DELAYX4:NEAR
+ 134  0001              EXTERN __DELAYX5:NEAR
+ 134  0001              EXTERN __DELAYX6:NEAR
+ 134  0001              EXTERN __DELAYY0:NEAR
+ 134  0001              EXTERN __DELAYY1:NEAR
+ 134  0001              EXTERN __DELAYY2:NEAR
+ 134  0001              EXTERN __DELAYY3:NEAR
+ 134  0001              EXTERN __DELAYY4:NEAR
+ 134  0001              EXTERN __DELAYY5:NEAR
+ 134  0000              @CODE .SECTION AT 0 'CODE'
+ 134  0000  2000     R  CALL STARTUP
+ 134  0001  2800     R  JMP begin
+ 134  0002              @DUMMY PROC
+ 134  0002  2000     R  CALL _main
+ 134  0003              @DUMMY ENDP
+
+
+        0 Errors

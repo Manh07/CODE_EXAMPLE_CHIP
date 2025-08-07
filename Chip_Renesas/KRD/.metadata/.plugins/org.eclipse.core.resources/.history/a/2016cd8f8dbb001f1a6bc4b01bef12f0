@@ -1,0 +1,21 @@
+################################################################################
+# Automatically-generated file. Do not edit!
+################################################################################
+
+# Add inputs and outputs from these tool invocations to the build variables
+C_SRCS += \
+../src/apps/heatControl/heatControl.c 
+
+COMPILER_OBJS += \
+src/apps/heatControl/heatControl.obj 
+
+# Each subdirectory must supply rules for building sources it contributes
+src/apps/heatControl/%.obj: ../src/apps/heatControl/%.c 
+	@echo 'Building file: $<'
+	@echo 'Invoking: Compiler'
+	@echo src\apps\heatControl\cSubCommand.tmp=
+	@sed -e "s/^/ /" "src\apps\heatControl\cSubCommand.tmp"
+	ccrx -subcommand="src\apps\heatControl\cSubCommand.tmp" "$<"
+	@echo 'Finished Building: $<'
+	@echo ''
+

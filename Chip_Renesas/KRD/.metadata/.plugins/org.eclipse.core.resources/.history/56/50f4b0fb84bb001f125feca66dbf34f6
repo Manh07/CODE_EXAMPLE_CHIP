@@ -1,0 +1,23 @@
+################################################################################
+# Automatically-generated file. Do not edit!
+################################################################################
+
+# Add inputs and outputs from these tool invocations to the build variables
+C_SRCS += \
+../src/apps/timer/timeCheck.c \
+../src/apps/timer/timer.c 
+
+COMPILER_OBJS += \
+src/apps/timer/timeCheck.obj \
+src/apps/timer/timer.obj 
+
+# Each subdirectory must supply rules for building sources it contributes
+src/apps/timer/%.obj: ../src/apps/timer/%.c 
+	@echo 'Building file: $<'
+	@echo 'Invoking: Compiler'
+	@echo src\apps\timer\cSubCommand.tmp=
+	@sed -e "s/^/ /" "src\apps\timer\cSubCommand.tmp"
+	ccrx -subcommand="src\apps\timer\cSubCommand.tmp" "$<"
+	@echo 'Finished Building: $<'
+	@echo ''
+

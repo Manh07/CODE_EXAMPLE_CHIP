@@ -1,0 +1,70 @@
+"File: HT8_it.c      Holtek Cross-Assembler  Version 3.00      Page 1
+
+
+
+;  43: {
+  43  0000              __stm0ah EQU [02dH]
+  43  0000              __stm0al EQU [02cH]
+  43  0000              __stm0dh EQU [02bH]
+  43  0000              __stm0dl EQU [02aH]
+  43  0000              __stm0c1 EQU [029H]
+  43  0000              __stm0c0 EQU [028H]
+  43  0000              __pasr EQU [026H]
+  43  0000              __rstc EQU [025H]
+  43  0000              __sadc2 EQU [024H]
+  43  0000              __sadc1 EQU [023H]
+  43  0000              __sadc0 EQU [022H]
+  43  0000              __sadoh EQU [021H]
+  43  0000              __sadol EQU [020H]
+  43  0000              __eed EQU [01fH]
+  43  0000              __eea EQU [01eH]
+  43  0000              __smod1 EQU [01cH]
+  43  0000              __tbc EQU [01bH]
+  43  0000              __wdtc EQU [019H]
+  43  0000              __ifs0 EQU [018H]
+  43  0000              __pawu EQU [017H]
+  43  0000              __papu EQU [016H]
+  43  0000              __pac EQU [015H]
+  43  0000              __pa EQU [014H]
+  43  0000              __mfi0 EQU [011H]
+  43  0000              __intc1 EQU [0fH]
+  43  0000              __intc0 EQU [0eH]
+  43  0000              __integ EQU [0dH]
+  43  0000              __smod EQU [0bH]
+  43  0000              __status EQU [0aH]
+  43  0000              __tblh EQU [08H]
+  43  0000              __tblp EQU [07H]
+  43  0000              __pcl EQU [06H]
+  43  0000              __acc EQU [05H]
+  43  0000              __bp EQU [04H]
+  43  0000              __mp1 EQU [03H]
+  43  0000              __iar1 EQU [02H]
+  43  0000              __mp0 EQU [01H]
+  43  0000              __iar0 EQU [00H]
+  43  0000              @@INT_ISR .SECTION AT 04H 'CODE'
+  43  0000  0004        RETI
+
+;  57: {
+  57  0000              @@TB0_ISR .SECTION AT 08H 'CODE'
+  57  0000  0004        RETI
+
+;  70: {
+  70  0000              @@TB1_ISR .SECTION AT 0cH 'CODE'
+  70  0000  0004        RETI
+
+;  84: {
+  84  0000              @@Timer_ISR .SECTION AT 010H 'CODE'
+  84  0000  0004        RETI
+
+;  97: {
+  97  0000              @@EEPROM_ISR .SECTION AT 014H 'CODE'
+  97  0000  0004        RETI
+"File: HT8_it.c      Holtek Cross-Assembler  Version 3.00      Page 2 
+
+
+; 110: {
+ 110  0000              @@ADC_ISR .SECTION AT 018H 'CODE'
+ 110  0000  0004        RETI
+
+
+        0 Errors

@@ -1,0 +1,23 @@
+################################################################################
+# Automatically-generated file. Do not edit!
+################################################################################
+
+# Add inputs and outputs from these tool invocations to the build variables
+C_SRCS += \
+../src/apps/util/queue.c \
+../src/apps/util/tools.c 
+
+COMPILER_OBJS += \
+src/apps/util/queue.obj \
+src/apps/util/tools.obj 
+
+# Each subdirectory must supply rules for building sources it contributes
+src/apps/util/%.obj: ../src/apps/util/%.c src/apps/util/Compiler.sub
+	@echo 'Building file: $<'
+	@echo 'Invoking: Compiler'
+	@echo src\apps\util\cSubCommand.tmp=
+	@sed -e "s/^/ /" "src\apps\util\cSubCommand.tmp"
+	ccrx -subcommand="src\apps\util\cSubCommand.tmp" "$<"
+	@echo 'Finished Building: $<'
+	@echo ''
+

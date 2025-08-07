@@ -1,0 +1,54 @@
+/*
+ * voiceCmd.h
+ *
+ *  Created on: Mar 15, 2021
+ *      Author: TranQuangThai
+ */
+
+#ifndef APPS_UART_WIFI_VOICECMD_H_
+#define APPS_UART_WIFI_VOICECMD_H_
+
+#define VOICE_CMD_ONLINE
+//#define VOICE_CMD_OFFLINE
+
+//for online
+typedef enum
+{
+	VOICE_CMD_IDX_GET_WATER_SPECIAL = 1,
+	VOICE_CMD_IDX_GET_WATER_UNKNOW,
+	VOICE_CMD_IDX_CANCEL_GET_WATER,
+	VOICE_CMD_IDX_GET_STATUS,
+	VOICE_CMD_IDX_MAX
+} voiceCmd_idx_t;
+typedef enum{
+    VOICE_ONLINE_WATER_TYPE_HOT = 0,
+	VOICE_ONLINE_WATER_TYPE_COOL = 1,
+	VOICE_ONLINE_WATER_TYPE_COLD = 2,
+	VOICE_ONLINE_WATER_TYPE_RO = 3,
+} IroWaterType_t;
+
+typedef enum
+{
+	WATER_STATE_FREE = 0,
+	WATER_STATE_BUSY,
+	WATER_STATE_DONE
+} voidceCmdWaterState_t;
+
+//for offline
+typedef enum{
+	VOICE_CMD_WATER_TYPE_WAKEUP_CMD = 0,
+    VOICE_CMD_WATER_TYPE_HOT = 1,
+	VOICE_CMD_WATER_TYPE_CAFE = 2,
+	VOICE_CMD_WATER_TYPE_TEA = 3, //->nuoc nong
+	VOICE_CMD_WATER_TYPE_MILK = 4,
+	VOICE_CMD_WATER_TYPE_RO = 5,
+	VOICE_CMD_WATER_TYPE_COLD = 6,
+	VOICE_CMD_WATER_TYPE_COOL = 7,
+	VOICE_CMD_WATER_TYPE_STOP = 8,
+	VOICE_CMD_WATER_TYPE_RO_200 = 9,
+	VOICE_CMD_WATER_TYPE_STOP_2 = 10,
+	VOICE_CMD_WATER_TYPE_RESUME = 11,
+	VOICE_CMD_WATER_TYPE_MAX
+} voiceCmd_waterType_t;
+void voiceCmd_sendStateWater(voidceCmdWaterState_t state);
+#endif /* APPS_UART_WIFI_VOICECMD_H_ */

@@ -1,0 +1,21 @@
+################################################################################
+# Automatically-generated file. Do not edit!
+################################################################################
+
+# Add inputs and outputs from these tool invocations to the build variables
+C_SRCS += \
+../src/apps/adc/adc.c 
+
+COMPILER_OBJS += \
+src/apps/adc/adc.obj 
+
+# Each subdirectory must supply rules for building sources it contributes
+src/apps/adc/%.obj: ../src/apps/adc/%.c src/apps/adc/Compiler.sub
+	@echo 'Building file: $<'
+	@echo 'Invoking: Compiler'
+	@echo src\apps\adc\cSubCommand.tmp=
+	@sed -e "s/^/ /" "src\apps\adc\cSubCommand.tmp"
+	ccrx -subcommand="src\apps\adc\cSubCommand.tmp" "$<"
+	@echo 'Finished Building: $<'
+	@echo ''
+

@@ -1,0 +1,169 @@
+004     @WRITE_PROGRAM_MEMORY8.P1
+004-005 @READ_PROGRAM_MEMORY8.P2
+008     PSP_DATA
+015     CCP_1_LOW
+015     CCP_1
+016     CCP_1_HIGH
+01B     CCP_2
+01B     CCP_2_LOW
+01C     CCP_2_HIGH
+020     @TRIS_C
+021-022 @sprintf_string
+023-036 MAIN.buf_dis
+037-03A distance
+03B     i
+03C     j
+03D     @PSTRINGCN7_120.P1
+03D-040 @PRINTF_L32D_120FPFPF.P2
+03D     lcd_init.i
+03D-03E get_distance.duration
+03D-040 @FLT.P1
+03D     @PSTRINGCN7_9600_62_63.P2
+03D     MAIN.@SCRATCH1
+03D     @PSTRINGR_9600_62_63.@SCRATCH1
+03D     @PSTRINGC7_9600_62_63.@SCRATCH1
+03D     @PSTRINGC7_94.@SCRATCH1
+03E     lcd_init.@SCRATCH1
+03E     @PSTRINGCN7_120.@SCRATCH1
+03E     @PSTRINGR_9600_62_63.@SCRATCH2
+03E     @PSTRINGCN7_9600_62_63.@SCRATCH1
+03E     @PSTRINGC7_9600_62_63.@SCRATCH2
+03E     @PSTRINGC7_94.@SCRATCH2
+03F-042 get_distance.distance
+03F     @PSTRINGCN7_120.@SCRATCH2
+03F     @PSTRINGCN7_9600_62_63.@SCRATCH2
+03F     @PSTRINGC7_9600_62_63.@SCRATCH3
+03F     @PSTRINGC7_94.@SCRATCH3
+040     lcd_putc.c
+040     @PSTRINGCN7_120.@SCRATCH3
+040     @PSTRINGCN7_9600_62_63.@SCRATCH3
+041     lcd_gotoxy.x
+041     @delay_ms1.P1
+041     @PRINTF_L32D_120FPFPF.P2
+041-044 @FLT.P3
+042     lcd_gotoxy.y
+042     @PRINTF_L32D_120FPFPF.@SCRATCH1
+043     lcd_gotoxy.address
+043-044 get_pulse_width.time
+043     get_distance.@SCRATCH1
+043     @PRINTF_L32D_120FPFPF.@SCRATCH2
+044     lcd_gotoxy.@SCRATCH1
+044     get_distance.@SCRATCH2
+044     @PRINTF_L32D_120FPFPF.@SCRATCH3
+045-046 @ITOF.P1
+045     lcd_send_byte.address
+045     @FLT.@SCRATCH1
+045     @PRINTF_L32D_120FPFPF.@SCRATCH4
+046     lcd_send_byte.n
+046     @FLT.@SCRATCH2
+046     @PRINTF_L32D_120FPFPF.@SCRATCH5
+047     lcd_read_byte.low
+047     lcd_send_byte.@SCRATCH1
+047     @PRINTF_L32D_120FPFPF.@SCRATCH6
+048     lcd_send_nibble.n
+048     lcd_read_byte.high
+048     @PRINTF_L32D_120FPFPF.@SCRATCH7
+049     lcd_read_nibble.n
+049     lcd_read_byte.@SCRATCH1
+049     @PRINTF_L32D_120FPFPF.@SCRATCH8
+04A-04D @MULFF.P1
+04A-04D @DIV3232.P2
+04A-04D @FTOSD.P3
+04A     @SPRINTF.P4
+04A     lcd_read_nibble.@SCRATCH1
+04E-051 @MULFF.P1
+04E-051 @DIV3232.P2
+04E     @FTOSD.@SCRATCH1
+052     @MULFF.@SCRATCH1
+052     @DIV3232.@SCRATCH1
+053     @MULFF.@SCRATCH2
+053     @DIV3232.@SCRATCH2
+054     @MULFF.@SCRATCH3
+054     @DIV3232.@SCRATCH3
+055     @MULFF.@SCRATCH4
+055     @DIV3232.@SCRATCH4
+056     @MULFF.@SCRATCH5
+056     @DIV3232.@SCRATCH5
+077     @SCRATCH
+078     @SCRATCH
+078     _RETURN_
+079     @SCRATCH
+07A     @SCRATCH
+09C.6   C1OUT
+09C.7   C2OUT
+10D-10E @READ_PROGRAM_MEMORY8.P1
+10D-10E @WRITE_PROGRAM_MEMORY8.P2
+
+ROM Allocation:
+0039  @delay_ms1
+0004  LCD_INIT_STRING
+00AF  lcd_read_byte
+007B  lcd_read_nibble
+004D  lcd_send_nibble
+00AC  lcd_send_byte
+0105  lcd_init
+0494  lcd_gotoxy
+04A6  lcd_putc
+01C1  get_pulse_width
+01B4  get_distance
+01E0  @ITOF
+013F  @MULFF
+0511  MAIN
+0220  @FLT
+000C  @const118
+025F  @SPRINTF
+026C  @PSTRINGCN7_120
+0323  @FTOSD
+02BA  @DIV3232
+02FC  @PRINTF_L32D_120FPFPF
+0014  @const132
+03E3  @PSTRINGR_9600_62_63
+03FA  @PSTRINGCN7_9600_62_63
+0018  @const136
+044C  @PSTRINGC7_9600_62_63
+001E  @const138
+04CB  @PSTRINGC7_94
+001F  @const140
+0020  @const142
+0024  @const143
+002C  @const145
+0032  @const146
+0033  @const147
+0034  @const149
+0511  @cinit
+
+
+User Memory space: 
+
+User Memory space: 
+
+Project Directory:
+    D:\DuongHo\DuongHo\ManhND\Pic16f8\FWCore\
+
+Project Files:
+    main.c
+    main.h
+    C:\Program Files (x86)\PICC\devices\16F877A.h
+    lcd.c
+
+Units:
+    D:\DuongHo\DuongHo\ManhND\Pic16f8\FWCore\main (main)
+
+Compiler Settings:
+    Processor:      PIC16F877A
+    Pointer Size:   16
+    ADC Range:      0-255
+    Opt Level:      9
+    Short,Int,Long: UNSIGNED: 1,8,16
+    Float,Double:   32,32
+
+Output Files:
+    Errors:      main.err
+    Ext Symbols: main.esym
+    INHX8:       main.hex
+    Symbols:     main.sym
+    List:        main.lst
+    Debug/COFF:  main.cof
+    Project:     main.PJT
+    Call Tree:   main.tre
+    Statistics:  main.sta

@@ -1,0 +1,21 @@
+################################################################################
+# Automatically-generated file. Do not edit!
+################################################################################
+
+# Add inputs and outputs from these tool invocations to the build variables
+C_SRCS += \
+../src/apps/UIControl/UIControl.c 
+
+COMPILER_OBJS += \
+src/apps/UIControl/UIControl.obj 
+
+# Each subdirectory must supply rules for building sources it contributes
+src/apps/UIControl/%.obj: ../src/apps/UIControl/%.c 
+	@echo 'Building file: $<'
+	@echo 'Invoking: Compiler'
+	@echo src\apps\UIControl\cSubCommand.tmp=
+	@sed -e "s/^/ /" "src\apps\UIControl\cSubCommand.tmp"
+	ccrx -subcommand="src\apps\UIControl\cSubCommand.tmp" "$<"
+	@echo 'Finished Building: $<'
+	@echo ''
+

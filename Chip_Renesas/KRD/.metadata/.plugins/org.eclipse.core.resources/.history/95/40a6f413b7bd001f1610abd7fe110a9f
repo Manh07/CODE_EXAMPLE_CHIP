@@ -1,0 +1,31 @@
+################################################################################
+# Automatically-generated file. Do not edit!
+################################################################################
+
+# Add inputs and outputs from these tool invocations to the build variables
+C_SRCS += \
+../src/apps/flash/CurentData.c \
+../src/apps/flash/filterExpire.c \
+../src/apps/flash/filter_time.c \
+../src/apps/flash/flash_app.c \
+../src/apps/flash/productId.c \
+../src/apps/flash/user_config.c 
+
+COMPILER_OBJS += \
+src/apps/flash/CurentData.obj \
+src/apps/flash/filterExpire.obj \
+src/apps/flash/filter_time.obj \
+src/apps/flash/flash_app.obj \
+src/apps/flash/productId.obj \
+src/apps/flash/user_config.obj 
+
+# Each subdirectory must supply rules for building sources it contributes
+src/apps/flash/%.obj: ../src/apps/flash/%.c 
+	@echo 'Building file: $<'
+	@echo 'Invoking: Compiler'
+	@echo src\apps\flash\cSubCommand.tmp=
+	@sed -e "s/^/ /" "src\apps\flash\cSubCommand.tmp"
+	ccrx -subcommand="src\apps\flash\cSubCommand.tmp" "$<"
+	@echo 'Finished Building: $<'
+	@echo ''
+
