@@ -1,0 +1,67 @@
+A51 MACRO ASSEMBLER  MAIN                                                                 04/22/2025 23:52:26 PAGE     1
+
+
+MACRO ASSEMBLER A51 V8.2.7.0
+OBJECT MODULE PLACED IN .\Objects\main.obj
+ASSEMBLER INVOKED BY: C:\Keil_v5\C51\BIN\A51.EXE main.a51 SET(SMALL) DEBUG PRINT(.\Listings\main.lst) OBJECT(.\Objects\m
+                      ain.obj) EP
+
+LOC  OBJ            LINE     SOURCE
+
+                       1     ; M?c tiêu: Nh?p nháy dèn LED k?t n?i v?i chân P2.7 c?a 8051
+                       2     
+                       3     ; Khai báo h?ng s? (tùy ch?n, cho d? d?c)
+  00A7                 4     LED_PIN EQU P2.7
+                       5     
+                       6     ; Khai báo các thanh ghi d?c bi?t (SFR)
+  0BB8                 7     DLY1MS EQU 3000 ; Giá tr? delay x?p x? 1ms (c?n di?u ch?nh theo t?n s? th?ch anh)
+                       8     
+0000                   9     ORG 0000H       ; Ð?a ch? b?t d?u chuong trình
+                      10     
+0000                  11     MAIN:
+0000 75A0FF           12         MOV P2, #0FFH   ; Kh?i t?o Port 2 ? m?c cao (t?t LED n?u c?c duong chung)
+                      13     
+0003                  14     LOOP:
+0003 D2A7             15         SETB LED_PIN    ; B?t LED (gi? s? LED n?i v?i P2.7 và c?c âm chung)
+0005 12000F           16         LCALL DELAY     ; G?i hàm delay
+0008 C2A7             17         CLR LED_PIN     ; T?t LED
+000A 12000F           18         LCALL DELAY     ; G?i hàm delay
+000D 80F4             19         SJMP LOOP       ; Nh?y v? d?u vòng l?p
+                      20     
+                      21     ; Hàm delay (x?p x? 1 giây)
+000F                  22     DELAY:
+000F 7FC8             23         MOV R7, #200    ; Vòng l?p ngoài (di?u ch?nh giá tr? này d? thay d?i th?i gian delay)
+0011                  24     DELAY_OUTER:
+0011 7EFA             25         MOV R6, #250    ; Vòng l?p gi?a
+0013                  26     DELAY_MIDDLE:
+0013 7DC8             27         MOV R5, #200    ; Vòng l?p trong
+0015                  28     DELAY_INNER:
+0015 DDFE             29         DJNZ R5, DELAY_INNER
+0017 DEFA             30         DJNZ R6, DELAY_MIDDLE
+0019 DFF6             31         DJNZ R7, DELAY_OUTER
+001B 22               32         RET             ; Tr? v? t? hàm delay
+                      33     
+                      34     END             ; K?t thúc chuong trình
+A51 MACRO ASSEMBLER  MAIN                                                                 04/22/2025 23:52:26 PAGE     2
+
+SYMBOL TABLE LISTING
+------ ----- -------
+
+
+N A M E             T Y P E  V A L U E   ATTRIBUTES
+
+DELAY. . . . . . .  C ADDR   000FH   A   
+DELAY_INNER. . . .  C ADDR   0015H   A   
+DELAY_MIDDLE . . .  C ADDR   0013H   A   
+DELAY_OUTER. . . .  C ADDR   0011H   A   
+DLY1MS . . . . . .  N NUMB   0BB8H   A   
+LED_PIN. . . . . .  B ADDR   00A0H.7 A   
+LOOP . . . . . . .  C ADDR   0003H   A   
+MAIN . . . . . . .  C ADDR   0000H   A   
+P2 . . . . . . . .  D ADDR   00A0H   A   
+
+
+REGISTER BANK(S) USED: 0 
+
+
+ASSEMBLY COMPLETE.  0 WARNING(S), 0 ERROR(S)

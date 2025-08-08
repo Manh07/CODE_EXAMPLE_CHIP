@@ -1,0 +1,273 @@
+A51 MACRO ASSEMBLER  7SEG                                                                 05/02/2025 17:42:23 PAGE     1
+
+
+MACRO ASSEMBLER A51 V8.2.7.0
+OBJECT MODULE PLACED IN 7seg.OBJ
+ASSEMBLER INVOKED BY: C:\Keil_v5\C51\BIN\A51.EXE 7seg.asm SET(SMALL) DEBUG EP
+
+LOC  OBJ            LINE     SOURCE
+
+0000                   1     ORG 0000H                   ; Đặt địa chỉ bắt đầu chương trình tại 0000H
+0000 8000              2     SJMP START_PROGRAM          ; Nhảy tới chương trình chính tại nhãn START_PROGRAM
+                       3     
+                       4     ;-------------------------------------------------
+                       5     ; Định nghĩa bit đặc biệt
+                       6     ;-------------------------------------------------
+  0032                 7     RUNNING  BIT  32H           ; Đặt cờ RUNNING tại địa chỉ RAM bit 20H + 18H = 38
+                             H để theo dõi trạng thái đếm
+  00B6                 8     LED      BIT  P3.6          ; Đặt nhãn LED cho chân P3.6 để điều khiển bật/t
+                             ắt LED báo hiệu
+                       9     
+                      10     ;-------------------------------------------------
+                      11     ; Chương trình khởi tạo
+                      12     ;-------------------------------------------------
+0002                  13     START_PROGRAM:
+0002 7800             14     MOV  R0, #00H               ; R0 = phút ban đầu = 0
+0004 7900             15     MOV  R1, #00H               ; R1 = giây ban đầu = 0
+                      16     
+0006 753000           17     MOV  30H, #00H              ; Lưu phút ban đầu vào địa chỉ RAM 30H (phục hồi
+                              khi nhấn Reset)
+0009 753100           18     MOV  31H, #00H              ; Lưu giây ban đầu vào 31H
+                      19     
+000C C232             20     CLR  RUNNING                ; Xóa cờ RUNNING (chưa chạy)
+000E C2B6             21     CLR  LED                    ; Tắt LED cảnh báo ban đầu
+                      22     
+                      23     ;-------------------------------------------------
+                      24     ; Vòng lặp chính
+                      25     ;-------------------------------------------------
+0010                  26     MAIN_LOOP:
+0010 117D             27         ACALL CHECK_BUTTONS     ; Gọi hàm kiểm tra nút nhấn
+                      28     
+0012 203204           29         JB   RUNNING, RUNNING_MODE ; Nếu RUNNING = 1 thì vào chế độ đếm
+                      30     
+0015                  31     NOT_RUNNING:
+0015 1125             32         ACALL DISPLAY_TIME      ; Hiển thị thời gian hiện tại khi không chạy
+0017 80F7             33         SJMP MAIN_LOOP          ; Lặp lại chương trình chính
+                      34     
+0019                  35     RUNNING_MODE:
+0019 7FFF             36         MOV  R7, #255           ; Đặt bộ đếm delay để hiển thị khoảng 1 giây
+001B                  37     DISPLAY_LOOP:
+001B 1125             38         ACALL DISPLAY_TIME      ; Hiển thị thời gian trong khi đếm
+001D 117D             39         ACALL CHECK_BUTTONS     ; Kiểm tra nút nhấn khi đang chạy
+001F DFFA             40         DJNZ R7, DISPLAY_LOOP   ; Giảm R7 và lặp lại nếu chưa hết
+                      41     
+0021 1168             42         ACALL COUNTDOWN         ; Giảm thời gian đi 1 giây
+0023 80EB             43         SJMP MAIN_LOOP          ; Quay về vòng lặp chính
+                      44     
+                      45     ;-------------------------------------------------
+                      46     ; DISPLAY_TIME - hiển thị thời gian lên LED 7 đoạn
+                      47     ;-------------------------------------------------
+0025                  48     DISPLAY_TIME:
+                      49         ; Chuyển phút thành chữ số hàng chục và đơn vị
+0025 E8               50         MOV  A, R0              ; A = phút
+0026 75F00A           51         MOV  B, #10             ; Chia cho 10
+0029 84               52         DIV  AB                 ; A = hàng chục phút, B = hàng đơn vị
+002A FA               53         MOV  R2, A              ; R2 = hàng chục phút
+002B ABF0             54         MOV  R3, B              ; R3 = hàng đơn vị phút
+                      55     
+A51 MACRO ASSEMBLER  7SEG                                                                 05/02/2025 17:42:23 PAGE     2
+
+                      56         ; Chuyển giây thành chữ số hàng chục và đơn vị
+002D E9               57         MOV  A, R1              ; A = giây
+002E 75F00A           58         MOV  B, #10
+0031 84               59         DIV  AB
+0032 FC               60         MOV  R4, A              ; R4 = hàng chục giây
+0033 ADF0             61         MOV  R5, B              ; R5 = hàng đơn vị giây
+                      62     
+                      63         ; Hiển thị lên 4 LED 7 đoạn
+                      64     
+                      65         ; LED1: hàng chục phút
+0035 75800E           66         MOV  P0, #0EH           ; Chọn LED 1 (thanh ghi điều khiển)
+0038 901000           67         MOV  DPTR, #SEGMENT_CODE ; Trỏ tới bảng mã LED
+003B EA               68         MOV  A, R2
+003C 93               69         MOVC A, @A+DPTR         ; Đọc mã LED tương ứng với số R2
+003D F590             70         MOV  P1, A              ; Xuất mã LED ra cổng P1
+003F 11C6             71         ACALL DELAY_2MS         ; Delay ngắn để ổn định hiển thị
+                      72     
+                      73         ; LED2: hàng đơn vị phút + dấu chấm
+0041 75800D           74         MOV  P0, #0DH           ; Chọn LED 2
+0044 901000           75         MOV  DPTR, #SEGMENT_CODE
+0047 EB               76         MOV  A, R3
+0048 93               77         MOVC A, @A+DPTR
+0049 4480             78         ORL  A, #080H           ; Thêm dấu chấm (bit 7 = 1)
+004B F590             79         MOV  P1, A
+004D 11C6             80         ACALL DELAY_2MS
+                      81     
+                      82         ; LED3: hàng chục giây
+004F 75800B           83         MOV  P0, #0BH           ; Chọn LED 3
+0052 901000           84         MOV  DPTR, #SEGMENT_CODE
+0055 EC               85         MOV  A, R4
+0056 93               86         MOVC A, @A+DPTR
+0057 F590             87         MOV  P1, A
+0059 11C6             88         ACALL DELAY_2MS
+                      89     
+                      90         ; LED4: hàng đơn vị giây
+005B 758007           91         MOV  P0, #07H           ; Chọn LED 4
+005E 901000           92         MOV  DPTR, #SEGMENT_CODE
+0061 ED               93         MOV  A, R5
+0062 93               94         MOVC A, @A+DPTR
+0063 F590             95         MOV  P1, A
+0065 11C6             96         ACALL DELAY_2MS
+                      97     
+0067 22               98         RET                     ; Quay về chương trình gọi
+                      99     
+                     100     ;-------------------------------------------------
+                     101     ; COUNTDOWN - Giảm thời gian đi 1 giây
+                     102     ;-------------------------------------------------
+0068                 103     COUNTDOWN:
+0068 E9              104         MOV  A, R1              ; Kiểm tra giây
+0069 6004            105         JZ   SEC_ZERO           ; Nếu giây = 0, xử lý tiếp
+006B 19              106         DEC  R1                 ; Giảm giây
+006C C2B6            107         CLR  LED                ; Tắt LED khi chưa về 0
+006E 22              108         RET
+                     109     
+006F                 110     SEC_ZERO:
+006F E8              111         MOV  A, R0              ; Kiểm tra phút
+0070 6006            112         JZ   TIME_UP            ; Nếu phút cũng = 0 thì hết giờ
+0072 18              113         DEC  R0                 ; Giảm phút
+0073 7900            114         MOV  R1, #00            ; Gán lại giây = 00
+0075 D2B6            115         SETB LED                ; Bật LED khi sang phút mới
+0077 22              116         RET
+                     117     
+0078                 118     TIME_UP:
+0078 C232            119         CLR  RUNNING            ; Hết giờ, dừng đếm
+007A C2B6            120         CLR  LED                ; Tắt LED cảnh báo
+007C 22              121         RET
+A51 MACRO ASSEMBLER  7SEG                                                                 05/02/2025 17:42:23 PAGE     3
+
+                     122     
+                     123     ;-------------------------------------------------
+                     124     ; CHECK_BUTTONS - xử lý các nút điều khiển
+                     125     ;-------------------------------------------------
+007D                 126     CHECK_BUTTONS:
+                     127         ; Nút START tại P3.2
+007D 20B20A          128         JB   P3.2, SKIP_START   ; Nếu chưa nhấn thì bỏ qua
+0080 11CB            129         ACALL DELAY_20MS        ; Delay chống dội phím
+0082 20B205          130         JB   P3.2, SKIP_START
+0085 D232            131         SETB RUNNING            ; Bắt đầu chạy
+0087                 132     WAIT_START_RELEASE:
+0087 30B2FD          133         JNB  P3.2, WAIT_START_RELEASE ; Chờ nhả nút
+008A                 134     SKIP_START:
+                     135     
+                     136         ; Nút RESET tại P3.3
+008A 20B310          137         JB   P3.3, SKIP_RESET
+008D 11CB            138         ACALL DELAY_20MS
+008F 20B30B          139         JB   P3.3, SKIP_RESET
+0092 A830            140         MOV  R0, 30H            ; Phục hồi phút từ bộ nhớ
+0094 A931            141         MOV  R1, 31H            ; Phục hồi giây
+0096 C232            142         CLR  RUNNING            ; Dừng đếm
+0098 C2B6            143         CLR  LED                ; Tắt LED cảnh báo
+009A                 144     WAIT_RESET_RELEASE:
+009A 30B3FD          145         JNB  P3.3, WAIT_RESET_RELEASE
+009D                 146     SKIP_RESET:
+                     147     
+                     148         ; Nút tăng phút tại P3.0
+009D 20B011          149         JB   P3.0, SKIP_INC_MIN
+00A0 11CB            150         ACALL DELAY_20MS
+00A2 20B00C          151         JB   P3.0, SKIP_INC_MIN
+00A5 E8              152         MOV  A, R0
+00A6 2405            153         ADD  A, #5              ; Tăng 5 phút
+00A8 B46402          154         CJNE A, #100, SKIP_INC_MIN_WRAP ; Nếu < 100 thì tiếp tục
+00AB 7400            155         MOV  A, #00             ; Nếu >= 100 thì quay về 0
+00AD                 156     SKIP_INC_MIN_WRAP:
+00AD F8              157         MOV  R0, A              ; Cập nhật R0
+00AE                 158     WAIT_INC_MIN_RELEASE:
+00AE 30B0FD          159         JNB  P3.0, WAIT_INC_MIN_RELEASE
+00B1                 160     SKIP_INC_MIN:
+                     161     
+                     162         ; Nút tăng giây tại P3.1
+00B1 20B111          163         JB   P3.1, SKIP_INC_SEC
+00B4 11CB            164         ACALL DELAY_20MS
+00B6 20B10C          165         JB   P3.1, SKIP_INC_SEC
+00B9 E9              166         MOV  A, R1
+00BA 240A            167         ADD  A, #10             ; Tăng 10 giây
+00BC B46402          168         CJNE A, #100, SKIP_INC_SEC_WRAP
+00BF 7400            169         MOV  A, #00
+00C1                 170     SKIP_INC_SEC_WRAP:
+00C1 F9              171         MOV  R1, A
+00C2                 172     WAIT_INC_SEC_RELEASE:
+00C2 30B1FD          173         JNB  P3.1, WAIT_INC_SEC_RELEASE
+00C5                 174     SKIP_INC_SEC:
+                     175     
+00C5 22              176         RET                     ; Quay về chương trình chính
+                     177     
+                     178     ;-------------------------------------------------
+                     179     ; DELAY 2ms - delay ngắn để ổn định LED
+                     180     ;-------------------------------------------------
+00C6                 181     DELAY_2MS:
+00C6 7EFA            182         MOV  R6, #250
+00C8 DEFE            183         DJNZ R6, $              ; Lặp đến khi R6 = 0
+00CA 22              184         RET
+                     185     
+                     186     ;-------------------------------------------------
+                     187     ; DELAY_20MS - delay chống dội phím
+A51 MACRO ASSEMBLER  7SEG                                                                 05/02/2025 17:42:23 PAGE     4
+
+                     188     ;-------------------------------------------------
+00CB                 189     DELAY_20MS:
+00CB 7EFA            190         MOV  R6, #250
+00CD                 191     DELAY_20MS_LOOP1:
+00CD 7FFA            192         MOV  R7, #250
+00CF                 193     DELAY_20MS_LOOP2:
+00CF DFFE            194         DJNZ R7, DELAY_20MS_LOOP2
+00D1 DEFA            195         DJNZ R6, DELAY_20MS_LOOP1
+00D3 22              196         RET
+                     197     
+                     198     ;-------------------------------------------------
+                     199     ; SEGMENT_CODE - bảng mã LED 7 đoạn cho các số 0–9
+                     200     ;-------------------------------------------------
+1000                 201     ORG 1000H
+1000                 202     SEGMENT_CODE:
+1000 3F065B4F        203         DB 3FH,06H,5BH,4FH,66H,6DH,7DH,07H,7FH,6FH ; 0–9: LED mã BCD
+1004 666D7D07                
+1008 7F6F                    
+                     204     
+                     205     ;-------------------------------------------------
+                     206     ; Kết thúc chương trình
+                     207     ;-------------------------------------------------
+                     208     END
+A51 MACRO ASSEMBLER  7SEG                                                                 05/02/2025 17:42:23 PAGE     5
+
+SYMBOL TABLE LISTING
+------ ----- -------
+
+
+N A M E               T Y P E  V A L U E   ATTRIBUTES
+
+B. . . . . . . . . .  D ADDR   00F0H   A   
+CHECK_BUTTONS. . . .  C ADDR   007DH   A   
+COUNTDOWN. . . . . .  C ADDR   0068H   A   
+DELAY_20MS . . . . .  C ADDR   00CBH   A   
+DELAY_20MS_LOOP1 . .  C ADDR   00CDH   A   
+DELAY_20MS_LOOP2 . .  C ADDR   00CFH   A   
+DELAY_2MS. . . . . .  C ADDR   00C6H   A   
+DISPLAY_LOOP . . . .  C ADDR   001BH   A   
+DISPLAY_TIME . . . .  C ADDR   0025H   A   
+LED. . . . . . . . .  B ADDR   00B0H.6 A   
+MAIN_LOOP. . . . . .  C ADDR   0010H   A   
+NOT_RUNNING. . . . .  C ADDR   0015H   A   
+P0 . . . . . . . . .  D ADDR   0080H   A   
+P1 . . . . . . . . .  D ADDR   0090H   A   
+P3 . . . . . . . . .  D ADDR   00B0H   A   
+RUNNING. . . . . . .  B ADDR   0026H.2 A   
+RUNNING_MODE . . . .  C ADDR   0019H   A   
+SEC_ZERO . . . . . .  C ADDR   006FH   A   
+SEGMENT_CODE . . . .  C ADDR   1000H   A   
+SKIP_INC_MIN . . . .  C ADDR   00B1H   A   
+SKIP_INC_MIN_WRAP. .  C ADDR   00ADH   A   
+SKIP_INC_SEC . . . .  C ADDR   00C5H   A   
+SKIP_INC_SEC_WRAP. .  C ADDR   00C1H   A   
+SKIP_RESET . . . . .  C ADDR   009DH   A   
+SKIP_START . . . . .  C ADDR   008AH   A   
+START_PROGRAM. . . .  C ADDR   0002H   A   
+TIME_UP. . . . . . .  C ADDR   0078H   A   
+WAIT_INC_MIN_RELEASE  C ADDR   00AEH   A   
+WAIT_INC_SEC_RELEASE  C ADDR   00C2H   A   
+WAIT_RESET_RELEASE .  C ADDR   009AH   A   
+WAIT_START_RELEASE .  C ADDR   0087H   A   
+
+
+REGISTER BANK(S) USED: 0 
+
+
+ASSEMBLY COMPLETE.  0 WARNING(S), 0 ERROR(S)

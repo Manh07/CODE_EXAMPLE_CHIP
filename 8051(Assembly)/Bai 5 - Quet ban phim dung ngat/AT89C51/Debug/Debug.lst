@@ -1,0 +1,322 @@
+
+ASEM-51 V1.3                                         Copyright (c) 2002 by W.W. Heinz                                         PAGE 1
+
+
+
+
+
+       MCS-51 Family Macro Assembler   A S E M - 5 1   V 1.3
+       =====================================================
+
+
+
+	Source File:	..\main.asm
+	Object File:	Debug.HEX
+	List File:	Debug.lst
+
+
+
+ Line  I  Addr  Code            Source
+
+    1:				;====================================================================
+    2:
+    3:				$NOMOD51
+    4:				$INCLUDE (8051.MCU)
+    5: 1			;   8051 processor definition file
+    6: 1			;   ==============================
+    7: 1
+    8: 1	N	 80	P0	DATA	080H
+    9: 1	N	 81	SP	DATA	081H
+   10: 1	N	 82	DPL	DATA	082H
+   11: 1	N	 83	DPH	DATA	083H
+   12: 1	N	 87	PCON	DATA	087H
+   13: 1	N	 88	TCON	DATA	088H
+   14: 1	N	 89	TMOD	DATA	089H
+   15: 1	N	 8A	TL0	DATA	08AH
+   16: 1	N	 8B	TL1	DATA	08BH
+   17: 1	N	 8C	TH0	DATA	08CH
+   18: 1	N	 8D	TH1	DATA	08DH
+   19: 1	N	 90	P1	DATA	090H
+   20: 1	N	 98	SCON	DATA	098H
+   21: 1	N	 99	SBUF	DATA	099H
+   22: 1	N	 A0	P2	DATA	0A0H
+   23: 1	N	 A8	IE	DATA	0A8H
+   24: 1	N	 B0	P3	DATA	0B0H
+   25: 1	N	 B8	IP	DATA	0B8H
+   26: 1	N	 D0	PSW	DATA	0D0H
+   27: 1	N	 E0	ACC	DATA	0E0H
+   28: 1	N	 F0	B	DATA	0F0H
+   29: 1
+   30: 1	N	 88	IT0	BIT	088H
+   31: 1	N	 89	IE0	BIT	089H
+   32: 1	N	 8A	IT1	BIT	08AH
+   33: 1	N	 8B	IE1	BIT	08BH
+   34: 1	N	 8C	TR0	BIT	08CH
+   35: 1	N	 8D	TF0	BIT	08DH
+   36: 1	N	 8E	TR1	BIT	08EH
+   37: 1	N	 8F	TF1	BIT	08FH
+   38: 1	N	 98	RI	BIT	098H
+   39: 1	N	 99	TI	BIT	099H
+   40: 1	N	 9A	RB8	BIT	09AH
+   41: 1	N	 9B	TB8	BIT	09BH
+   42: 1	N	 9C	REN	BIT	09CH
+   43: 1	N	 9D	SM2	BIT	09DH
+
+ASEM-51 V1.3                                         Copyright (c) 2002 by W.W. Heinz                                         PAGE 2
+
+
+
+ Line  I  Addr  Code            Source
+
+   44: 1	N	 9E	SM1	BIT	09EH
+   45: 1	N	 9F	SM0	BIT	09FH
+   46: 1	N	 A8	EX0	BIT	0A8H
+   47: 1	N	 A9	ET0	BIT	0A9H
+   48: 1	N	 AA	EX1	BIT	0AAH
+   49: 1	N	 AB	ET1	BIT	0ABH
+   50: 1	N	 AC	ES	BIT	0ACH
+   51: 1	N	 AF	EA	BIT	0AFH
+   52: 1	N	 B0	RXD	BIT	0B0H
+   53: 1	N	 B1	TXD	BIT	0B1H
+   54: 1	N	 B2	INT0	BIT	0B2H
+   55: 1	N	 B3	INT1	BIT	0B3H
+   56: 1	N	 B4	T0	BIT	0B4H
+   57: 1	N	 B5	T1	BIT	0B5H
+   58: 1	N	 B6	WR	BIT	0B6H
+   59: 1	N	 B7	RD	BIT	0B7H
+   60: 1	N	 B8	PX0	BIT	0B8H
+   61: 1	N	 B9	PT0	BIT	0B9H
+   62: 1	N	 BA	PX1	BIT	0BAH
+   63: 1	N	 BB	PT1	BIT	0BBH
+   64: 1	N	 BC	PS	BIT	0BCH
+   65: 1	N	 D0	P	BIT	0D0H
+   66: 1	N	 D2	OV	BIT	0D2H
+   67: 1	N	 D3	RS0	BIT	0D3H
+   68: 1	N	 D4	RS1	BIT	0D4H
+   69: 1	N	 D5	F0	BIT	0D5H
+   70: 1	N	 D6	AC	BIT	0D6H
+   71: 1	N	 D7	CY	BIT	0D7H
+   72: 1
+   73: 1	N      0000	RESET	CODE	000H
+   74: 1	N      0003	EXTI0	CODE	003H
+   75: 1	N      000B	TIMER0	CODE	00BH
+   76: 1	N      0013	EXTI1	CODE	013H
+   77: 1	N      001B	TIMER1	CODE	01BH
+   78: 1	N      0023	SINT	CODE	023H
+   79:
+   80:				;====================================================================
+   81:				      ; Reset Vector
+   82:		N      0000	      org   0000h
+   83:	  0000	02 01 00	      jmp   Start
+   84:
+   85:		N      0003		  ORG	0003H
+   86:	  0003	02 01 15		  LJMP	INT0_ISR
+   87:
+   88:				;====================================================================
+   89:				; CODE SEGMENT
+   90:				;====================================================================
+   91:
+   92:		N      0100			org   0100h
+   93:	  0100			Start:
+   94:	  0100	D2 AF				SETB	EA			; Enable Interrupt
+   95:	  0102	D2 A8				SETB	EX0			; Enable INT0
+   96:				;		SETB	IT0			; INT0 NGAT THEO SUON XUONG
+   97:
+   98:	  0104	75 89 20			MOV		TMOD, #20H
+   99:	  0107	75 8D B0			MOV		TH1, #0B0H
+
+ASEM-51 V1.3                                         Copyright (c) 2002 by W.W. Heinz                                         PAGE 3
+
+
+
+ Line  I  Addr  Code            Source
+
+  100:
+  101:	  010A	75 A0 0F			MOV		P2, #0FH
+  102:	  010D	75 90 00			MOV		P1, #0
+  103:	  0110	79 00				MOV		R1, #0		; COUNT
+  104:	  0112	E4				CLR		A
+  105:	  0113	80 FE				SJMP	$
+  106:
+  107:				;-------------------------------
+  108:	  0115			INT0_ISR:
+  109:	  0115	12 01 6C			CALL	DELAY
+  110:	  0118	20 B2 4B			JB		P3.2, EXIT
+  111:
+  112:	  011B	75 A0 FE			MOV		P2, #11111110B
+  113:	  011E	E5 A0				MOV		A, P2
+  114:	  0120	54 F0				ANL		A, #0F0H
+  115:	  0122	B4 F0 24			CJNE	A, #0F0H, ROW0
+  116:
+  117:	  0125	75 A0 FD			MOV		P2, #11111101B
+  118:	  0128	E5 A0				MOV		A, P2
+  119:	  012A	79 04				MOV		R1, #4
+  120:	  012C	54 F0				ANL		A, #0F0H
+  121:	  012E	B4 F0 1E			CJNE	A, #0F0H, ROW1
+  122:
+  123:	  0131	75 A0 FB			MOV		P2, #11111011B
+  124:	  0134	E5 A0				MOV		A, P2
+  125:	  0136	79 08				MOV		R1, #8
+  126:	  0138	54 F0				ANL		A, #0F0H
+  127:	  013A	B4 F0 18			CJNE	A, #0F0H, ROW2
+  128:
+  129:	  013D	75 A0 F7			MOV		P2, #11110111B
+  130:	  0140	E5 A0				MOV		A, P2
+  131:	  0142	79 0C				MOV		R1, #12
+  132:	  0144	54 F0				ANL		A, #0F0H
+  133:	  0146	B4 F0 12			CJNE	A, #0F0H, ROW3
+  134:	  0149			ROW0:
+  135:	  0149	33				RLC		A
+  136:	  014A	50 15				JNC		MATCH
+  137:	  014C	09				INC		R1
+  138:	  014D	80 FA				SJMP	ROW0
+  139:	  014F			ROW1:
+  140:	  014F	33				RLC		A
+  141:	  0150	50 0F				JNC		MATCH
+  142:	  0152	09				INC		R1
+  143:	  0153	80 FA				SJMP	ROW1
+  144:	  0155			ROW2:
+  145:	  0155	33				RLC		A
+  146:	  0156	50 09				JNC		MATCH
+  147:	  0158	09				INC		R1
+  148:	  0159	80 FA				SJMP	ROW2
+  149:	  015B			ROW3:
+  150:	  015B	33				RLC		A
+  151:	  015C	50 03				JNC		MATCH
+  152:	  015E	09				INC		R1
+  153:	  015F	80 FA				SJMP	ROW3
+  154:	  0161			MATCH:
+  155:	  0161	74 00				MOV		A, #0
+
+ASEM-51 V1.3                                         Copyright (c) 2002 by W.W. Heinz                                         PAGE 4
+
+
+
+ Line  I  Addr  Code            Source
+
+  156:	  0163	E9				MOV		A, R1
+  157:	  0164	F5 90				MOV		P1, A
+  158:	  0166			EXIT:
+  159:	  0166	79 00				MOV		R1, #0
+  160:	  0168	75 A0 F0			MOV		P2, #0F0H
+  161:	  016B	32				RETI
+  162:				;====================================================================
+  163:	  016C			DELAY:
+  164:	  016C	D2 8E				SETB	TR1
+  165:	  016E	30 8F FD			JNB		TF1, $
+  166:	  0171	C2 8F				CLR		TF1
+  167:	  0173	C2 8E				CLR		TR1
+  168:	  0175	22				RET
+  169:				;====================================================================
+  170:				      END
+
+
+
+
+
+                     register banks used:  ---
+
+                     no errors
+
+
+
+
+ASEM-51 V1.3                                         Copyright (c) 2002 by W.W. Heinz                                         PAGE 5
+
+
+
+
+
+	       L I S T   O F   S Y M B O L S
+	       =============================
+
+
+SYMBOL				  TYPE     VALUE	LINE
+------------------------------------------------------------
+??ASEM_51			  NUMBER    8051
+??VERSION			  NUMBER    0130
+AC				  BIT	      D6	  70
+ACC				  DATA	      E0	  27
+B				  DATA	      F0	  28
+CY				  BIT	      D7	  71
+DELAY				  CODE	    016C	 163
+DPH				  DATA	      83	  11
+DPL				  DATA	      82	  10
+EA				  BIT	      AF	  51
+ES				  BIT	      AC	  50
+ET0				  BIT	      A9	  47
+ET1				  BIT	      AB	  49
+EX0				  BIT	      A8	  46
+EX1				  BIT	      AA	  48
+EXIT				  CODE	    0166	 158
+EXTI0				  CODE	    0003	  74
+EXTI1				  CODE	    0013	  76
+F0				  BIT	      D5	  69
+IE				  DATA	      A8	  23
+IE0				  BIT	      89	  31
+IE1				  BIT	      8B	  33
+INT0				  BIT	      B2	  54
+INT0_ISR			  CODE	    0115	 108
+INT1				  BIT	      B3	  55
+IP				  DATA	      B8	  25
+IT0				  BIT	      88	  30
+IT1				  BIT	      8A	  32
+MATCH				  CODE	    0161	 154
+OV				  BIT	      D2	  66
+P				  BIT	      D0	  65
+P0				  DATA	      80	   8
+P1				  DATA	      90	  19
+P2				  DATA	      A0	  22
+P3				  DATA	      B0	  24
+PCON				  DATA	      87	  12
+PS				  BIT	      BC	  64
+PSW				  DATA	      D0	  26
+PT0				  BIT	      B9	  61
+PT1				  BIT	      BB	  63
+PX0				  BIT	      B8	  60
+PX1				  BIT	      BA	  62
+RB8				  BIT	      9A	  40
+RD				  BIT	      B7	  59
+REN				  BIT	      9C	  42
+RESET				  CODE	    0000	  73
+RI				  BIT	      98	  38
+ROW0				  CODE	    0149	 134
+ROW1				  CODE	    014F	 139
+ROW2				  CODE	    0155	 144
+
+ASEM-51 V1.3                                         Copyright (c) 2002 by W.W. Heinz                                         PAGE 6
+
+
+
+SYMBOL				  TYPE     VALUE	LINE
+------------------------------------------------------------
+ROW3				  CODE	    015B	 149
+RS0				  BIT	      D3	  67
+RS1				  BIT	      D4	  68
+RXD				  BIT	      B0	  52
+SBUF				  DATA	      99	  21
+SCON				  DATA	      98	  20
+SINT				  CODE	    0023	  78
+SM0				  BIT	      9F	  45
+SM1				  BIT	      9E	  44
+SM2				  BIT	      9D	  43
+SP				  DATA	      81	   9
+START				  CODE	    0100	  93
+T0				  BIT	      B4	  56
+T1				  BIT	      B5	  57
+TB8				  BIT	      9B	  41
+TCON				  DATA	      88	  13
+TF0				  BIT	      8D	  35
+TF1				  BIT	      8F	  37
+TH0				  DATA	      8C	  17
+TH1				  DATA	      8D	  18
+TI				  BIT	      99	  39
+TIMER0				  CODE	    000B	  75
+TIMER1				  CODE	    001B	  77
+TL0				  DATA	      8A	  15
+TL1				  DATA	      8B	  16
+TMOD				  DATA	      89	  14
+TR0				  BIT	      8C	  34
+TR1				  BIT	      8E	  36
+TXD				  BIT	      B1	  53
+WR				  BIT	      B6	  58

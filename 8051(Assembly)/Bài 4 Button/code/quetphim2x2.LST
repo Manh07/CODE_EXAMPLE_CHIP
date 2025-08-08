@@ -1,0 +1,56 @@
+A51 MACRO ASSEMBLER  QUETPHIM2X2                                                          10/13/2017 16:19:02 PAGE     1
+
+
+MACRO ASSEMBLER A51 V8.01
+OBJECT MODULE PLACED IN quetphim2x2.OBJ
+ASSEMBLER INVOKED BY: C:\Keil\C51\BIN\A51.EXE quetphim2x2.asm SET(SMALL) DEBUG EP
+
+LOC  OBJ            LINE     SOURCE
+
+                       1       ;================================= 
+                       2       ; Mot phim bat tat mot led 
+                       3       ;================================= 
+                       4     
+                       5      
+                       6      
+                       7                             
+                       8     
+                       9     
+                      10     
+0000                  11     ORG 00H
+0000                  12     MAIN:
+                      13     
+0000 309402           14     JNB P1.4,PHIM1
+0003 80FB             15     JMP MAIN
+0005                  16     PHIM1:
+0005 C2A0             17     CLR P2.0
+0007 110C             18     acall delay_500ms
+0009 D2A0             19     SETB P2.0
+000B 22               20     RET
+000C                  21     delay_500ms:
+000C 7550C8           22     MOV 50H,#200
+000F 7551FA           23     l1: MOV 51H,#250
+0012 D551FD           24     DJNZ 51H,$
+0015 D550F7           25     DJNZ 50H,l1
+0018 22               26     RET
+                      27     END
+A51 MACRO ASSEMBLER  QUETPHIM2X2                                                          10/13/2017 16:19:02 PAGE     2
+
+SYMBOL TABLE LISTING
+------ ----- -------
+
+
+N A M E             T Y P E  V A L U E   ATTRIBUTES
+
+DELAY_500MS. . . .  C ADDR   000CH   A   
+L1 . . . . . . . .  C ADDR   000FH   A   
+MAIN . . . . . . .  C ADDR   0000H   A   
+P1 . . . . . . . .  D ADDR   0090H   A   
+P2 . . . . . . . .  D ADDR   00A0H   A   
+PHIM1. . . . . . .  C ADDR   0005H   A   
+
+
+REGISTER BANK(S) USED: 0 
+
+
+ASSEMBLY COMPLETE.  0 WARNING(S), 0 ERROR(S)

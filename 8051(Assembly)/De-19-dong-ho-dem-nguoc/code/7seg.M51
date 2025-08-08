@@ -1,0 +1,169 @@
+BL51 BANKED LINKER/LOCATER V6.22.4.0                                                    05/01/2025  21:47:56  PAGE 1
+
+
+BL51 BANKED LINKER/LOCATER V6.22.4.0, INVOKED BY:
+C:\KEIL_V5\C51\BIN\BL51.EXE 7seg.obj TO 7seg RAMSIZE (256)
+
+
+INPUT MODULES INCLUDED:
+  7seg.obj (7SEG)
+
+
+LINK MAP OF MODULE:  7seg (7SEG)
+
+
+            TYPE    BASE      LENGTH    RELOCATION   SEGMENT NAME
+            -----------------------------------------------------
+
+            * * * * * * *   D A T A   M E M O R Y   * * * * * * *
+            REG     0000H     0008H     ABSOLUTE     "REG BANK 0"
+
+            * * * * * * *   C O D E   M E M O R Y   * * * * * * *
+            CODE    0000H     100AH     ABSOLUTE     
+
+
+
+SYMBOL TABLE OF MODULE:  7seg (7SEG)
+
+  VALUE           TYPE          NAME
+  ----------------------------------
+
+  -------         MODULE        7SEG
+  D:00F0H         SYMBOL        B
+  C:0075H         SYMBOL        CHECK_BUTTONS
+  C:0066H         SYMBOL        COUNTDOWN
+  C:00BBH         SYMBOL        DELAY_20MS
+  C:00BDH         SYMBOL        DELAY_20MS_LOOP1
+  C:00BFH         SYMBOL        DELAY_20MS_LOOP2
+  C:00B6H         SYMBOL        DELAY_2MS
+  C:0019H         SYMBOL        DISPLAY_LOOP
+  C:0023H         SYMBOL        DISPLAY_TIME
+  C:000EH         SYMBOL        MAIN_LOOP
+  C:0013H         SYMBOL        NOT_RUNNING
+  D:0080H         SYMBOL        P0
+  D:0090H         SYMBOL        P1
+  D:00B0H         SYMBOL        P3
+  B:0026H.2       SYMBOL        RUNNING
+  C:0017H         SYMBOL        RUNNING_MODE
+  C:006BH         SYMBOL        SEC_ZERO
+  C:1000H         SYMBOL        SEGMENT_CODE
+  C:00A4H         SYMBOL        SKIP_INC_MIN
+  C:00A1H         SYMBOL        SKIP_INC_MIN_WRAP
+  C:00B5H         SYMBOL        SKIP_INC_SEC
+  C:00B2H         SYMBOL        SKIP_INC_SEC_WRAP
+  C:0093H         SYMBOL        SKIP_RESET
+  C:0082H         SYMBOL        SKIP_START
+  C:0002H         SYMBOL        START_PROGRAM
+  C:0072H         SYMBOL        TIME_UP
+  C:00A1H         SYMBOL        WAIT_INC_MIN_RELEASE
+  C:00B2H         SYMBOL        WAIT_INC_SEC_RELEASE
+  C:0090H         SYMBOL        WAIT_RESET_RELEASE
+  C:007FH         SYMBOL        WAIT_START_RELEASE
+BL51 BANKED LINKER/LOCATER V6.22.4.0                                                  05/01/2025  21:47:56  PAGE 2
+
+
+  C:0000H         LINE#         5
+  C:0002H         LINE#         17
+  C:0004H         LINE#         18
+  C:0006H         LINE#         20
+  C:0009H         LINE#         21
+  C:000CH         LINE#         23
+  C:000EH         LINE#         29
+  C:0010H         LINE#         31
+  C:0013H         LINE#         34
+  C:0015H         LINE#         35
+  C:0017H         LINE#         38
+  C:0019H         LINE#         40
+  C:001BH         LINE#         41
+  C:001DH         LINE#         42
+  C:001FH         LINE#         44
+  C:0021H         LINE#         45
+  C:0023H         LINE#         52
+  C:0024H         LINE#         53
+  C:0027H         LINE#         54
+  C:0028H         LINE#         55
+  C:0029H         LINE#         58
+  C:002BH         LINE#         61
+  C:002CH         LINE#         62
+  C:002FH         LINE#         63
+  C:0030H         LINE#         64
+  C:0031H         LINE#         67
+  C:0033H         LINE#         72
+  C:0036H         LINE#         73
+  C:0039H         LINE#         74
+  C:003AH         LINE#         75
+  C:003BH         LINE#         76
+  C:003DH         LINE#         77
+  C:003FH         LINE#         80
+  C:0042H         LINE#         81
+  C:0045H         LINE#         82
+  C:0046H         LINE#         83
+  C:0047H         LINE#         84
+  C:0049H         LINE#         85
+  C:004BH         LINE#         86
+  C:004DH         LINE#         89
+  C:0050H         LINE#         90
+  C:0053H         LINE#         91
+  C:0054H         LINE#         92
+  C:0055H         LINE#         93
+  C:0057H         LINE#         94
+  C:0059H         LINE#         97
+  C:005CH         LINE#         98
+  C:005FH         LINE#         99
+  C:0060H         LINE#         100
+  C:0061H         LINE#         101
+  C:0063H         LINE#         102
+  C:0065H         LINE#         104
+  C:0066H         LINE#         110
+  C:0067H         LINE#         111
+  C:0069H         LINE#         112
+  C:006AH         LINE#         113
+  C:006BH         LINE#         116
+BL51 BANKED LINKER/LOCATER V6.22.4.0                                                  05/01/2025  21:47:56  PAGE 3
+
+
+  C:006CH         LINE#         117
+  C:006EH         LINE#         118
+  C:006FH         LINE#         119
+  C:0071H         LINE#         120
+  C:0072H         LINE#         123
+  C:0074H         LINE#         124
+  C:0075H         LINE#         131
+  C:0078H         LINE#         132
+  C:007AH         LINE#         133
+  C:007DH         LINE#         134
+  C:007FH         LINE#         136
+  C:0082H         LINE#         140
+  C:0085H         LINE#         141
+  C:0087H         LINE#         142
+  C:008AH         LINE#         143
+  C:008CH         LINE#         144
+  C:008EH         LINE#         145
+  C:0090H         LINE#         147
+  C:0093H         LINE#         151
+  C:0096H         LINE#         152
+  C:0098H         LINE#         153
+  C:009BH         LINE#         154
+  C:009CH         LINE#         155
+  C:009FH         LINE#         156
+  C:00A1H         LINE#         159
+  C:00A4H         LINE#         163
+  C:00A7H         LINE#         164
+  C:00A9H         LINE#         165
+  C:00ACH         LINE#         166
+  C:00ADH         LINE#         167
+  C:00B0H         LINE#         168
+  C:00B2H         LINE#         171
+  C:00B5H         LINE#         174
+  C:00B6H         LINE#         180
+  C:00B8H         LINE#         181
+  C:00BAH         LINE#         182
+  C:00BBH         LINE#         185
+  C:00BDH         LINE#         187
+  C:00BFH         LINE#         189
+  C:00C1H         LINE#         190
+  C:00C3H         LINE#         191
+  -------         ENDMOD        7SEG
+
+Program Size: data=8.0 xdata=0 code=4106
+LINK/LOCATE RUN COMPLETE.  0 WARNING(S),  0 ERROR(S)

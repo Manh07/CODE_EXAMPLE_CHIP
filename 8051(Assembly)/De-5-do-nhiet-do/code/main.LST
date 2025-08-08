@@ -1,0 +1,231 @@
+A51 MACRO ASSEMBLER  MAIN                                                                 05/03/2025 17:10:16 PAGE     1
+
+
+MACRO ASSEMBLER A51 V8.2.7.0
+OBJECT MODULE PLACED IN main.OBJ
+ASSEMBLER INVOKED BY: C:\Keil_v5\C51\BIN\A51.EXE main.asm SET(SMALL) DEBUG EP
+
+LOC  OBJ            LINE     SOURCE
+
+                       1     $mod51 
+                       2     ; Chỉ định sử dụng bộ vi điều khiển 8051.
+                       3     
+0000                   4     ORG 0000H
+                       5     ; Đặt địa chỉ bắt đầu của chương trình tại 0x0000.
+                       6     
+                       7     ; ===== Định nghĩa =====
+  0031                 8     TEMP_LM  EQU 31H       ; Địa chỉ bộ nhớ lưu giá trị nhiệt độ sau khi đã
+                              nhân đôi.
+  00B2                 9     RD_PIN   EQU P3.2      ; Chân điều khiển đọc dữ liệu (Read) của chip ADC0804.
+  00B3                10     WR_PIN   EQU P3.3      ; Chân điều khiển ghi dữ liệu (Write) / bắt đầu chuy�
+                             ��n đổi của chip ADC0804.
+  00B4                11     INTR     EQU P3.4      ; Chân báo ngắt (Interrupt) của chip ADC0804, báo hiệu quá
+                              trình chuyển đổi hoàn tất.
+                      12     
+                      13     ; ===== Chương trình chính =====
+0000                  14     START:
+0000 75A000           15         MOV P2, #00H       ; Thiết lập giá trị ban đầu cho Port 2 là 00H, tắt tấ
+                             t cả các đoạn của LED 7 đoạn (với LED cathode chung, mức 0 tích cực).
+0003 7580FF           16         MOV P0, #0FFH      ; Thiết lập giá trị ban đầu cho Port 0 là 0FFH, tắt t�
+                             �t cả các LED (với LED được chọn bằng mức thấp, mức 1 không chọn).
+                      17     
+0006                  18     MAIN_LOOP:
+0006 1110             19         ACALL read_adc         ; Gọi chương trình con (Subroutine Call) để đọc giá 
+                             trị từ ADC0804.
+0008 1124             20         ACALL adc_to_temp      ; Gọi chương trình con để chuyển đổi giá trị ADC
+                              sang giá trị nhiệt độ (đã nhân đôi).
+000A 112A             21         ACALL extract_digits   ; Gọi chương trình con để tách giá trị nhiệt độ
+                              thành các chữ số hàng trăm, chục, đơn vị.
+000C 113B             22         ACALL display_numbers  ; Gọi chương trình con để hiển thị các chữ số l
+                             ên 4 LED 7 đoạn.
+000E 80F6             23         SJMP MAIN_LOOP         ; Nhảy không điều kiện (Short Jump) về đầu vòng l�
+                             ��p chính để thực hiện lại các bước.
+                      24     
+                      25     ;-------------------------------------------------
+                      26     ; Đọc dữ liệu từ ADC0804
+                      27     ;-------------------------------------------------
+0010                  28     read_adc:
+0010 C2B3             29         CLR WR_PIN             ; Xóa bit (Clear bit) của chân WR_PIN xuống mức thấp, 
+                             bắt đầu quá trình chuyển đổi ADC.
+0012 1168             30         ACALL delay            ; Gọi chương trình con delay để tạo khoảng thời gi
+                             an cần thiết cho quá trình bắt đầu chuyển đổi.
+0014 D2B3             31         SETB WR_PIN            ; Đặt bit (Set bit) của chân WR_PIN lên mức cao, kết 
+                             thúc xung kích hoạt chuyển đổi.
+                      32     
+0016                  33     wait_intr:
+0016 20B4FD           34         JB INTR, wait_intr     ; Nhảy nếu bit (Jump if Bit) INTR bằng 1 về lại chính
+                              nó, đợi cho chân INTR xuống mức 0 (báo hiệu chuyển đổi hoàn tất).
+0019 C2B2             35         CLR RD_PIN             ; Xóa bit của chân RD_PIN xuống mức thấp để bắt �
+                             �ầu quá trình đọc dữ liệu từ ADC.
+001B 1168             36         ACALL delay            ; Gọi chương trình con delay để tạo khoảng thời gi
+                             an cần thiết cho quá trình đọc dữ liệu.
+001D E590             37         MOV A, P1              ; Di chuyển (Move) giá trị từ Port 1 (nơi dữ liệu AD
+                             C được đưa ra) vào thanh ghi A (Accumulator).
+001F F531             38         MOV TEMP_LM, A         ; Di chuyển giá trị từ thanh ghi A vào vùng nhớ TEMP_
+                             LM để lưu trữ giá trị ADC.
+0021 D2B2             39         SETB RD_PIN            ; Đặt bit của chân RD_PIN lên mức cao, kết thúc quá
+                              trình đọc dữ liệu từ ADC.
+A51 MACRO ASSEMBLER  MAIN                                                                 05/03/2025 17:10:16 PAGE     2
+
+0023 22               40         RET                    ; Trở về (Return) từ chương trình con.
+                      41     
+                      42     ;-------------------------------------------------
+                      43     ; Chuyển đổi giá trị ADC sang nhiệt độ
+                      44     ; (giả sử 255 = 127.5°C, xấp xỉ nhân 2)
+                      45     ;-------------------------------------------------
+0024                  46     adc_to_temp:
+0024 E531             47         MOV A, TEMP_LM         ; Di chuyển giá trị ADC từ TEMP_LM vào thanh ghi A.
+0026 23               48         RL A                   ; Dịch trái thanh ghi A một bit (Rotate Left), tương đư
+                             ơng với nhân giá trị với 2.
+0027 F531             49         MOV TEMP_LM, A         ; Di chuyển giá trị đã nhân đôi từ thanh ghi A trở
+                              lại vùng nhớ TEMP_LM.
+0029 22               50         RET                    ; Trở về từ chương trình con.
+                      51     
+                      52     ;-------------------------------------------------
+                      53     ; Tách nhiệt độ thành 3 chữ số: R1 (trăm), R2 (chục), R3 (đơn vị)
+                      54     ;-------------------------------------------------
+002A                  55     extract_digits:
+002A E531             56         MOV A, TEMP_LM         ; Di chuyển giá trị nhiệt độ (đã nhân đôi) từ T
+                             EMP_LM vào thanh ghi A.
+002C 75F064           57         MOV B, #100            ; Di chuyển giá trị 100 vào thanh ghi B để thực hiệ
+                             n phép chia.
+002F 84               58         DIV AB                 ; Chia (Divide) giá trị trong A cho giá trị trong B. Kết
+                              quả: A chứa thương (hàng trăm), B chứa số dư.
+0030 F9               59         MOV R1, A              ; Di chuyển thương (hàng trăm) từ thanh ghi A vào thanh
+                              ghi R1.
+0031 E5F0             60         MOV A, B               ; Di chuyển số dư (phần còn lại sau khi chia cho 100) 
+                             từ thanh ghi B vào thanh ghi A.
+0033 75F00A           61         MOV B, #10              ; Di chuyển giá trị 10 vào thanh ghi B để tiếp tục
+                              phép chia.
+0036 84               62         DIV AB                 ; Chia giá trị trong A (số dư trước đó) cho 10. Kết
+                              quả: A chứa thương (hàng chục), B chứa số dư (hàng đơn vị).
+0037 FA               63         MOV R2, A              ; Di chuyển thương (hàng chục) từ thanh ghi A vào than
+                             h ghi R2.
+0038 ABF0             64         MOV R3, B              ; Di chuyển số dư (hàng đơn vị) từ thanh ghi B vào 
+                             thanh ghi R3.
+003A 22               65         RET                    ; Trở về từ chương trình con.
+                      66     
+                      67     ;-------------------------------------------------
+                      68     ; Hiển thị 3 chữ số nhiệt độ trên 4 LED 7 đoạn
+                      69     ;-------------------------------------------------
+003B                  70     display_numbers:
+                      71         ; LED 1 - hàng trăm
+003B 7580FE           72         MOV P0, #0FEH          ; Chọn LED thứ nhất (P0.0 = 0, các chân còn lại = 1, 
+                             active low).
+003E 901000           73         MOV DPTR, #SEGMENT_CODE ; Đặt con trỏ dữ liệu (Data Pointer) trỏ đến đ�
+                             �a chỉ của bảng mã LED 7 đoạn.
+0041 E9               74         MOV A, R1              ; Di chuyển giá trị hàng trăm từ thanh ghi R1 vào than
+                             h ghi A.
+0042 93               75         MOVC A, @A+DPTR        ; Di chuyển mã 7 đoạn tương ứng với giá trị trong
+                              A từ bộ nhớ chương trình vào thanh ghi A.
+0043 F5A0             76         MOV P2, A              ; Xuất mã 7 đoạn từ thanh ghi A ra Port 2 để hiển t
+                             hị lên LED.
+0045 1171             77         ACALL DELAY_2MS        ; Gọi chương trình con delay để LED hiển thị trong m
+                             ột khoảng thời gian.
+                      78     
+                      79         ; LED 2 - hàng chục
+0047 7580FD           80         MOV P0, #0FDH          ; Chọn LED thứ hai (P0.1 = 0, các chân còn lại = 1).
+004A 901000           81         MOV DPTR, #SEGMENT_CODE ; Đặt lại con trỏ dữ liệu trỏ đến bảng mã LE
+                             D.
+004D EA               82         MOV A, R2              ; Di chuyển giá trị hàng chục từ thanh ghi R2 vào tha
+                             nh ghi A.
+004E 93               83         MOVC A, @A+DPTR        ; Lấy mã 7 đoạn cho hàng chục.
+004F F5A0             84         MOV P2, A              ; Xuất mã 7 đoạn ra Port 2.
+0051 1171             85         ACALL DELAY_2MS        ; Gọi delay.
+                      86     
+A51 MACRO ASSEMBLER  MAIN                                                                 05/03/2025 17:10:16 PAGE     3
+
+                      87         ; LED 3 - hàng đơn vị
+0053 7580FB           88         MOV P0, #0FBH          ; Chọn LED thứ ba (P0.2 = 0, các chân còn lại = 1).
+0056 901000           89         MOV DPTR, #SEGMENT_CODE ; Đặt lại con trỏ dữ liệu.
+0059 EB               90         MOV A, R3              ; Di chuyển giá trị hàng đơn vị từ thanh ghi R3 vào
+                              thanh ghi A.
+005A 93               91         MOVC A, @A+DPTR        ; Lấy mã 7 đoạn cho hàng đơn vị.
+005B F5A0             92         MOV P2, A              ; Xuất mã 7 đoạn ra Port 2.
+005D 1171             93         ACALL DELAY_2MS        ; Gọi delay.
+                      94     
+                      95         ; LED 4 - không dùng (hoặc có thể hiện 'C')
+005F 7580F7           96         MOV P0, #0F7H          ; Chọn LED thứ tư (P0.3 = 0, các chân còn lại = 1).
+0062 75A0FF           97         MOV P2, #0FFH          ; Tắt tất cả các đoạn của LED thứ tư (hiển th�
+                             � trống).
+0065 1171             98         ACALL DELAY_2MS        ; Gọi delay.
+                      99     
+0067 22              100         RET                    ; Trở về từ chương trình con.
+                     101     
+                     102     ;-------------------------------------------------
+                     103     ; Delay ngắn cho ADC
+                     104     ;-------------------------------------------------
+0068                 105     delay:
+0068 7E64            106         MOV R6, #100           ; Thiết lập giá trị đếm cho vòng lặp delay ngoài.
+006A 7F1F            107     D1: MOV R7, #1FH            ; Thiết lập giá trị đếm cho vòng lặp delay trong.
+006C DFFE            108     D2: DJNZ R7, D2            ; Giảm giá trị R7 và nhảy về D2 nếu R7 khác 0 (vòn
+                             g lặp trong).
+006E DEFA            109         DJNZ R6, D1            ; Giảm giá trị R6 và nhảy về D1 nếu R6 khác 0 (vòn
+                             g lặp ngoài).
+0070 22              110         RET                    ; Trở về từ chương trình con delay.
+                     111     
+                     112     ;-------------------------------------------------
+                     113     ; Delay để hiển thị LED (khoảng ~2ms)
+                     114     ;-------------------------------------------------
+0071                 115     DELAY_2MS:
+0071 7EFA            116         MOV R6, #250           ; Thiết lập giá trị đếm cho vòng lặp delay.
+0073                 117     DELAY_LOOP:
+0073 DEFE            118         DJNZ R6, DELAY_LOOP    ; Giảm giá trị R6 và nhảy về DELAY_LOOP nếu R6 khác
+                              0.
+0075 22              119         RET                    ; Trở về từ chương trình con delay.
+                     120     
+                     121     ;-------------------------------------------------
+                     122     ; Bảng mã LED 7 đoạn (Cathode chung)
+                     123     ; SEGMENT_CODE[0-9] = mã từ 0 đến 9
+                     124     ;-------------------------------------------------
+1000                 125     ORG 1000H
+1000                 126     SEGMENT_CODE:
+1000 3F              127         DB 3FH ; 0             ; Mã 7 đoạn để hiển thị số 0.
+1001 06              128         DB 06H ; 1             ; Mã 7 đoạn để hiển thị số 1.
+1002 5B              129         DB 5BH ; 2             ; Mã 7 đoạn để hiển thị số 2.
+1003 4F              130         DB 4FH ; 3             ; Mã 7 đoạn để hiển thị số 3.
+1004 66              131         DB 66H ; 4             ; Mã 7 đoạn để hiển thị số 4.
+1005 6D              132         DB 6DH ; 5             ; Mã 7 đoạn để hiển thị số 5.
+1006 7D              133         DB 7DH ; 6             ; Mã 7 đoạn để hiển thị số 6.
+1007 07              134         DB 07H ; 7             ; Mã 7 đoạn để hiển thị số 7.
+1008 7F              135         DB 7FH ; 8             ; Mã 7 đoạn để hiển thị số 8.
+1009 6F              136         DB 6FH ; 9             ; Mã 7 đoạn để hiển thị số 9.
+                     137     
+                     138     ;-------------------------------------------------
+                     139     END
+A51 MACRO ASSEMBLER  MAIN                                                                 05/03/2025 17:10:16 PAGE     4
+
+SYMBOL TABLE LISTING
+------ ----- -------
+
+
+N A M E             T Y P E  V A L U E   ATTRIBUTES
+
+ADC_TO_TEMP. . . .  C ADDR   0024H   A   
+B. . . . . . . . .  D ADDR   00F0H   A   
+D1 . . . . . . . .  C ADDR   006AH   A   
+D2 . . . . . . . .  C ADDR   006CH   A   
+DELAY. . . . . . .  C ADDR   0068H   A   
+DELAY_2MS. . . . .  C ADDR   0071H   A   
+DELAY_LOOP . . . .  C ADDR   0073H   A   
+DISPLAY_NUMBERS. .  C ADDR   003BH   A   
+EXTRACT_DIGITS . .  C ADDR   002AH   A   
+INTR . . . . . . .  B ADDR   00B0H.4 A   
+MAIN_LOOP. . . . .  C ADDR   0006H   A   
+P0 . . . . . . . .  D ADDR   0080H   A   
+P1 . . . . . . . .  D ADDR   0090H   A   
+P2 . . . . . . . .  D ADDR   00A0H   A   
+P3 . . . . . . . .  D ADDR   00B0H   A   
+RD_PIN . . . . . .  B ADDR   00B0H.2 A   
+READ_ADC . . . . .  C ADDR   0010H   A   
+SEGMENT_CODE . . .  C ADDR   1000H   A   
+START. . . . . . .  C ADDR   0000H   A   
+TEMP_LM. . . . . .  N NUMB   0031H   A   
+WAIT_INTR. . . . .  C ADDR   0016H   A   
+WR_PIN . . . . . .  B ADDR   00B0H.3 A   
+
+
+REGISTER BANK(S) USED: 0 
+
+
+ASSEMBLY COMPLETE.  0 WARNING(S), 0 ERROR(S)

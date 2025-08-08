@@ -1,0 +1,162 @@
+A51 MACRO ASSEMBLER  7SEG                                                                 10/13/2017 23:28:01 PAGE     1
+
+
+MACRO ASSEMBLER A51 V8.02
+OBJECT MODULE PLACED IN 7seg.OBJ
+ASSEMBLER INVOKED BY: C:\Keil\C51\BIN\A51.EXE 7seg.asm SET(SMALL) DEBUG EP
+
+LOC  OBJ            LINE     SOURCE
+
+                       1     
+                       2     
+                       3     
+                       4     
+                       5     
+                       6     
+                       7     
+                       8     
+                       9     
+                      10     
+                      11     
+                      12     
+                      13     
+                      14     
+                      15     
+                      16     
+                      17     
+                      18     
+                      19     
+                      20     
+                      21     
+                      22     
+                      23     
+                      24     
+                      25     
+                      26     
+                      27     
+                      28     
+                      29     
+                      30     
+                      31     
+                      32     
+                      33     
+                      34     
+                      35     
+                      36     
+                      37     
+                      38     
+                      39     
+                      40     
+                      41     
+                      42     
+                      43     
+                      44     
+                      45     
+                      46     
+                      47     
+                      48     
+                      49     
+                      50     
+                      51     
+                      52     
+                      53     
+                      54     
+                      55     
+                      56     
+                      57     
+                      58     
+A51 MACRO ASSEMBLER  7SEG                                                                 10/13/2017 23:28:01 PAGE     2
+
+                      59     
+                      60     
+                      61     
+                      62     
+                      63     
+                      64     
+                      65     
+                      66     
+                      67     
+                      68     
+                      69     
+                      70     
+                      71     
+                      72     
+                      73     
+                      74     
+                      75     ;======================
+                      76     ; dem tu 1 den 99
+                      77     ;======================
+  0080                78     num equ p0
+  0090                79     donvi bit p1.0
+  0091                80     chuc bit p1.1
+0000                  81     org 00h
+0000                  82     main:
+0000 759000           83     mov p1,#000h
+0003 7D64             84     mov r5,#100 ;1 so quet 100 lan
+0005                  85     reset:
+0005 7E00             86     mov R6,#0
+0007                  87     loop:
+0007 EE               88     mov a,r6
+0008 B46402           89     cjne a,#100,skip ;dem len 100 thi quay ve 0
+000B 80F8             90     sjmp reset
+000D                  91     skip:
+000D 75F00A           92     mov b,#10
+0010 84               93     div ab ;tach chu so hang chuc luu torng a, don vi luu trong b
+0011 90003A           94     mov dptr,#ma7seg
+                      95     
+0014 D291             96     setb chuc;enable 7seg no1
+0016 93               97     movc a,@a+dptr
+0017 F580             98     mov num,a ;chu so hang chuc
+0019 120031           99     lcall delay;delay 250us
+001C C291            100     clr chuc ;disable 7seg no1
+                     101     
+001E D290            102     setb donvi
+0020 E5F0            103     mov a,b
+0022 93              104     movc a,@a+dptr
+0023 F580            105     mov num,a ; chu so hang don vi
+0025 120031          106     lcall delay
+0028 C290            107     clr donvi
+002A DDDB            108     djnz r5,loop ; r5=0 tang r6 len 1
+002C 0E              109     inc r6
+002D 7D64            110     mov r5,#100
+002F 80D6            111     sjmp loop
+                     112     ;==================
+0031                 113     delay:
+0031 7A10            114     mov r2,#16       
+0033 7BFA            115     loop1: mov r3,#250                          
+0035 DBFE            116     djnz r3,$
+0037 DAFA            117     djnz r2,loop1
+0039 22              118     ret
+                     119     ;=================
+003A                 120     ma7seg:
+003A 3F065B4F        121     db 03fh,006h,05bh,04fh,066h,06dh,07dh,007h,07fh,06fh
+003E 666D7D07                
+0042 7F6F                    
+                     122     end
+A51 MACRO ASSEMBLER  7SEG                                                                 10/13/2017 23:28:01 PAGE     3
+
+SYMBOL TABLE LISTING
+------ ----- -------
+
+
+N A M E             T Y P E  V A L U E   ATTRIBUTES
+
+B. . . . . . . . .  D ADDR   00F0H   A   
+CHUC . . . . . . .  B ADDR   0090H.1 A   
+DELAY. . . . . . .  C ADDR   0031H   A   
+DONVI. . . . . . .  B ADDR   0090H.0 A   
+LOOP . . . . . . .  C ADDR   0007H   A   
+LOOP1. . . . . . .  C ADDR   0033H   A   
+MA7SEG . . . . . .  C ADDR   003AH   A   
+MAIN . . . . . . .  C ADDR   0000H   A   
+NUM. . . . . . . .  D ADDR   0080H   A   
+P0 . . . . . . . .  D ADDR   0080H   A   
+P1 . . . . . . . .  D ADDR   0090H   A   
+RESET. . . . . . .  C ADDR   0005H   A   
+SKIP . . . . . . .  C ADDR   000DH   A   
+
+
+REGISTER BANK(S) USED: 0 
+
+
+ASSEMBLY COMPLETE.  0 WARNING(S), 0 ERROR(S)

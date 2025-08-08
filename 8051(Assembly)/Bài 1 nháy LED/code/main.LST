@@ -1,0 +1,44 @@
+A51 MACRO ASSEMBLER  MAIN                                                                 10/06/2017 22:15:38 PAGE     1
+
+
+MACRO ASSEMBLER A51 V8.01
+OBJECT MODULE PLACED IN main.OBJ
+ASSEMBLER INVOKED BY: C:\Keil\C51\BIN\A51.EXE main.asm SET(SMALL) DEBUG EP
+
+LOC  OBJ            LINE     SOURCE
+
+  00A0                 1             led bit P2.0
+0000                   2     org 00h
+                       3     
+0000                   4     main:
+0000 C2A0              5           clr led
+0002 12000C            6           lcall delay_500ms
+0005 D2A0              7           setb led
+0007 12000C            8           lcall delay_500ms
+000A 80F4              9           sjmp main
+000C                  10     delay_500ms :
+000C 7550C8           11           MOV 50H,#200
+000F 7551FA           12     loop: MOV 51H,#250
+0012 D551FD           13           DJNZ 51H,$
+0015 D550F7           14           DJNZ 50H,loop
+0018 22               15        RET
+                      16     end
+A51 MACRO ASSEMBLER  MAIN                                                                 10/06/2017 22:15:38 PAGE     2
+
+SYMBOL TABLE LISTING
+------ ----- -------
+
+
+N A M E             T Y P E  V A L U E   ATTRIBUTES
+
+DELAY_500MS. . . .  C ADDR   000CH   A   
+LED. . . . . . . .  B ADDR   00A0H.0 A   
+LOOP . . . . . . .  C ADDR   000FH   A   
+MAIN . . . . . . .  C ADDR   0000H   A   
+P2 . . . . . . . .  D ADDR   00A0H   A   
+
+
+REGISTER BANK(S) USED: 0 
+
+
+ASSEMBLY COMPLETE.  0 WARNING(S), 0 ERROR(S)

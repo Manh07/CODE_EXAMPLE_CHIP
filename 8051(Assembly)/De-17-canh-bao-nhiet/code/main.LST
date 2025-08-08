@@ -1,0 +1,325 @@
+A51 MACRO ASSEMBLER  MAIN                                                                 05/02/2025 14:38:01 PAGE     1
+
+
+MACRO ASSEMBLER A51 V8.2.7.0
+OBJECT MODULE PLACED IN main.OBJ
+ASSEMBLER INVOKED BY: C:\Keil_v5\C51\BIN\A51.EXE main.asm SET(SMALL) DEBUG EP
+
+LOC  OBJ            LINE     SOURCE
+
+                       1     $mod51 
+                       2     ; Chỉ định sử dụng bộ vi điều khiển 8051.
+                       3     
+0000                   4     ORG 0000H
+                       5     ; Đặt địa chỉ bắt đầu của chương trình tại 0x0000.
+                       6     
+                       7     ; ========== Định nghĩa ==========
+  0030                 8     TEMP_SET EQU 30H       ; Địa chỉ bộ nhớ lưu giá trị ngưỡng nhiệt độ.
+  0031                 9     TEMP_LM  EQU 31H       ; Địa chỉ bộ nhớ lưu giá trị nhiệt độ từ LM35.
+  0032                10     U        EQU 32H       ; Thanh ghi tạm thời (không sử dụng trong đoạn mã này).
+  0033                11     L        EQU 33H       ; Thanh ghi tạm thời (không sử dụng trong đoạn mã này).
+  00B5                12     LED_PIN  EQU P3.5      ; Chân điều khiển LED.
+                      13     
+  0080                14     PORT     EQU P0        ; Định nghĩa PORT là cổng P0.
+  00A0                15     RS       EQU P2.0      ; Định nghĩa chân RS của LCD là P2.0.
+  00A1                16     RW       EQU P2.1      ; Định nghĩa chân RW của LCD là P2.1.
+  00A2                17     EN       EQU P2.2      ; Định nghĩa chân EN của LCD là P2.2.
+                      18     
+  00B2                19     RD_PIN   EQU P3.2      ; Định nghĩa chân RD của ADC0804 là P3.2.
+  00B3                20     WR_PIN   EQU P3.3      ; Định nghĩa chân WR của ADC0804 là P3.3.
+  00B4                21     INTR     EQU P3.4      ; Định nghĩa chân INTR của ADC0804 là P3.4.
+                      22     
+                      23     ; ===== Dữ liệu LCD =====
+0000 54656D70         24     TXT_TEMP:  DB 'Temp Set:', 0    ; Chuỗi hiển thị "Temp Set:" trên LCD.
+0004 20536574                
+0008 3A00                    
+000A 4C4D3335         25     TXT_LM35:  DB 'LM35: ', 0       ; Chuỗi hiển thị "LM35: " trên LCD.
+000E 3A2000                  
+0011 4144433A         26     TXT_ADC:   DB 'ADC: ', 0        ; Chuỗi hiển thị "ADC: " trên LCD.
+0015 2000                    
+0017 6F432020         27     TXT_DEG:   DB 'oC     ', 0      ; Chuỗi hiển thị "oC" trên LCD.
+001B 20202000                
+                      28     
+                      29     ; ===== MACRO =====
+                      30     SS MACRO LBL
+                      31         MOV R1, #0                 ; Đặt R1 = 0 (chỉ số bắt đầu của chuỗi).
+                      32         MOV DPTR, LBL              ; Đặt con trỏ dữ liệu (DPTR) trỏ đến nhãn chu
+                             ỗi.
+                      33         LCALL lcd_puts             ; Gọi hàm in chuỗi ra LCD.
+                      34     ENDM
+                      35     ; Macro để in chuỗi ra LCD.
+                      36     
+                      37     ; ===== Chương trình chính =====
+001F                  38     START:
+001F 753019           39         MOV TEMP_SET, #25          ; Đặt ngưỡng nhiệt độ ban đầu là 25°C.
+0022 C2A1             40         CLR RW                     ; Đặt chân RW của LCD về mức thấp (chế độ g
+                             hi).
+0024 7590FF           41         MOV P1, #0FFH              ; Cấu hình cổng P1 làm đầu vào (đọc dữ liệu
+                              từ ADC0804).
+0027 1137             42         ACALL init_lcd             ; Gọi hàm khởi tạo LCD.
+                      43     
+0029                  44     MAIN_LOOP:
+0029 11C3             45         ACALL check_button         ; Gọi hàm kiểm tra nút nhấn tăng/giảm ngưỡng n
+                             hiệt độ.
+002B 1167             46         ACALL display_temp         ; Gọi hàm hiển thị ngưỡng nhiệt độ lên LCD.
+                      47     
+002D 119D             48         ACALL read_adc             ; Gọi hàm đọc giá trị ADC từ ADC0804.
+002F 11B1             49         ACALL adc_to_temp          ; Gọi hàm chuyển đổi giá trị ADC sang nhiệt đ�
+A51 MACRO ASSEMBLER  MAIN                                                                 05/02/2025 14:38:01 PAGE     2
+
+                             ��.
+0031 11B7             50         ACALL control_led          ; Gọi hàm điều khiển LED dựa trên nhiệt độ.
+0033 1182             51         ACALL display_lm35         ; Gọi hàm hiển thị nhiệt độ LM35 lên LCD.
+                      52     
+0035 80F2             53         SJMP MAIN_LOOP             ; Nhảy về đầu vòng lặp chính.
+                      54     
+                      55     ; ===== Khởi tạo LCD =====
+0037                  56     init_lcd:
+0037 311D             57         ACALL delay                ; Gọi hàm delay để đảm bảo LCD ổn định.
+0039 311D             58         ACALL delay                ; Gọi thêm một lần delay.
+                      59     
+003B C284             60         CLR PORT.4                 ; Đặt chân P0.4 về mức thấp.
+003D D285             61         SETB PORT.5                ; Đặt chân P0.5 về mức cao.
+003F C286             62         CLR PORT.6                 ; Đặt chân P0.6 về mức thấp.
+0041 C287             63         CLR PORT.7                 ; Đặt chân P0.7 về mức thấp.
+0043 C2A0             64         CLR RS                     ; Đặt chân RS về mức thấp (chế độ lệnh).
+0045 D2A2             65         SETB EN                    ; Đặt chân EN về mức cao (kích hoạt LCD).
+0047 311D             66         ACALL delay                ; Gọi hàm delay.
+0049 C2A2             67         CLR EN                     ; Đặt chân EN về mức thấp.
+                      68     
+004B 7428             69         MOV A, #28H                ; Gửi lệnh cấu hình LCD (2 dòng, 5x8 điểm ảnh).
+004D 11E7             70         ACALL lcd_cmd              ; Gọi hàm gửi lệnh đến LCD.
+004F 740C             71         MOV A, #0CH                ; Gửi lệnh bật màn hình LCD, tắt con trỏ.
+0051 11E7             72         ACALL lcd_cmd              ; Gọi hàm gửi lệnh đến LCD.
+0053 7406             73         MOV A, #06H                ; Gửi lệnh tự động tăng địa chỉ con trỏ LCD.
+0055 11E7             74         ACALL lcd_cmd              ; Gọi hàm gửi lệnh đến LCD.
+0057 7401             75         MOV A, #01H                ; Gửi lệnh xóa màn hình LCD.
+0059 11E7             76         ACALL lcd_cmd              ; Gọi hàm gửi lệnh đến LCD.
+005B 22               77         RET                        ; Trả về.
+                      78     
+                      79     ; ===== In chuỗi LCD =====
+005C                  80     lcd_puts:
+005C E9               81         MOV A, R1                  ; Lấy chỉ số hiện tại của chuỗi.
+005D 93               82         MOVC A, @A+DPTR            ; Lấy ký tự từ chuỗi tại địa chỉ DPTR + R1.
+005E 6006             83         JZ lcd_puts_end            ; Nếu ký tự là 0 (kết thúc chuỗi), nhảy đến 
+                             lcd_puts_end.
+0060 1200EC           84         LCALL lcd_data             ; Gửi ký tự đến LCD.
+0063 09               85         INC R1                     ; Tăng chỉ số chuỗi.
+0064 80F6             86         SJMP lcd_puts              ; Nhảy về đầu vòng lặp để in ký tự tiếp th
+                             eo.
+0066                  87     lcd_puts_end:
+0066 22               88         RET                        ; Trả về.
+                      89     
+                      90     ; ===== Hiển thị Temp Set =====
+0067                  91     display_temp:
+0067 7480             92         MOV A, #80H                ; Đặt con trỏ LCD tại dòng 1.
+0069 11E7             93         ACALL lcd_cmd              ; Gọi hàm gửi lệnh đến LCD.
+006B 900000           94         MOV DPTR, #TXT_TEMP        ; Hiển thị chuỗi "Temp Set:".
+006E 7900             95         MOV R1, #0
+0070 12005C           96         LCALL lcd_puts
+                      97     
+0073 E530             98         MOV A, TEMP_SET            ; Lấy giá trị ngưỡng nhiệt độ.
+0075 11DA             99         ACALL convert_2digit       ; Chuyển đổi sang 2 chữ số ASCII.
+0077 D2A0            100         SETB RS                    ; Đặt RS về mức cao (chế độ dữ liệu).
+0079 EA              101         MOV A, R2                  ; Hiển thị chữ số hàng chục.
+007A 11EC            102         ACALL lcd_data
+007C EB              103         MOV A, R3                  ; Hiển thị chữ số hàng đơn vị.
+007D 11EC            104         ACALL lcd_data
+007F C2A0            105         CLR RS                     ; Đặt RS về mức thấp (chế độ lệnh).
+0081 22              106         RET                        ; Trả về.
+                     107     
+                     108     ; ===== Hiển thị LM35 =====
+0082                 109     display_lm35:
+0082 74C0            110         MOV A, #0C0H               ; Đặt con trỏ LCD tại dòng 2.
+0084 11E7            111         ACALL lcd_cmd              ; Gọi hàm gửi lệnh đến LCD.
+0086 90000A          112         MOV DPTR, #TXT_LM35        ; Hiển thị chuỗi "LM35: ".
+A51 MACRO ASSEMBLER  MAIN                                                                 05/02/2025 14:38:01 PAGE     3
+
+0089 7900            113         MOV R1, #0
+008B 12005C          114         LCALL lcd_puts
+                     115     
+008E E531            116         MOV A, TEMP_LM             ; Lấy giá trị nhiệt độ từ TEMP_LM.
+0090 11DA            117         ACALL convert_2digit       ; Chuyển đổi sang 2 chữ số ASCII.
+0092 D2A0            118         SETB RS                    ; Đặt RS về mức cao (chế độ dữ liệu).
+0094 EA              119         MOV A, R2                  ; Hiển thị chữ số hàng chục.
+0095 11EC            120         ACALL lcd_data
+0097 EB              121         MOV A, R3                  ; Hiển thị chữ số hàng đơn vị.
+0098 11EC            122         ACALL lcd_data
+009A C2A0            123         CLR RS                     ; Đặt RS về mức thấp (chế độ lệnh).
+009C 22              124         RET                        ; Trả về.
+                     125     
+                     126     ; ===== Đọc dữ liệu từ ADC0804 =====
+009D                 127     read_adc:
+009D C2B3            128         CLR WR_PIN                 ; Kích hoạt chuyển đổi ADC.
+009F 311D            129         ACALL delay                ; Gọi hàm delay.
+00A1 D2B3            130         SETB WR_PIN                ; Kết thúc tín hiệu ghi.
+                     131     
+00A3                 132     wait_intr:
+00A3 20B4FD          133         JB INTR, wait_intr         ; Chờ INTR xuống thấp (chuyển đổi hoàn tất).
+00A6 C2B2            134         CLR RD_PIN                 ; Kích hoạt đọc dữ liệu.
+00A8 311D            135         ACALL delay                ; Gọi hàm delay.
+00AA E590            136         MOV A, P1                  ; Đọc dữ liệu từ cổng P1.
+00AC F531            137         MOV TEMP_LM, A             ; Lưu giá trị vào TEMP_LM.
+00AE D2B2            138         SETB RD_PIN                ; Kết thúc tín hiệu đọc.
+00B0 22              139         RET                        ; Trả về.
+                     140     
+                     141     ; ===== Chuyển đổi giá trị ADC sang nhiệt độ =====
+00B1                 142     adc_to_temp:
+00B1 E531            143         MOV A, TEMP_LM             ; Lấy giá trị ADC từ TEMP_LM.
+00B3 23              144         RL A                       ; Dịch trái 1 bit (nhân giá trị ADC với 2).
+00B4 F531            145         MOV TEMP_LM, A             ; Lưu kết quả vào TEMP_LM.
+00B6 22              146         RET                        ; Trả về.
+                     147     
+                     148     ; ===== Điều khiển LED =====
+00B7                 149     control_led:
+00B7 E531            150         MOV A, TEMP_LM             ; Lấy giá trị nhiệt độ.
+00B9 9530            151         SUBB A, TEMP_SET           ; So sánh với ngưỡng đặt.
+00BB 4003            152         JC led_off                 ; Nếu nhỏ hơn ngưỡng, tắt LED.
+00BD D2B5            153         SETB LED_PIN               ; Bật LED.
+00BF 22              154         RET                        ; Trả về.
+                     155     
+00C0                 156     led_off:
+00C0 C2B5            157         CLR LED_PIN                ; Tắt LED.
+00C2 22              158         RET                        ; Trả về.
+                     159     
+                     160     ; ===== Nút nhấn tăng/giảm =====
+00C3                 161     check_button:
+00C3 20B004          162         JB P3.0, check_decrease    ; Kiểm tra nút nhấn giảm.
+00C6 311D            163         ACALL delay
+00C8 0530            164         INC TEMP_SET               ; Tăng ngưỡng nhiệt độ.
+00CA                 165     check_decrease:
+00CA 20B10C          166         JB P3.1, check_done        ; Kiểm tra nút nhấn tăng.
+00CD 311D            167         ACALL delay
+00CF 7830            168         MOV R0, #TEMP_SET
+00D1 E6              169         MOV A, @R0
+00D2 B40002          170         CJNE A, #0, dec_temp       ; Nếu TEMP_SET > 0, giảm ngưỡng.
+00D5 8002            171         SJMP check_done
+00D7                 172     dec_temp:
+00D7 1530            173         DEC TEMP_SET               ; Giảm ngưỡng nhiệt độ.
+00D9                 174     check_done:
+00D9 22              175         RET                        ; Trả về.
+                     176     
+                     177     ; ===== Chuyển đổi 2 chữ số ASCII =====
+00DA                 178     convert_2digit:
+A51 MACRO ASSEMBLER  MAIN                                                                 05/02/2025 14:38:01 PAGE     4
+
+00DA 75F00A          179         MOV B, #10                 ; Chia lấy hàng chục và đơn vị.
+00DD 84              180         DIV AB
+00DE 2430            181         ADD A, #30H                ; Chuyển sang mã ASCII.
+00E0 FA              182         MOV R2, A
+00E1 E5F0            183         MOV A, B
+00E3 2430            184         ADD A, #30H
+00E5 FB              185         MOV R3, A
+00E6 22              186         RET                        ; Trả về.
+                     187     
+                     188     ; ===== Lệnh gửi đến LCD (command) =====
+00E7                 189     lcd_cmd:
+00E7 C2A0            190         CLR RS                     ; Gửi lệnh.
+00E9 11F1            191         ACALL send_nibble
+00EB 22              192         RET                        ; Trả về.
+                     193     
+                     194     ; ===== Lệnh gửi đến LCD (data) =====
+00EC                 195     lcd_data:
+00EC D2A0            196         SETB RS                    ; Gửi dữ liệu.
+00EE 11F1            197         ACALL send_nibble
+00F0 22              198         RET                        ; Trả về.
+                     199     
+                     200     ; ===== Gửi 2 nibble tới LCD =====
+00F1                 201     send_nibble:
+00F1 F532            202         MOV U, A
+00F3 5332F0          203         ANL U, #0F0H               ; Lấy 4 bit cao.
+00F6 C4              204         SWAP A
+00F7 54F0            205         ANL A, #0F0H               ; Lấy 4 bit thấp.
+00F9 F533            206         MOV L, A
+00FB E532            207         MOV A, U
+00FD 3104            208         ACALL move_to_port         ; Gửi 4 bit cao.
+00FF E533            209         MOV A, L
+0101 3104            210         ACALL move_to_port         ; Gửi 4 bit thấp.
+0103 22              211         RET                        ; Trả về.
+                     212     
+                     213     ; ===== Xuất dữ liệu ra P0.4–P0.7 =====
+0104                 214     move_to_port:
+0104 A2E4            215         MOV C, ACC.4
+0106 9284            216         MOV PORT.4, C
+0108 A2E5            217         MOV C, ACC.5
+010A 9285            218         MOV PORT.5, C
+010C A2E6            219         MOV C, ACC.6
+010E 9286            220         MOV PORT.6, C
+0110 A2E7            221         MOV C, ACC.7
+0112 9287            222         MOV PORT.7, C
+0114 D2A2            223         SETB EN                    ; Kích hoạt LCD.
+0116 311D            224         ACALL delay
+0118 C2A2            225         CLR EN                     ; Tắt kích hoạt LCD.
+011A 311D            226         ACALL delay
+011C 22              227         RET                        ; Trả về.
+                     228     
+                     229     ; ===== Delay dài =====
+011D                 230     delay:
+011D 7E5F            231         MOV R6, #5FH
+011F 7F3F            232     D1: MOV R7, #3FH
+0121 DFFE            233     D2: DJNZ R7, D2
+0123 DEFA            234         DJNZ R6, D1
+0125 22              235         RET                        ; Trả về.
+                     236     
+                     237     END
+                             ; Kết thúc chương trình.
+A51 MACRO ASSEMBLER  MAIN                                                                 05/02/2025 14:38:01 PAGE     5
+
+SYMBOL TABLE LISTING
+------ ----- -------
+
+
+N A M E             T Y P E  V A L U E   ATTRIBUTES
+
+ACC. . . . . . . .  D ADDR   00E0H   A   
+ADC_TO_TEMP. . . .  C ADDR   00B1H   A   
+B. . . . . . . . .  D ADDR   00F0H   A   
+CHECK_BUTTON . . .  C ADDR   00C3H   A   
+CHECK_DECREASE . .  C ADDR   00CAH   A   
+CHECK_DONE . . . .  C ADDR   00D9H   A   
+CONTROL_LED. . . .  C ADDR   00B7H   A   
+CONVERT_2DIGIT . .  C ADDR   00DAH   A   
+D1 . . . . . . . .  C ADDR   011FH   A   
+D2 . . . . . . . .  C ADDR   0121H   A   
+DEC_TEMP . . . . .  C ADDR   00D7H   A   
+DELAY. . . . . . .  C ADDR   011DH   A   
+DISPLAY_LM35 . . .  C ADDR   0082H   A   
+DISPLAY_TEMP . . .  C ADDR   0067H   A   
+EN . . . . . . . .  B ADDR   00A0H.2 A   
+INIT_LCD . . . . .  C ADDR   0037H   A   
+INTR . . . . . . .  B ADDR   00B0H.4 A   
+L. . . . . . . . .  N NUMB   0033H   A   
+LCD_CMD. . . . . .  C ADDR   00E7H   A   
+LCD_DATA . . . . .  C ADDR   00ECH   A   
+LCD_PUTS . . . . .  C ADDR   005CH   A   
+LCD_PUTS_END . . .  C ADDR   0066H   A   
+LED_OFF. . . . . .  C ADDR   00C0H   A   
+LED_PIN. . . . . .  B ADDR   00B0H.5 A   
+MAIN_LOOP. . . . .  C ADDR   0029H   A   
+MOVE_TO_PORT . . .  C ADDR   0104H   A   
+P0 . . . . . . . .  D ADDR   0080H   A   
+P1 . . . . . . . .  D ADDR   0090H   A   
+P2 . . . . . . . .  D ADDR   00A0H   A   
+P3 . . . . . . . .  D ADDR   00B0H   A   
+PORT . . . . . . .  D ADDR   0080H   A   
+RD_PIN . . . . . .  B ADDR   00B0H.2 A   
+READ_ADC . . . . .  C ADDR   009DH   A   
+RS . . . . . . . .  B ADDR   00A0H.0 A   
+RW . . . . . . . .  B ADDR   00A0H.1 A   
+SEND_NIBBLE. . . .  C ADDR   00F1H   A   
+START. . . . . . .  C ADDR   001FH   A   
+TEMP_LM. . . . . .  N NUMB   0031H   A   
+TEMP_SET . . . . .  N NUMB   0030H   A   
+TXT_ADC. . . . . .  C ADDR   0011H   A   
+TXT_DEG. . . . . .  C ADDR   0017H   A   
+TXT_LM35 . . . . .  C ADDR   000AH   A   
+TXT_TEMP . . . . .  C ADDR   0000H   A   
+U. . . . . . . . .  N NUMB   0032H   A   
+WAIT_INTR. . . . .  C ADDR   00A3H   A   
+WR_PIN . . . . . .  B ADDR   00B0H.3 A   
+
+
+REGISTER BANK(S) USED: 0 
+
+
+ASSEMBLY COMPLETE.  0 WARNING(S), 0 ERROR(S)

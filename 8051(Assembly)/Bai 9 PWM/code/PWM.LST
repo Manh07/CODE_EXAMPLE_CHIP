@@ -1,0 +1,57 @@
+A51 MACRO ASSEMBLER  PWM                                                                  10/08/2017 10:00:41 PAGE     1
+
+
+MACRO ASSEMBLER A51 V8.02
+OBJECT MODULE PLACED IN PWM.OBJ
+ASSEMBLER INVOKED BY: C:\Keil\C51\BIN\A51.EXE PWM.asm SET(SMALL) DEBUG EP
+
+LOC  OBJ            LINE     SOURCE
+
+                       1     ;=================================
+                       2     ; tao xung vuong
+                       3     ;=================================
+                       4     ;tan so thach anh 11.0592MHz
+                       5     ;=================================
+                       6     ; su dung timer0 mode 2 de tao tan so xung vuong f=5kHz
+                       7     ;=================================
+0000                   8      org 0
+                       9     
+0000 020800           10     ljmp main
+000B                  11     org 0bh
+000B 020811           12     ljmp interupt_timer0
+0800                  13     org 800h
+0800                  14     main:
+0800 758902           15     mov tmod,#2
+0803 758AA3           16     mov tl0,#0a3h
+0806 758CA3           17     mov th0,#0a3h
+0809 D28C             18     setb tr0
+080B D2A9             19     setb et0
+080D D2AF             20     setb ea
+080F 80FE             21     sjmp $
+0811                  22     interupt_timer0:
+0811 B2A0             23     cpl p2.0 ;dao chan p2.0
+0813 32               24     reti
+                      25     end
+A51 MACRO ASSEMBLER  PWM                                                                  10/08/2017 10:00:41 PAGE     2
+
+SYMBOL TABLE LISTING
+------ ----- -------
+
+
+N A M E             T Y P E  V A L U E   ATTRIBUTES
+
+EA . . . . . . . .  B ADDR   00A8H.7 A   
+ET0. . . . . . . .  B ADDR   00A8H.1 A   
+INTERUPT_TIMER0. .  C ADDR   0811H   A   
+MAIN . . . . . . .  C ADDR   0800H   A   
+P2 . . . . . . . .  D ADDR   00A0H   A   
+TH0. . . . . . . .  D ADDR   008CH   A   
+TL0. . . . . . . .  D ADDR   008AH   A   
+TMOD . . . . . . .  D ADDR   0089H   A   
+TR0. . . . . . . .  B ADDR   0088H.4 A   
+
+
+REGISTER BANK(S) USED: 0 
+
+
+ASSEMBLY COMPLETE.  0 WARNING(S), 0 ERROR(S)

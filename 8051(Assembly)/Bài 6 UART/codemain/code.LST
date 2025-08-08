@@ -1,0 +1,85 @@
+A51 MACRO ASSEMBLER  CODE                                                                 10/14/2017 08:39:05 PAGE     1
+
+
+MACRO ASSEMBLER A51 V8.01
+OBJECT MODULE PLACED IN code.OBJ
+ASSEMBLER INVOKED BY: C:\Keil\C51\BIN\A51.EXE code.asm SET(SMALL) DEBUG EP
+
+LOC  OBJ            LINE     SOURCE
+
+                       1     ;=================================
+                       2     ; G.i 1 byte t. máy tính xu.ng vi ði.u khi.n, vi ði.u khi.n ð.c r.i g.i l.i byte tõng t. lê
+                             n máy
+                       3     
+                       4     ;=================================
+0000                   5     org 000h
+0000 020100            6     ljmp begin
+0023                   7     org 23h
+0023 02011A            8     ljmp serial_IT
+                       9     ;=================================
+                      10     ;/**
+                      11     ; * FUNCTION_PURPOSE: This file set up uart in mode 1 (8 bits uart) with
+                      12     ; * timer 1 in mode 2 (8 bits auto reload timer).
+                      13     ; * FUNCTION_INPUTS: void
+                      14     ; * FUNCTION_OUTPUTS: void
+                      15     ; */
+                      16     ;=================================
+0100                  17     org 0100h
+0100                  18     begin:
+0100 759850           19     MOV SCON, #50h ; /* uart in mode 1 (8 bit), REN=1 */
+0103 438920           20     ORL TMOD, #20h ; /* Timer 1 in mode 2 */
+0106 758DF9           21     MOV TH1, #0F9h ; /* 9600 Bds at 11.059MHz */
+0109 758BF9           22     MOV TL1, #0F9h ; /* 9600 Bds at 11.059MHz */
+010C E587             23     MOV A,PCON
+010E D2E7             24     SETB ACC.7
+0110 F587             25     MOV PCON,A
+0112 D2AC             26     SETB ES ; /* Enable serial interrupt*/
+0114 D2AF             27     SETB EA ; /* Enable global interrupt */
+0116 D28E             28     SETB TR1 ; /* Timer 1 run */
+0118 80FE             29     JMP $ ; /* endless */
+                      30     ;/**
+                      31     ; * FUNCTION_PURPOSE: serial interrupt, echo received data.
+                      32     ; * FUNCTION_INPUTS: P3.0(RXD) serial input
+                      33     ; * FUNCTION_OUTPUTS: P3.1(TXD) serial output
+                      34     ; */
+011A                  35     serial_IT:
+011A 309809           36     JNB RI,EMIT_IT ; test if it is a reception
+011D C298             37     CLR RI ; clear reception flag for next reception
+011F E599             38     MOV A,SBUF ; read data from uart
+0121 F599             39     MOV SBUF,A ; write same data to uart
+0123 020128           40     LJMP END_IT
+0126                  41     EMIT_IT:
+0126 C299             42     CLR TI ; clear transmition flag for next transmition
+0128                  43     END_IT:
+0128 32               44     RETI
+                      45     end
+A51 MACRO ASSEMBLER  CODE                                                                 10/14/2017 08:39:05 PAGE     2
+
+SYMBOL TABLE LISTING
+------ ----- -------
+
+
+N A M E             T Y P E  V A L U E   ATTRIBUTES
+
+ACC. . . . . . . .  D ADDR   00E0H   A   
+BEGIN. . . . . . .  C ADDR   0100H   A   
+EA . . . . . . . .  B ADDR   00A8H.7 A   
+EMIT_IT. . . . . .  C ADDR   0126H   A   
+END_IT . . . . . .  C ADDR   0128H   A   
+ES . . . . . . . .  B ADDR   00A8H.4 A   
+PCON . . . . . . .  D ADDR   0087H   A   
+RI . . . . . . . .  B ADDR   0098H.0 A   
+SBUF . . . . . . .  D ADDR   0099H   A   
+SCON . . . . . . .  D ADDR   0098H   A   
+SERIAL_IT. . . . .  C ADDR   011AH   A   
+TH1. . . . . . . .  D ADDR   008DH   A   
+TI . . . . . . . .  B ADDR   0098H.1 A   
+TL1. . . . . . . .  D ADDR   008BH   A   
+TMOD . . . . . . .  D ADDR   0089H   A   
+TR1. . . . . . . .  B ADDR   0088H.6 A   
+
+
+REGISTER BANK(S) USED: 0 
+
+
+ASSEMBLY COMPLETE.  0 WARNING(S), 0 ERROR(S)

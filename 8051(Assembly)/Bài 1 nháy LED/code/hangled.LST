@@ -1,0 +1,51 @@
+A51 MACRO ASSEMBLER  HANGLED                                                              10/06/2017 22:18:06 PAGE     1
+
+
+MACRO ASSEMBLER A51 V8.01
+OBJECT MODULE PLACED IN hangled.OBJ
+ASSEMBLER INVOKED BY: C:\Keil\C51\BIN\A51.EXE hangled.asm SET(SMALL) DEBUG EP
+
+LOC  OBJ            LINE     SOURCE
+
+  00A0                 1      led_data equ p2
+0000                   2             org 00h
+0000                   3             main : 
+0000 7400              4             mov a,#0x00
+0002 D3                5             setb c
+0003                   6             loop :
+0003 33                7             rlc a
+0004 F4                8             cpl a
+0005 F5A0              9             mov led_data,a
+0007 F4               10             cpl a
+0008 12000D           11             lcall delay_500ms
+000B 80F6             12             sjmp loop
+                      13     
+000D                  14             delay_500ms     :
+000D 7550C8           15             MOV 50H,#200
+0010 7551FA           16     ll: MOV 51H,#250
+0013 D551FD           17             DJNZ 51H,$
+0016 D550F7           18             DJNZ 50H,ll
+                      19     
+0019 22               20             RET
+                      21             end
+                               
+A51 MACRO ASSEMBLER  HANGLED                                                              10/06/2017 22:18:06 PAGE     2
+
+SYMBOL TABLE LISTING
+------ ----- -------
+
+
+N A M E             T Y P E  V A L U E   ATTRIBUTES
+
+DELAY_500MS. . . .  C ADDR   000DH   A   
+LED_DATA . . . . .  D ADDR   00A0H   A   
+LL . . . . . . . .  C ADDR   0010H   A   
+LOOP . . . . . . .  C ADDR   0003H   A   
+MAIN . . . . . . .  C ADDR   0000H   A   
+P2 . . . . . . . .  D ADDR   00A0H   A   
+
+
+REGISTER BANK(S) USED: 0 
+
+
+ASSEMBLY COMPLETE.  0 WARNING(S), 0 ERROR(S)

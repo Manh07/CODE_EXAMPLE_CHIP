@@ -1,0 +1,284 @@
+A51 MACRO ASSEMBLER  7SEG                                                                 05/03/2025 20:36:14 PAGE     1
+
+
+MACRO ASSEMBLER A51 V8.2.7.0
+OBJECT MODULE PLACED IN 7seg.OBJ
+ASSEMBLER INVOKED BY: C:\Keil_v5\C51\BIN\A51.EXE 7seg.asm SET(SMALL) DEBUG EP
+
+LOC  OBJ            LINE     SOURCE
+
+0000                   1     ORG 0000H        ; Bắt đầu chương trình từ địa chỉ 0000H
+0000 8000              2     SJMP START_PROGRAM ; Nhảy đến nhãn START_PROGRAM để bắt đầu thực thi chươ
+                             ng trình chính
+                       3     
+                       4     ;-------------------------------------------------
+                       5     ; Start Program
+                       6     ;-------------------------------------------------
+0002                   7     START_PROGRAM:
+                       8         ; Initialize traffic light pins (P3.0–P3.5)
+0002 75B000            9         MOV P3, #00H        ; Thiết lập tất cả các chân của Port 3 ở mức thấp
+                              (tắt tất cả đèn giao thông ban đầu)
+                      10     
+                      11     ;-------------------------------------------------
+                      12     ; Main Loop
+                      13     ;-------------------------------------------------
+0005                  14     MAIN_LOOP:
+                      15         ; Phase 1: NS Green (11s), EW Red (15s)
+0005 780B             16         MOV R0, #11         ; Gán giá trị 11 (giây) cho thanh ghi R0 để đếm ngược
+                              thời gian đèn xanh hướng Bắc-Nam
+0007 790F             17         MOV R1, #15         ; Gán giá trị 15 (giây) cho thanh ghi R1 để đếm ngược
+                              thời gian đèn đỏ hướng Đông-Tây
+0009 75B021           18         MOV P3, #100001B    ; Thiết lập trạng thái đèn: Bắc-Nam Xanh (P3.2=1), Đôn
+                             g-Tây Đỏ (P3.3=1), các đèn khác tắt
+000C 112B             19         ACALL PHASE_NS_GREEN; Gọi chương trình con PHASE_NS_GREEN để thực hiện giai
+                              đoạn đèn xanh Bắc-Nam
+                      20     
+                      21         ; NS Yellow (4s), EW Red (4s remaining)
+000E 7804             22         MOV R0, #4          ; Gán giá trị 4 (giây) cho thanh ghi R0 để đếm ngược 
+                             thời gian đèn vàng hướng Bắc-Nam
+0010 7904             23         MOV R1, #4          ; Gán giá trị 4 (giây) cho thanh ghi R1 để đếm ngược 
+                             thời gian đèn đỏ hướng Đông-Tây (15 - 11 = 4 giây còn lại)
+0012 75B022           24         MOV P3, #100010B    ; Thiết lập trạng thái đèn: Bắc-Nam Vàng (P3.1=1), Đô
+                             ng-Tây Đỏ (P3.3=1), các đèn khác tắt
+0015 113C             25         ACALL PHASE_NS_YELLOW; Gọi chương trình con PHASE_NS_YELLOW để thực hiện gi
+                             ai đoạn đèn vàng Bắc-Nam
+                      26     
+                      27         ; Phase 2: EW Green (11s), NS Red (15s)
+0017 780F             28         MOV R0, #15         ; Gán giá trị 15 (giây) cho thanh ghi R0 để đếm ngược
+                              thời gian đèn đỏ hướng Bắc-Nam
+0019 790B             29         MOV R1, #11         ; Gán giá trị 11 (giây) cho thanh ghi R1 để đếm ngược
+                              thời gian đèn xanh hướng Đông-Tây
+001B 75B00C           30         MOV P3, #001100B    ; Thiết lập trạng thái đèn: Đông-Tây Xanh (P3.5=1), B�
+                             �c-Nam Đỏ (P3.0=1), các đèn khác tắt
+001E 114D             31         ACALL PHASE_EW_GREEN; Gọi chương trình con PHASE_EW_GREEN để thực hiện giai
+                              đoạn đèn xanh Đông-Tây
+                      32     
+                      33         ; EW Yellow (4s), NS Red (4s remaining)
+0020 7804             34         MOV R0, #4          ; Gán giá trị 4 (giây) cho thanh ghi R0 để đếm ngược 
+                             thời gian đèn đỏ hướng Bắc-Nam (15 - 11 = 4 giây còn lại)
+0022 7904             35         MOV R1, #4          ; Gán giá trị 4 (giây) cho thanh ghi R1 để đếm ngược 
+                             thời gian đèn vàng hướng Đông-Tây
+0024 75B014           36         MOV P3, #010100B    ; Thiết lập trạng thái đèn: Đông-Tây Vàng (P3.4=1), B�
+                             ��c-Nam Đỏ (P3.0=1), các đèn khác tắt
+0027 115E             37         ACALL PHASE_EW_YELLOW; Gọi chương trình con PHASE_EW_YELLOW để thực hiện gi
+                             ai đoạn đèn vàng Đông-Tây
+                      38     
+0029 80DA             39         SJMP MAIN_LOOP    ; Nhảy về đầu vòng lặp chính để tiếp tục chu trình
+                      40     
+A51 MACRO ASSEMBLER  7SEG                                                                 05/03/2025 20:36:14 PAGE     2
+
+                      41     ;-------------------------------------------------
+                      42     ; PHASE_NS_GREEN: NS Green + EW Red
+                      43     ;-------------------------------------------------
+002B                  44     PHASE_NS_GREEN:
+002B 7F0B             45         MOV R7, #11         ; Gán giá trị 11 cho thanh ghi R7, đại diện cho 11 lần l
+                             ặp (mỗi lần ~1 giây)
+002D                  46     PHASE_NS_GREEN_LOOP:
+002D C007             47         PUSH 07H            ; Lưu giá trị của thanh ghi R7 vào stack
+002F 7FFF             48         MOV R7, #255        ; Gán giá trị 255 cho thanh ghi R7 để tạo vòng lặp dela
+                             y (chậm hơn)
+0031                  49     INNER_NS_GREEN:
+0031 116F             50         ACALL DISPLAY_TIME  ; Gọi chương trình con DISPLAY_TIME để hiển thị thời 
+                             gian đếm ngược
+0033 DFFC             51         DJNZ R7, INNER_NS_GREEN; Giảm R7 và nhảy về INNER_NS_GREEN nếu R7 chưa bằng
+                              0 (tạo delay)
+0035 D007             52         POP 07H             ; Khôi phục giá trị của thanh ghi R7 từ stack
+0037 11B0             53         ACALL COUNTDOWN     ; Gọi chương trình con COUNTDOWN để giảm giá trị đế
+                             m ngược (R0 và R1)
+0039 DFF2             54         DJNZ R7, PHASE_NS_GREEN_LOOP; Giảm R7 và nhảy về PHASE_NS_GREEN_LOOP nếu R7 ch
+                             ưa bằng 0 (duy trì thời gian pha)
+003B 22               55         RET                 ; Trở về chương trình gọi
+                      56     
+                      57     ;-------------------------------------------------
+                      58     ; PHASE_NS_YELLOW: NS Yellow + EW Red
+                      59     ;-------------------------------------------------
+003C                  60     PHASE_NS_YELLOW:
+003C 7F04             61         MOV R7, #4          ; Gán giá trị 4 cho thanh ghi R7, đại diện cho 4 lần l�
+                             �p (~4 giây)
+003E                  62     PHASE_NS_YELLOW_LOOP:
+003E C007             63         PUSH 07H
+0040 7FFF             64         MOV R7, #255        ; ~1.5s delay loop (chậm hơn)
+0042                  65     INNER_NS_YELLOW:
+0042 116F             66         ACALL DISPLAY_TIME
+0044 DFFC             67         DJNZ R7, INNER_NS_YELLOW
+0046 D007             68         POP 07H
+0048 11B0             69         ACALL COUNTDOWN
+004A DFF2             70         DJNZ R7, PHASE_NS_YELLOW_LOOP
+004C 22               71         RET
+                      72     
+                      73     ;-------------------------------------------------
+                      74     ; PHASE_EW_GREEN: EW Green + NS Red
+                      75     ;-------------------------------------------------
+004D                  76     PHASE_EW_GREEN:
+004D 7F0B             77         MOV R7, #11         ; 11 seconds for EW green
+004F                  78     PHASE_EW_GREEN_LOOP:
+004F C007             79         PUSH 07H
+0051 7FFF             80         MOV R7, #255        ; ~1.5s delay loop (chậm hơn)
+0053                  81     INNER_EW_GREEN:
+0053 116F             82         ACALL DISPLAY_TIME
+0055 DFFC             83         DJNZ R7, INNER_EW_GREEN
+0057 D007             84         POP 07H
+0059 11B0             85         ACALL COUNTDOWN
+005B DFF2             86         DJNZ R7, PHASE_EW_GREEN_LOOP
+005D 22               87         RET
+                      88     
+                      89     ;-------------------------------------------------
+                      90     ; PHASE_EW_YELLOW: EW Yellow + NS Red
+                      91     ;-------------------------------------------------
+005E                  92     PHASE_EW_YELLOW:
+005E 7F04             93         MOV R7, #4          ; 4 seconds for EW yellow
+0060                  94     PHASE_EW_YELLOW_LOOP:
+0060 C007             95         PUSH 07H
+0062 7FFF             96         MOV R7, #255        ; ~1.5s delay loop (chậm hơn)
+0064                  97     INNER_EW_YELLOW:
+0064 116F             98         ACALL DISPLAY_TIME
+0066 DFFC             99         DJNZ R7, INNER_EW_YELLOW
+A51 MACRO ASSEMBLER  7SEG                                                                 05/03/2025 20:36:14 PAGE     3
+
+0068 D007            100         POP 07H
+006A 11B0            101         ACALL COUNTDOWN
+006C DFF2            102         DJNZ R7, PHASE_EW_YELLOW_LOOP
+006E 22              103         RET
+                     104     
+                     105     ;-------------------------------------------------
+                     106     ; DISPLAY_TIME: Display on 4 LEDs (NS and EW)
+                     107     ;-------------------------------------------------
+006F                 108     DISPLAY_TIME:
+                     109         ; NS countdown (R0) → LED1 (tens), LED2 (units)
+006F E8              110         MOV A, R0           ; Chuyển giá trị của R0 (thời gian NS còn lại) vào tha
+                             nh ghi A
+0070 75F00A          111         MOV B, #10          ; Gán giá trị 10 vào thanh ghi B để thực hiện phép chia
+0073 84              112         DIV AB              ; Chia A cho B. Thương (hàng chục) được lưu trong A, số
+                              dư (hàng đơn vị) được lưu trong B
+0074 FA              113         MOV R2, A           ; Lưu thương (hàng chục của thời gian NS) vào thanh ghi 
+                             R2
+0075 ABF0            114         MOV R3, B           ; Lưu số dư (hàng đơn vị của thời gian NS) vào thanh 
+                             ghi R3
+                     115     
+                     116         ; EW countdown (R1) → LED3 (tens), LED4 (units)
+0077 E9              117         MOV A, R1           ; Chuyển giá trị của R1 (thời gian EW còn lại) vào tha
+                             nh ghi A
+0078 75F00A          118         MOV B, #10          ; Gán giá trị 10 vào thanh ghi B
+007B 84              119         DIV AB              ; Chia A cho B. Thương (hàng chục) vào A, số dư (hàng đ�
+                             �n vị) vào B
+007C FC              120         MOV R4, A           ; Lưu thương (hàng chục của thời gian EW) vào thanh ghi 
+                             R4
+007D ADF0            121         MOV R5, B           ; Lưu số dư (hàng đơn vị của thời gian EW) vào thanh 
+                             ghi R5
+                     122     
+                     123         ; LED1 (NS tens, R2)
+007F 75800E          124         MOV P0, #0EH        ; Chọn LED 1 (giả sử P0 điều khiển chân chọn LED)
+0082 901000          125         MOV DPTR, #SEGMENT_CODE; Nạp địa chỉ của bảng mã LED 7 đoạn vào thanh g
+                             hi con trỏ dữ liệu DPTR
+0085 EA              126         MOV A, R2           ; Chuyển giá trị hàng chục của thời gian NS (R2) vào t
+                             hanh ghi A
+0086 93              127         MOVC A, @A+DPTR     ; Đọc mã 7 đoạn tương ứng từ bảng SEGMENT_CODE dựa
+                              trên giá trị trong A
+0087 F590            128         MOV P1, A           ; Xuất mã 7 đoạn ra Port 1 để hiển thị trên LED 1
+0089 11B9            129         ACALL DELAY_2MS     ; Gọi chương trình con DELAY_2MS để tạo khoảng trễ ng
+                             ắn
+                     130     
+                     131         ; LED2 (NS units, R3)
+008B 75800D          132         MOV P0, #0DH        ; Chọn LED 2
+008E 901000          133         MOV DPTR, #SEGMENT_CODE
+0091 EB              134         MOV A, R3           ; Chuyển giá trị hàng đơn vị của thời gian NS (R3) v�
+                             �o A
+0092 93              135         MOVC A, @A+DPTR
+0093 F590            136         MOV P1, A
+0095 11B9            137         ACALL DELAY_2MS
+                     138     
+                     139         ; LED3 (EW tens, R4)
+0097 75800B          140         MOV P0, #0BH        ; Chọn LED 3
+009A 901000          141         MOV DPTR, #SEGMENT_CODE
+009D EC              142         MOV A, R4           ; Chuyển giá trị hàng chục của thời gian EW (R4) vào A
+009E 93              143         MOVC A, @A+DPTR
+009F F590            144         MOV P1, A
+00A1 11B9            145         ACALL DELAY_2MS
+                     146     
+                     147         ; LED4 (EW units, R5)
+00A3 758007          148         MOV P0, #07H        ; Chọn LED 4
+00A6 901000          149         MOV DPTR, #SEGMENT_CODE
+00A9 ED              150         MOV A, R5           ; Chuyển giá trị hàng đơn vị của thời gian EW (R5) v�
+                             �o A
+00AA 93              151         MOVC A, @A+DPTR
+A51 MACRO ASSEMBLER  7SEG                                                                 05/03/2025 20:36:14 PAGE     4
+
+00AB F590            152         MOV P1, A
+00AD 11B9            153         ACALL DELAY_2MS
+                     154     
+00AF 22              155         RET                 ; Trở về chương trình gọi
+                     156     
+                     157     ;-------------------------------------------------
+                     158     ; COUNTDOWN: Decrease R0 and R1 if non-zero
+                     159     ;-------------------------------------------------
+00B0                 160     COUNTDOWN:
+                     161         ; NS countdown
+00B0 E8              162         MOV A, R0           ; Chuyển giá trị của R0 vào A
+00B1 6001            163         JZ SKIP_R0          ; Nếu A bằng 0 (R0 đã về 0), nhảy đến SKIP_R0
+00B3 18              164         DEC R0              ; Giảm giá trị của R0 đi 1
+00B4                 165     SKIP_R0:
+                     166         ; EW countdown
+00B4 E9              167         MOV A, R1           ; Chuyển giá trị của R1 vào A
+00B5 6001            168         JZ SKIP_R1          ; Nếu A bằng 0 (R1 đã về 0), nhảy đến SKIP_R1
+00B7 19              169         DEC R1              ; Giảm giá trị của R1 đi 1
+00B8                 170     SKIP_R1:
+00B8 22              171         RET                 ; Trở về chương trình gọi
+                     172     
+                     173     ;-------------------------------------------------
+                     174     ; DELAY ~2ms
+                     175     ;-------------------------------------------------
+00B9                 176     DELAY_2MS:
+00B9 7EFF            177         MOV R6, #255        ; Gán giá trị 255 cho R6 để tạo vòng lặp delay
+00BB DEFE            178         DJNZ R6, $          ; Giảm R6 và nhảy về địa chỉ hiện tại ($) nếu R6 
+                             chưa bằng 0 (tạo delay)
+00BD 22              179         RET                 ; Trở về chương trình gọi
+                     180     
+                     181     ;-------------------------------------------------
+                     182     ; 7-Segment Code Table
+                     183     ;-------------------------------------------------
+1000                 184     ORG 1000H               ; Đặt địa chỉ bắt đầu cho bảng mã tại 1000H trong
+                              bộ nhớ chương trình
+1000                 185     SEGMENT_CODE:
+1000 3F065B4F        186         DB 3FH, 06H, 5BH, 4FH, 66H, 6DH, 7DH, 07H, 7FH, 6FH ; Mã 7 đoạn cho các số từ 
+                             0 đến 9 (anode chung)
+1004 666D7D07                
+1008 7F6F                    
+                     187     END                     ; Kết thúc chương trình Assembly
+A51 MACRO ASSEMBLER  7SEG                                                                 05/03/2025 20:36:14 PAGE     5
+
+SYMBOL TABLE LISTING
+------ ----- -------
+
+
+N A M E               T Y P E  V A L U E   ATTRIBUTES
+
+B. . . . . . . . . .  D ADDR   00F0H   A   
+COUNTDOWN. . . . . .  C ADDR   00B0H   A   
+DELAY_2MS. . . . . .  C ADDR   00B9H   A   
+DISPLAY_TIME . . . .  C ADDR   006FH   A   
+INNER_EW_GREEN . . .  C ADDR   0053H   A   
+INNER_EW_YELLOW. . .  C ADDR   0064H   A   
+INNER_NS_GREEN . . .  C ADDR   0031H   A   
+INNER_NS_YELLOW. . .  C ADDR   0042H   A   
+MAIN_LOOP. . . . . .  C ADDR   0005H   A   
+P0 . . . . . . . . .  D ADDR   0080H   A   
+P1 . . . . . . . . .  D ADDR   0090H   A   
+P3 . . . . . . . . .  D ADDR   00B0H   A   
+PHASE_EW_GREEN . . .  C ADDR   004DH   A   
+PHASE_EW_GREEN_LOOP.  C ADDR   004FH   A   
+PHASE_EW_YELLOW. . .  C ADDR   005EH   A   
+PHASE_EW_YELLOW_LOOP  C ADDR   0060H   A   
+PHASE_NS_GREEN . . .  C ADDR   002BH   A   
+PHASE_NS_GREEN_LOOP.  C ADDR   002DH   A   
+PHASE_NS_YELLOW. . .  C ADDR   003CH   A   
+PHASE_NS_YELLOW_LOOP  C ADDR   003EH   A   
+SEGMENT_CODE . . . .  C ADDR   1000H   A   
+SKIP_R0. . . . . . .  C ADDR   00B4H   A   
+SKIP_R1. . . . . . .  C ADDR   00B8H   A   
+START_PROGRAM. . . .  C ADDR   0002H   A   
+
+
+REGISTER BANK(S) USED: 0 
+
+
+ASSEMBLY COMPLETE.  0 WARNING(S), 0 ERROR(S)

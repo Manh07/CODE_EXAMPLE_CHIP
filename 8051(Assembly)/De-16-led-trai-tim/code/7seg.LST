@@ -1,0 +1,142 @@
+A51 MACRO ASSEMBLER  7SEG                                                                 05/03/2025 22:44:36 PAGE     1
+
+
+MACRO ASSEMBLER A51 V8.2.7.0
+OBJECT MODULE PLACED IN 7seg.OBJ
+ASSEMBLER INVOKED BY: C:\Keil_v5\C51\BIN\A51.EXE 7seg.asm SET(SMALL) DEBUG EP
+
+LOC  OBJ            LINE     SOURCE
+
+                       1     ; Định nghĩa các biến và hằng số
+  0090                 2     ROW         EQU P1          ; Gán tên ROW cho Port 1, port này sẽ điều khiển các
+                              hàng của ma trận LED
+  00A0                 3     COL         EQU P2          ; Gán tên COL cho Port 2, port này sẽ điều khiển các
+                              cột của ma trận LED
+  001E                 4     DELAY_COUNT EQU 30          ; Định nghĩa hằng số DELAY_COUNT với giá trị 30, �
+                             �ược sử dụng trong hàm delay để tạo độ trễ khoảng 500ms
+                       5     
+0000                   6     ORG 0000H                   ; Chỉ thị cho trình biên dịch đặt đoạn mã sau t�
+                             ��i địa chỉ 0000H (điểm bắt đầu thực thi của vi điều khiển)
+0000 8000              7         SJMP MAIN               ; Lệnh nhảy không điều kiện đến nhãn MAIN, bỏ q
+                             ua các phần mã khác có thể nằm trước
+                       8     
+                       9     ; Chương trình chính
+0002                  10     MAIN:
+                      11     
+0002                  12     LOOP:
+0002 75A040           13         MOV COL, #01000000B      ; Gửi giá trị nhị phân 01000000B (chỉ bit 6 là 1) r
+                             a Port 2 (điều khiển cột), kích hoạt cột tương ứng
+0005 7590EF           14         MOV ROW, #11101111B      ; Gửi giá trị nhị phân 11101111B ra Port 1 (điều kh
+                             iển hàng), kích hoạt hàng tương ứng (bit 3 là 0)
+0008 1184             15         ACALL DELAY_MS          ; Gọi chương trình con DELAY_MS để tạo một khoảng
+                              trễ ngắn, giúp mắt người nhìn thấy LED sáng
+                      16     
+000A 75A040           17         MOV COL, #01000000B
+000D 7590F7           18         MOV ROW, #11110111B
+0010 1184             19         ACALL DELAY_MS
+                      20     
+0012 75A020           21         MOV COL, #00100000B      ; Kích hoạt cột có bit 5 là 1
+0015 7590FB           22         MOV ROW, #11111011B      ; Kích hoạt hàng có bit 2 là 0
+0018 1184             23         ACALL DELAY_MS
+                      24     
+001A 75A010           25         MOV COL, #00010000B      ; Kích hoạt cột có bit 4 là 1
+001D 7590FD           26         MOV ROW, #11111101B      ; Kích hoạt hàng có bit 1 là 0
+0020 1184             27         ACALL DELAY_MS
+                      28     
+0022 75A008           29         MOV COL, #00001000B      ; Kích hoạt cột có bit 3 là 1
+0025 7590FE           30         MOV ROW, #11111110B      ; Kích hoạt hàng có bit 0 là 0
+0028 1184             31         ACALL DELAY_MS
+                      32     
+002A 75A004           33         MOV COL, #00000100B      ; Kích hoạt cột có bit 2 là 1
+002D 7590FE           34         MOV ROW, #11111110B
+0030 1184             35         ACALL DELAY_MS
+                      36     
+0032 75A002           37         MOV COL, #00000010B      ; Kích hoạt cột có bit 1 là 1
+0035 7590FD           38         MOV ROW, #11111101B
+0038 1184             39         ACALL DELAY_MS
+                      40     
+003A 75A002           41         MOV COL, #00000010B
+003D 7590FB           42         MOV ROW, #11111011B
+0040 1184             43         ACALL DELAY_MS
+                      44     
+0042 75A004           45         MOV COL, #00000100B
+0045 7590F7           46         MOV ROW, #11110111B
+0048 1184             47         ACALL DELAY_MS
+                      48     
+004A 75A004           49         MOV COL, #00000100B
+004D 7590EF           50         MOV ROW, #11101111B
+A51 MACRO ASSEMBLER  7SEG                                                                 05/03/2025 22:44:36 PAGE     2
+
+0050 1184             51         ACALL DELAY_MS
+                      52     
+0052 75A002           53         MOV COL, #00000010B
+0055 7590DF           54         MOV ROW, #11011111B
+0058 1184             55         ACALL DELAY_MS
+                      56     
+005A 75A002           57         MOV COL, #00000010B
+005D 7590BF           58         MOV ROW, #10111111B
+0060 1184             59         ACALL DELAY_MS
+                      60     
+0062 75A004           61         MOV COL, #00000100B
+0065 75907F           62         MOV ROW, #01111111B
+0068 1184             63         ACALL DELAY_MS
+                      64     
+006A 75A008           65         MOV COL, #00001000B
+006D 75907F           66         MOV ROW, #01111111B
+0070 1184             67         ACALL DELAY_MS
+                      68     
+0072 75A010           69         MOV COL, #00010000B
+0075 7590BF           70         MOV ROW, #10111111B
+0078 1184             71         ACALL DELAY_MS
+                      72     
+007A 75A020           73         MOV COL, #00100000B
+007D 7590DF           74         MOV ROW, #11011111B
+0080 1184             75         ACALL DELAY_MS
+                      76     
+0082 1102             77         ACALL LOOP              ; Nhảy không điều kiện về đầu nhãn LOOP, tạo th
+                             ành một vòng lặp vô hạn
+                      78     
+                      79     ; Hàm delay ~500ms
+0084                  80     DELAY_MS:
+0084 7A1E             81         MOV R2, #DELAY_COUNT    ; Gán giá trị của hằng số DELAY_COUNT (30) vào thanh
+                              ghi R2, R2 sẽ được dùng làm bộ đếm vòng lặp ngoài
+0086                  82     DELAY_LOOP:
+0086 7B0A             83         MOV R3, #10             ; Gán giá trị 10 vào thanh ghi R3, R3 sẽ được dùng 
+                             làm bộ đếm vòng lặp trung gian (~1ms)
+0088                  84     DELAY_INNER:
+0088 7C0A             85         MOV R4, #10             ; Gán giá trị 10 vào thanh ghi R4, R4 sẽ được dùng 
+                             làm bộ đếm vòng lặp trong (~0.1ms)
+008A DCFE             86         DJNZ R4, $              ; Giảm giá trị của R4 đi 1 và nhảy về địa chỉ
+                              hiện tại ($) nếu R4 khác 0 (tạo delay nhỏ)
+008C DBFA             87         DJNZ R3, DELAY_INNER    ; Giảm giá trị của R3 đi 1 và nhảy về nhãn DELAY_
+                             INNER nếu R3 khác 0 (lặp lại vòng lặp trong)
+008E DAF6             88         DJNZ R2, DELAY_LOOP     ; Giảm giá trị của R2 đi 1 và nhảy về nhãn DELAY_
+                             LOOP nếu R2 khác 0 (lặp lại vòng lặp trung gian)
+0090 22               89         RET                     ; Lệnh trả về chương trình gọi (trong trường hợ
+                             p này là MAIN)
+                      90     
+                      91     END                         ; Chỉ thị kết thúc chương trình Assembly
+A51 MACRO ASSEMBLER  7SEG                                                                 05/03/2025 22:44:36 PAGE     3
+
+SYMBOL TABLE LISTING
+------ ----- -------
+
+
+N A M E             T Y P E  V A L U E   ATTRIBUTES
+
+COL. . . . . . . .  D ADDR   00A0H   A   
+DELAY_COUNT. . . .  N NUMB   001EH   A   
+DELAY_INNER. . . .  C ADDR   0088H   A   
+DELAY_LOOP . . . .  C ADDR   0086H   A   
+DELAY_MS . . . . .  C ADDR   0084H   A   
+LOOP . . . . . . .  C ADDR   0002H   A   
+MAIN . . . . . . .  C ADDR   0002H   A   
+P1 . . . . . . . .  D ADDR   0090H   A   
+P2 . . . . . . . .  D ADDR   00A0H   A   
+ROW. . . . . . . .  D ADDR   0090H   A   
+
+
+REGISTER BANK(S) USED: 0 
+
+
+ASSEMBLY COMPLETE.  0 WARNING(S), 0 ERROR(S)

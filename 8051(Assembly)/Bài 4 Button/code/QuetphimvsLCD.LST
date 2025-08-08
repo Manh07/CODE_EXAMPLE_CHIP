@@ -1,0 +1,256 @@
+A51 MACRO ASSEMBLER  QUETPHIMVSLCD                                                        10/14/2017 14:23:03 PAGE     1
+
+
+MACRO ASSEMBLER A51 V8.02
+OBJECT MODULE PLACED IN QuetphimvsLCD.OBJ
+ASSEMBLER INVOKED BY: C:\Keil\C51\BIN\A51.EXE QuetphimvsLCD.asm SET(SMALL) DEBUG EP
+
+LOC  OBJ            LINE     SOURCE
+
+                       1     ;================================= 
+                       2     ; Quet phim hien thi len LCD 
+                       3     ;=================================   
+                       4     $mod51  
+  001F                 5      U equ 31         ; memory location to hold upper nibble   
+  0015                 6       L equ 21        ; memory location to hold lower nibble     
+  0080                 7       Port equ P0       ; data port to connect LCD   
+  00A6                 8       RS equ P2.6     ; RS pin connection   
+  00A5                 9       RW equ P2.5     ; RW pin connection   
+  00A7                10       EN equ P2.7     ; EN pin connection 
+                      11       ;=================================   
+                      12       ; Connection of Port   
+                      13       ; Port.4 = DB4   
+                      14       ; Port.5 = DB5   
+                      15       ; Port.6 = DB6   
+                      16       ; Port.7 = DB7 
+                      17       ;=================================
+                      18     
+                      19     SS MACRO L1  
+                      20     MOV R1,#0  
+                      21     MOV DPTR,L1  
+                      22     LCALL lcd_puts 
+                      23     ENDM 
+                      24      ;===========================   
+0000                  25      ORG 0000h   
+0000 C2A5             26      CLR RW   
+0002 11A8             27      ACALL init   
+0004                  28      main:
+                      29      SS #STRING1   
+000C 74C0             33      MOV A, #0c0H        ; switch to 2nd line of LCD   
+000E 118E             34      ACALL lcd_cmd    
+                      35      SS #STRING2   
+0018                  39      quetphim:   
+                      40                
+0018 30940B           41              JNB P1.4,PHIM1   
+001B 309519           42              JNB P1.5,PHIM2
+                      43              ;============ Q===========     
+                      44                
+001E 309627           45              JNB P1.6,PHIM3   
+0021 309735           46              JNB P1.7,PHIM4   
+0024 80DE             47              sjmp main 
+                      48              ;================================= 
+0026                  49              PHIM1:  
+0026 74C0             50               MOV A, #0c0H        ; switch to 2nd line of LCD  
+0028 118E             51               ACALL lcd_cmd    
+                      52               SS #KEY1   
+0032 3094FD           56               JNB P1.4,$   
+0035 80CD             57               sjmp main 
+                      58               ;================================= 
+0037                  59               PHIM2:
+0037 74C0             60               MOV A, #0c0H        ; switch to 2nd line of LCD   
+0039 118E             61               ACALL lcd_cmd    
+                      62               SS #KEY2   
+0043 3095FD           66               JNB P1.5,$   
+0046 80BC             67               sjmp main 
+                      68               ;================================= 
+0048                  69               PHIM3:   
+0048 74C0             70               MOV A, #0c0H        ; switch to 2nd line of LCD   
+A51 MACRO ASSEMBLER  QUETPHIMVSLCD                                                        10/14/2017 14:23:03 PAGE     2
+
+004A 118E             71               ACALL lcd_cmd    
+                      72               SS #KEY3   
+0054 3096FD           76               JNB P1.6,$   
+0057 80AB             77               sjmp main 
+                      78               ;================================= 
+0059                  79               PHIM4:   
+0059 74C0             80               MOV A, #0c0H        ; switch to 2nd line of LCD   
+005B 118E             81               ACALL lcd_cmd    
+                      82               SS #KEY4 
+0065 3097FD           86           JNB P1.7,$   
+0068 809A             87               sjmp main    
+                      88      
+                      89      ;=========================== 
+                      90      ; Separator 
+                      91      ;===========================    
+006A                  92      separator:    
+006A F51F             93      MOV U,A       ; save A at temp location U    
+006C 531FF0           94      ANL U,#0F0H    ; mask it  with 0Fh (28h & F0h = 20h)    
+006F C4               95      SWAP A         ; swap nibble (28h => 82H)    
+0070 54F0             96      ANL A,#0F0H   ; mask it with 0fh (82h & f0h = 80h)    
+0072 F515             97      MOV L,A        ; save it at temp location L    
+0074 22               98      RET             ; return ;========================  
+                      99      ; Move To Port 
+                     100      ; MOV port,A       
+                     101      ; put content of A to port 
+                     102      ; ANL port,#0x0FH 
+                     103      ; ORL port,A 
+                     104      ;========================    
+0075                 105      move_to_Port:    
+0075 A2E4            106      MOV C,Acc.4    
+0077 9284            107      MOV port.4,C    
+0079 A2E5            108      MOV C,Acc.5    
+007B 9285            109      MOV port.5,C    
+007D A2E6            110      MOV C,Acc.6    
+007F 9286            111      MOV port.6,C    
+0081 A2E7            112      MOV C,Acc.7    
+0083 9287            113      MOV port.7,C        
+0085 D2A7            114      SETB EN      ; make EN high    
+0087 11D7            115      ACALL DELAY    ; call a short delay routine    
+0089 C2A7            116      CLR EN       ; clear EN    
+008B 11D7            117      ACALL DELAY    ; short delay    
+008D 22              118      RET       
+                     119      ; return       
+                     120      ;================================= 
+                     121     
+                     122      
+                     123      
+                     124      
+                     125     ;LCD command 
+                     126     ;=================================    
+008E                 127     lcd_cmd:     
+008E C2A6            128     CLR RS       ; clear rs, going to send command     
+0090 116A            129     ACALL separator     ; separate the command and save to U and L     
+0092 E51F            130     MOV A, U      ; copy U to A     
+0094 1175            131     ACALL move_to_port  ; move content of a to port     
+0096 E515            132     MOV A, L             ; copy L to A     
+0098 1175            133     ACALL move_to_port  ; move content of a to port     
+009A 22              134     RET         
+                     135     ; return 
+                     136     ;================================= 
+                     137     ; LCD data 
+                     138     ;=================================   
+009B                 139     lcd_data:    
+009B D2A6            140     SETB RS             ; RS=1, going to send DATA    
+009D 116A            141     ACALL separator     ; separate the data and save to U & L    
+009F E51F            142     MOV A, U            ; copy U to A    
+A51 MACRO ASSEMBLER  QUETPHIMVSLCD                                                        10/14/2017 14:23:03 PAGE     3
+
+00A1 1175            143     ACALL move_to_port  ; send it to LCD    
+00A3 E515            144     MOV A, L            ; copy L to A    
+00A5 1175            145     ACALL move_to_port  ; send it to LCD    
+00A7 22              146     RET                 ; return 
+                     147     ;================================= 
+                     148     ; Initilization 
+                     149     ;=================================  
+00A8                 150     init:    
+00A8 11D7            151     ACALL delay      ; some delay to lcd after power on    
+00AA 11D7            152     ACALL delay    
+00AC C284            153     CLR port.4    
+00AE D285            154     SETB port.5    
+00B0 C286            155     CLR port.6    
+00B2 C287            156     CLR port.7     ; send 20h to LCD to set 4 bit mode    
+00B4 C2A6            157     CLR RS     ; after that we can use lcd_cmd    
+00B6 D2A7            158     SETB EN          ; make EN switching    
+00B8 11D7            159     ACALL delay    
+00BA C2A7            160     CLR EN    
+00BC 7428            161     MOV A, #28H    
+00BE 118E            162     ACALL lcd_cmd    
+00C0 740C            163     MOV A, #0CH    
+00C2 118E            164     ACALL lcd_cmd    
+00C4 7406            165     MOV A, #06H   
+00C6 118E            166     ACALL lcd_cmd    
+00C8 7401            167     MOV A, #01H    
+00CA 118E            168     ACALL lcd_cmd    
+00CC 22              169     RET 
+                     170     ;================================= 
+00CD                 171     lcd_puts: 
+                     172     
+                     173      
+                     174     
+                     175      
+00CD E9              176      MOV A,R1  
+00CE 93              177      MOVC A,@A+DPTR   
+00CF 12009B          178      LCALL lcd_data  
+00D2 09              179      INC R1  
+00D3 B90FF7          180      CJNE R1,#15,lcd_puts  
+00D6 22              181      RET 
+                     182      ;=================================  
+00D7                 183      delay:    
+00D7 7E5F            184      MOV R6, #5FH   
+00D9 7F3F            185      L2: MOV R7,#3FH   
+00DB DFFE            186      L1: DJNZ R7, L1    
+00DD DEFA            187      DJNZ R6, L2    
+00DF 22              188      RET ;================================= 
+00E0 20202056        189     STRING1: DB '   VI XU LY  ' 
+00E4 49205855                
+00E8 204C5920                
+00EC 20                      
+00ED 20205072        190                     STRING2: DB '  Press one key '  
+00F1 65737320                
+00F5 6F6E6520                
+00F9 6B657920                
+00FD 20202020        191                     KEY1:    DB '     KEY 1      '  
+0101 204B4559                
+0105 20312020                
+0109 20202020                
+010D 20202020        192                     KEY2:    DB '     KEY 2      ' 
+0111 204B4559                
+0115 20322020                
+0119 20202020                
+011D 20202020        193                     KEY3:    DB '     KEY 3      ' 
+0121 204B4559                
+0125 20332020                
+0129 20202020                
+A51 MACRO ASSEMBLER  QUETPHIMVSLCD                                                        10/14/2017 14:23:03 PAGE     4
+
+012D 20202020        194                     KEY4:    DB '     KEY 4      '  
+0131 204B4559                
+0135 20342020                
+0139 20202020                
+                     195      
+                     196     end 
+A51 MACRO ASSEMBLER  QUETPHIMVSLCD                                                        10/14/2017 14:23:03 PAGE     5
+
+SYMBOL TABLE LISTING
+------ ----- -------
+
+
+N A M E             T Y P E  V A L U E   ATTRIBUTES
+
+ACC. . . . . . . .  D ADDR   00E0H   A   
+DELAY. . . . . . .  C ADDR   00D7H   A   
+EN . . . . . . . .  B ADDR   00A0H.7 A   
+INIT . . . . . . .  C ADDR   00A8H   A   
+KEY1 . . . . . . .  C ADDR   00FDH   A   
+KEY2 . . . . . . .  C ADDR   010DH   A   
+KEY3 . . . . . . .  C ADDR   011DH   A   
+KEY4 . . . . . . .  C ADDR   012DH   A   
+L. . . . . . . . .  N NUMB   0015H   A   
+L1 . . . . . . . .  C ADDR   00DBH   A   
+L2 . . . . . . . .  C ADDR   00D9H   A   
+LCD_CMD. . . . . .  C ADDR   008EH   A   
+LCD_DATA . . . . .  C ADDR   009BH   A   
+LCD_PUTS . . . . .  C ADDR   00CDH   A   
+MAIN . . . . . . .  C ADDR   0004H   A   
+MOVE_TO_PORT . . .  C ADDR   0075H   A   
+P0 . . . . . . . .  D ADDR   0080H   A   
+P1 . . . . . . . .  D ADDR   0090H   A   
+P2 . . . . . . . .  D ADDR   00A0H   A   
+PHIM1. . . . . . .  C ADDR   0026H   A   
+PHIM2. . . . . . .  C ADDR   0037H   A   
+PHIM3. . . . . . .  C ADDR   0048H   A   
+PHIM4. . . . . . .  C ADDR   0059H   A   
+PORT . . . . . . .  D ADDR   0080H   A   
+QUETPHIM . . . . .  C ADDR   0018H   A   
+RS . . . . . . . .  B ADDR   00A0H.6 A   
+RW . . . . . . . .  B ADDR   00A0H.5 A   
+SEPARATOR. . . . .  C ADDR   006AH   A   
+STRING1. . . . . .  C ADDR   00E0H   A   
+STRING2. . . . . .  C ADDR   00EDH   A   
+U. . . . . . . . .  N NUMB   001FH   A   
+
+
+REGISTER BANK(S) USED: 0 
+
+
+ASSEMBLY COMPLETE.  0 WARNING(S), 0 ERROR(S)

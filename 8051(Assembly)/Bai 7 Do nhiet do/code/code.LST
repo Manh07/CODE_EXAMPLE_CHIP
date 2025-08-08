@@ -1,0 +1,115 @@
+A51 MACRO ASSEMBLER  CODE                                                                 10/10/2017 17:46:00 PAGE     1
+
+
+MACRO ASSEMBLER A51 V8.02
+OBJECT MODULE PLACED IN code.OBJ
+ASSEMBLER INVOKED BY: C:\Keil\C51\BIN\A51.EXE code.asm SET(SMALL) DEBUG EP
+
+LOC  OBJ            LINE     SOURCE
+
+                       1     ;=================================
+                       2     ; do nhiet do
+                       3     ;=================================
+  0096                 4     start bit p1.6
+  0094                 5     eoc bit p1.4
+  0095                 6     ale bit p1.5
+                       7     
+  0090                 8     led1 bit p1.0
+  0091                 9     led2 bit p1.1
+  0092                10     led3 bit p1.2
+  0093                11     led4 bit p1.3
+0000                  12     org 000h
+0000 12000E           13     main: lcall cdoi
+0003 120023           14     lcall hex_bcd
+0006 12002D           15     lcall bcd_7doan
+0009 12003B           16     lcall hienthi
+000C 80F2             17     jmp main
+000E                  18     cdoi:
+000E D295             19     setb ale
+0010 C295             20     clr ale
+0012 D296             21     setb start
+0014 2094FD           22     jb eoc,$            
+0017 C296             23     clr start
+0019 7F96             24     mov r7,#150
+001B 12003B           25     de: lcall hienthi
+001E DFFB             26     djnz r7,de
+0020 E5B0             27     mov a,p3
+0022 22               28     ret
+0023                  29     hex_bcd:
+0023 75F00A           30     mov b,#10
+0026 84               31     div ab
+0027 85F010           32     mov 10h,b                         
+002A F511             33     mov 11h,a                         
+002C 22               34     ret
+002D                  35     bcd_7doan:
+002D 900900           36     mov dptr,#900h
+0030 E510             37     mov a,10h
+0032 93               38     movc a,@a + dptr
+0033 F520             39     mov 20h,a                                 
+0035 E511             40     mov a,11h
+0037 93               41     movc a,@a + dptr
+0038 F521             42     mov 21h,a                                
+003A 22               43     ret
+003B 852180           44     hienthi: mov p0,21h
+003E D293             45     setb led4
+0040 120068           46     lcall delay
+0043 5390F0           47     anl p1,#0f0h       ; p1=----1111
+                      48     
+0046 852080           49     mov p0,20h
+0049 D292             50     setb led3
+004B 120068           51     lcall delay
+004E 5390F0           52     anl p1,#0f0h
+                      53     
+0051 758063           54     mov p0,#063h
+0054 D291             55     setb led2
+0056 120068           56     lcall delay
+0059 5390F0           57     anl p1,#0f0h
+                      58     
+A51 MACRO ASSEMBLER  CODE                                                                 10/10/2017 17:46:00 PAGE     2
+
+005C 758039           59     mov p0,#039h
+005F D290             60     setb led1
+0061 120068           61     lcall delay
+0064 5390F0           62     anl p1,#0f0h
+                      63     
+0067 22               64     ret
+0068 757F64           65     delay: mov 7fh,#100
+006B D57FFD           66     djnz 7fh,$
+006E 22               67     ret
+0900                  68     org 900h
+0900 3F065B4F         69     db 03fh,006h,05bh,04fh,066h,06dh,07dh,007h,07fh,06fh
+0904 666D7D07                
+0908 7F6F                    
+                      70     END
+A51 MACRO ASSEMBLER  CODE                                                                 10/10/2017 17:46:00 PAGE     3
+
+SYMBOL TABLE LISTING
+------ ----- -------
+
+
+N A M E             T Y P E  V A L U E   ATTRIBUTES
+
+ALE. . . . . . . .  B ADDR   0090H.5 A   
+B. . . . . . . . .  D ADDR   00F0H   A   
+BCD_7DOAN. . . . .  C ADDR   002DH   A   
+CDOI . . . . . . .  C ADDR   000EH   A   
+DE . . . . . . . .  C ADDR   001BH   A   
+DELAY. . . . . . .  C ADDR   0068H   A   
+EOC. . . . . . . .  B ADDR   0090H.4 A   
+HEX_BCD. . . . . .  C ADDR   0023H   A   
+HIENTHI. . . . . .  C ADDR   003BH   A   
+LED1 . . . . . . .  B ADDR   0090H.0 A   
+LED2 . . . . . . .  B ADDR   0090H.1 A   
+LED3 . . . . . . .  B ADDR   0090H.2 A   
+LED4 . . . . . . .  B ADDR   0090H.3 A   
+MAIN . . . . . . .  C ADDR   0000H   A   
+P0 . . . . . . . .  D ADDR   0080H   A   
+P1 . . . . . . . .  D ADDR   0090H   A   
+P3 . . . . . . . .  D ADDR   00B0H   A   
+START. . . . . . .  B ADDR   0090H.6 A   
+
+
+REGISTER BANK(S) USED: 0 
+
+
+ASSEMBLY COMPLETE.  0 WARNING(S), 0 ERROR(S)

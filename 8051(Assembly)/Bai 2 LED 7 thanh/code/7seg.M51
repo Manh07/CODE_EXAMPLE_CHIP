@@ -1,0 +1,80 @@
+BL51 BANKED LINKER/LOCATER V6.22                                                        10/13/2017  23:28:01  PAGE 1
+
+
+BL51 BANKED LINKER/LOCATER V6.22, INVOKED BY:
+C:\KEIL\C51\BIN\BL51.EXE 7seg.obj TO 7seg RAMSIZE (256)
+
+
+INPUT MODULES INCLUDED:
+  7seg.obj (7SEG)
+
+
+LINK MAP OF MODULE:  7seg (7SEG)
+
+
+            TYPE    BASE      LENGTH    RELOCATION   SEGMENT NAME
+            -----------------------------------------------------
+
+            * * * * * * *   D A T A   M E M O R Y   * * * * * * *
+            REG     0000H     0008H     ABSOLUTE     "REG BANK 0"
+
+            * * * * * * *   C O D E   M E M O R Y   * * * * * * *
+            CODE    0000H     0044H     ABSOLUTE     
+
+
+
+SYMBOL TABLE OF MODULE:  7seg (7SEG)
+
+  VALUE           TYPE          NAME
+  ----------------------------------
+
+  -------         MODULE        7SEG
+  D:00F0H         SYMBOL        B
+  B:0090H.1       SYMBOL        CHUC
+  C:0031H         SYMBOL        DELAY
+  B:0090H.0       SYMBOL        DONVI
+  C:0007H         SYMBOL        LOOP
+  C:0033H         SYMBOL        LOOP1
+  C:003AH         SYMBOL        MA7SEG
+  C:0000H         SYMBOL        MAIN
+  D:0080H         SYMBOL        NUM
+  D:0080H         SYMBOL        P0
+  D:0090H         SYMBOL        P1
+  C:0005H         SYMBOL        RESET
+  C:000DH         SYMBOL        SKIP
+  C:0000H         LINE#         83
+  C:0003H         LINE#         84
+  C:0005H         LINE#         86
+  C:0007H         LINE#         88
+  C:0008H         LINE#         89
+  C:000BH         LINE#         90
+  C:000DH         LINE#         92
+  C:0010H         LINE#         93
+  C:0011H         LINE#         94
+  C:0014H         LINE#         96
+  C:0016H         LINE#         97
+  C:0017H         LINE#         98
+  C:0019H         LINE#         99
+  C:001CH         LINE#         100
+  C:001EH         LINE#         102
+  C:0020H         LINE#         103
+  C:0022H         LINE#         104
+BL51 BANKED LINKER/LOCATER V6.22                                                      10/13/2017  23:28:01  PAGE 2
+
+
+  C:0023H         LINE#         105
+  C:0025H         LINE#         106
+  C:0028H         LINE#         107
+  C:002AH         LINE#         108
+  C:002CH         LINE#         109
+  C:002DH         LINE#         110
+  C:002FH         LINE#         111
+  C:0031H         LINE#         114
+  C:0033H         LINE#         115
+  C:0035H         LINE#         116
+  C:0037H         LINE#         117
+  C:0039H         LINE#         118
+  -------         ENDMOD        7SEG
+
+Program Size: data=8.0 xdata=0 code=68
+LINK/LOCATE RUN COMPLETE.  0 WARNING(S),  0 ERROR(S)

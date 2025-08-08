@@ -1,0 +1,170 @@
+,,,;====================================================================
+,,,
+,,,$NOMOD51
+,,,$INCLUDE (8051.MCU)
+,,,;   8051 processor definition file
+,,,;   ==============================
+,,,
+,,,P0      DATA    080H
+,,,SP      DATA    081H
+,,,DPL     DATA    082H
+,,,DPH     DATA    083H
+,,,PCON    DATA    087H
+,,,TCON    DATA    088H
+,,,TMOD    DATA    089H
+,,,TL0     DATA    08AH
+,,,TL1     DATA    08BH
+,,,TH0     DATA    08CH
+,,,TH1     DATA    08DH
+,,,P1      DATA    090H
+,,,SCON    DATA    098H
+,,,SBUF    DATA    099H
+,,,P2      DATA    0A0H
+,,,IE      DATA    0A8H
+,,,P3      DATA    0B0H
+,,,IP      DATA    0B8H
+,,,PSW     DATA    0D0H
+,,,ACC     DATA    0E0H
+,,,B       DATA    0F0H
+,,,
+,,,IT0     BIT     088H
+,,,IE0     BIT     089H
+,,,IT1     BIT     08AH
+,,,IE1     BIT     08BH
+,,,TR0     BIT     08CH
+,,,TF0     BIT     08DH
+,,,TR1     BIT     08EH
+,,,TF1     BIT     08FH
+,,,RI      BIT     098H
+,,,TI      BIT     099H
+,,,RB8     BIT     09AH
+,,,TB8     BIT     09BH
+,,,REN     BIT     09CH
+,,,SM2     BIT     09DH
+,,,SM1     BIT     09EH
+,,,SM0     BIT     09FH
+,,,EX0     BIT     0A8H
+,,,ET0     BIT     0A9H
+,,,EX1     BIT     0AAH
+,,,ET1     BIT     0ABH
+,,,ES      BIT     0ACH
+,,,EA      BIT     0AFH
+,,,RXD     BIT     0B0H
+,,,TXD     BIT     0B1H
+,,,INT0    BIT     0B2H
+,,,INT1    BIT     0B3H
+,,,T0      BIT     0B4H
+,,,T1      BIT     0B5H
+,,,WR      BIT     0B6H
+,,,RD      BIT     0B7H
+,,,PX0     BIT     0B8H
+,,,PT0     BIT     0B9H
+,,,PX1     BIT     0BAH
+,,,PT1     BIT     0BBH
+,,,PS      BIT     0BCH
+,,,P       BIT     0D0H
+,,,OV      BIT     0D2H
+,,,RS0     BIT     0D3H
+,,,RS1     BIT     0D4H
+,,,F0      BIT     0D5H
+,,,AC      BIT     0D6H
+,,,CY      BIT     0D7H
+,,,
+,,,RESET   CODE    000H
+,,,EXTI0   CODE    003H
+,,,TIMER0  CODE    00BH
+,,,EXTI1   CODE    013H
+,,,TIMER1  CODE    01BH
+,,,SINT    CODE    023H
+,,,
+,,,;====================================================================
+,,,      ; Reset Vector
+,,,      org   0000h
+0000,02 01 00,,      jmp   Start
+,,,
+,,,          ORG   0003H
+0003,02 01 15,,          LJMP  INT0_ISR
+,,,
+,,,;====================================================================
+,,,; CODE SEGMENT
+,,,;====================================================================
+,,,
+,,,                org   0100h
+0100,,Start,Start:
+0100,D2 AF,,                SETB    EA                      ; Enable Interrupt
+0102,D2 A8,,                SETB    EX0                     ; Enable INT0
+,,,;               SETB    IT0                     ; INT0 NGAT THEO SUON XUONG
+,,,
+0104,75 89 20,,                MOV             TMOD, #20H
+0107,75 8D D0,,                MOV             TH1, #0D0H
+,,,
+010A,75 A0 0F,,                MOV             P2, #0FH
+010D,75 90 00,,                MOV             P1, #0
+0110,79 00,,                MOV             R1, #0          ; COUNT
+0112,E4,,                CLR             A
+0113,80 FE,,                SJMP    $
+,,,
+,,,;-------------------------------
+0115,,INT0_ISR,INT0_ISR:
+0115,12 01 6C,,                CALL    DELAY
+0118,20 B2 4B,,                JB              P3.2, EXIT
+,,,
+011B,75 A0 FE,,                MOV             P2, #11111110B
+011E,E5 A0,,                MOV             A, P2
+0120,54 F0,,                ANL             A, #0F0H
+0122,B4 F0 24,,                CJNE    A, #0F0H, ROW0
+,,,
+0125,75 A0 FD,,                MOV             P2, #11111101B
+0128,E5 A0,,                MOV             A, P2
+012A,79 04,,                MOV             R1, #4
+012C,54 F0,,                ANL             A, #0F0H
+012E,B4 F0 1E,,                CJNE    A, #0F0H, ROW1
+,,,
+0131,75 A0 FB,,                MOV             P2, #11111011B
+0134,E5 A0,,                MOV             A, P2
+0136,79 08,,                MOV             R1, #8
+0138,54 F0,,                ANL             A, #0F0H
+013A,B4 F0 18,,                CJNE    A, #0F0H, ROW2
+,,,
+013D,75 A0 F7,,                MOV             P2, #11110111B
+0140,E5 A0,,                MOV             A, P2
+0142,79 0C,,                MOV             R1, #12
+0144,54 F0,,                ANL             A, #0F0H
+0146,B4 F0 12,,                CJNE    A, #0F0H, ROW3
+0149,,ROW0,ROW0:
+0149,33,,                RLC             A
+014A,50 15,,                JNC             MATCH
+014C,09,,                INC             R1
+014D,80 FA,,                SJMP    ROW0
+014F,,ROW1,ROW1:
+014F,33,,                RLC             A
+0150,50 0F,,                JNC             MATCH
+0152,09,,                INC             R1
+0153,80 FA,,                SJMP    ROW1
+0155,,ROW2,ROW2:
+0155,33,,                RLC             A
+0156,50 09,,                JNC             MATCH
+0158,09,,                INC             R1
+0159,80 FA,,                SJMP    ROW2
+015B,,ROW3,ROW3:
+015B,33,,                RLC             A
+015C,50 03,,                JNC             MATCH
+015E,09,,                INC             R1
+015F,80 FA,,                SJMP    ROW3
+0161,,MATCH,MATCH:
+0161,74 00,,                MOV             A, #0
+0163,E9,,                MOV             A, R1
+0164,F5 90,,                MOV             P1, A
+0166,,EXIT,EXIT:
+0166,79 00,,                MOV             R1, #0
+0168,75 A0 F0,,                MOV             P2, #0F0H
+016B,32,,                RETI
+,,,;====================================================================
+016C,,DELAY,DELAY:
+016C,D2 8E,,                SETB    TR1
+016E,30 8F FD,,                JNB             TF1, $
+0171,C2 8F,,                CLR             TF1
+0173,C2 8E,,                CLR             TR1
+0175,22,,                RET
+,,,;====================================================================
+000E,,,      END

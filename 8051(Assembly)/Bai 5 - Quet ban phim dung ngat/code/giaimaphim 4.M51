@@ -1,0 +1,115 @@
+BL51 BANKED LINKER/LOCATER V6.22                                                        10/11/2017  17:24:21  PAGE 1
+
+
+BL51 BANKED LINKER/LOCATER V6.22, INVOKED BY:
+C:\KEIL\C51\BIN\BL51.EXE giaimaphim 4.4.obj TO giaimaphim 4.4 RAMSIZE (256)
+
+
+INPUT MODULES INCLUDED:
+  giaimaphim 4.4.obj (GIAIMAPHIM_4_4)
+
+
+LINK MAP OF MODULE:  giaimaphim 4.4 (GIAIMAPHIM_4_4)
+
+
+            TYPE    BASE      LENGTH    RELOCATION   SEGMENT NAME
+            -----------------------------------------------------
+
+            * * * * * * *   D A T A   M E M O R Y   * * * * * * *
+            REG     0000H     0008H     ABSOLUTE     "REG BANK 0"
+
+            * * * * * * *   C O D E   M E M O R Y   * * * * * * *
+            CODE    0000H     0175H     ABSOLUTE     
+
+
+
+SYMBOL TABLE OF MODULE:  giaimaphim 4.4 (GIAIMAPHIM_4_4)
+
+  VALUE           TYPE          NAME
+  ----------------------------------
+
+  -------         MODULE        GIAIMAPHIM_4_4
+  C:016BH         SYMBOL        DELAY
+  B:00A8H.7       SYMBOL        EA
+  B:00A8H.0       SYMBOL        EX0
+  C:0165H         SYMBOL        EXIT
+  C:0115H         SYMBOL        INT0_ISR
+  C:0160H         SYMBOL        MATCH
+  D:0090H         SYMBOL        P1
+  D:00A0H         SYMBOL        P2
+  D:00B0H         SYMBOL        P3
+  C:0148H         SYMBOL        ROW0
+  C:014EH         SYMBOL        ROW1
+  C:0154H         SYMBOL        ROW2
+  C:015AH         SYMBOL        ROW3
+  C:0100H         SYMBOL        START
+  B:0088H.7       SYMBOL        TF1
+  D:008DH         SYMBOL        TH1
+  D:0089H         SYMBOL        TMOD
+  B:0088H.6       SYMBOL        TR1
+  C:0000H         LINE#         8
+  C:0003H         LINE#         10
+  C:0100H         LINE#         16
+  C:0102H         LINE#         17
+  C:0104H         LINE#         21
+  C:0107H         LINE#         22
+  C:010AH         LINE#         23
+  C:010DH         LINE#         24
+  C:0110H         LINE#         25
+  C:0112H         LINE#         26
+  C:0113H         LINE#         27
+  C:0115H         LINE#         30
+BL51 BANKED LINKER/LOCATER V6.22                                                      10/11/2017  17:24:21  PAGE 2
+
+
+  C:0117H         LINE#         31
+  C:011AH         LINE#         32
+  C:011DH         LINE#         33
+  C:011FH         LINE#         34
+  C:0121H         LINE#         35
+  C:0124H         LINE#         36
+  C:0127H         LINE#         37
+  C:0129H         LINE#         38
+  C:012BH         LINE#         39
+  C:012DH         LINE#         40
+  C:0130H         LINE#         41
+  C:0133H         LINE#         42
+  C:0135H         LINE#         43
+  C:0137H         LINE#         44
+  C:0139H         LINE#         45
+  C:013CH         LINE#         46
+  C:013FH         LINE#         47
+  C:0141H         LINE#         48
+  C:0143H         LINE#         49
+  C:0145H         LINE#         50
+  C:0148H         LINE#         52
+  C:0149H         LINE#         53
+  C:014BH         LINE#         54
+  C:014CH         LINE#         55
+  C:014EH         LINE#         57
+  C:014FH         LINE#         58
+  C:0151H         LINE#         59
+  C:0152H         LINE#         60
+  C:0154H         LINE#         62
+  C:0155H         LINE#         63
+  C:0157H         LINE#         64
+  C:0158H         LINE#         65
+  C:015AH         LINE#         67
+  C:015BH         LINE#         68
+  C:015DH         LINE#         69
+  C:015EH         LINE#         70
+  C:0160H         LINE#         72
+  C:0162H         LINE#         73
+  C:0163H         LINE#         74
+  C:0165H         LINE#         76
+  C:0167H         LINE#         77
+  C:016AH         LINE#         78
+  C:016BH         LINE#         81
+  C:016DH         LINE#         82
+  C:0170H         LINE#         83
+  C:0172H         LINE#         84
+  C:0174H         LINE#         85
+  -------         ENDMOD        GIAIMAPHIM_4_4
+
+Program Size: data=8.0 xdata=0 code=373
+LINK/LOCATE RUN COMPLETE.  0 WARNING(S),  0 ERROR(S)

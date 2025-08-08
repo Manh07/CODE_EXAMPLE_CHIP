@@ -1,0 +1,121 @@
+BL51 BANKED LINKER/LOCATER V6.22.4.0                                                    05/03/2025  17:10:16  PAGE 1
+
+
+BL51 BANKED LINKER/LOCATER V6.22.4.0, INVOKED BY:
+C:\KEIL_V5\C51\BIN\BL51.EXE main.obj TO LCD RAMSIZE (256)
+
+
+INPUT MODULES INCLUDED:
+  main.obj (MAIN)
+
+
+LINK MAP OF MODULE:  LCD (MAIN)
+
+
+            TYPE    BASE      LENGTH    RELOCATION   SEGMENT NAME
+            -----------------------------------------------------
+
+            * * * * * * *   D A T A   M E M O R Y   * * * * * * *
+            REG     0000H     0008H     ABSOLUTE     "REG BANK 0"
+
+            * * * * * * *   C O D E   M E M O R Y   * * * * * * *
+            CODE    0000H     100AH     ABSOLUTE     
+
+
+
+SYMBOL TABLE OF MODULE:  LCD (MAIN)
+
+  VALUE           TYPE          NAME
+  ----------------------------------
+
+  -------         MODULE        MAIN
+  C:0024H         SYMBOL        ADC_TO_TEMP
+  D:00F0H         SYMBOL        B
+  C:006AH         SYMBOL        D1
+  C:006CH         SYMBOL        D2
+  C:0068H         SYMBOL        DELAY
+  C:0071H         SYMBOL        DELAY_2MS
+  C:0073H         SYMBOL        DELAY_LOOP
+  C:003BH         SYMBOL        DISPLAY_NUMBERS
+  C:002AH         SYMBOL        EXTRACT_DIGITS
+  B:00B0H.4       SYMBOL        INTR
+  C:0006H         SYMBOL        MAIN_LOOP
+  D:0080H         SYMBOL        P0
+  D:0090H         SYMBOL        P1
+  D:00A0H         SYMBOL        P2
+  D:00B0H         SYMBOL        P3
+  B:00B0H.2       SYMBOL        RD_PIN
+  C:0010H         SYMBOL        READ_ADC
+  C:1000H         SYMBOL        SEGMENT_CODE
+  C:0000H         SYMBOL        START
+  N:0031H         SYMBOL        TEMP_LM
+  C:0016H         SYMBOL        WAIT_INTR
+  B:00B0H.3       SYMBOL        WR_PIN
+  C:0000H         LINE#         15
+  C:0003H         LINE#         16
+  C:0006H         LINE#         19
+  C:0008H         LINE#         20
+  C:000AH         LINE#         21
+  C:000CH         LINE#         22
+  C:000EH         LINE#         23
+  C:0010H         LINE#         29
+BL51 BANKED LINKER/LOCATER V6.22.4.0                                                  05/03/2025  17:10:16  PAGE 2
+
+
+  C:0012H         LINE#         30
+  C:0014H         LINE#         31
+  C:0016H         LINE#         34
+  C:0019H         LINE#         35
+  C:001BH         LINE#         36
+  C:001DH         LINE#         37
+  C:001FH         LINE#         38
+  C:0021H         LINE#         39
+  C:0023H         LINE#         40
+  C:0024H         LINE#         47
+  C:0026H         LINE#         48
+  C:0027H         LINE#         49
+  C:0029H         LINE#         50
+  C:002AH         LINE#         56
+  C:002CH         LINE#         57
+  C:002FH         LINE#         58
+  C:0030H         LINE#         59
+  C:0031H         LINE#         60
+  C:0033H         LINE#         61
+  C:0036H         LINE#         62
+  C:0037H         LINE#         63
+  C:0038H         LINE#         64
+  C:003AH         LINE#         65
+  C:003BH         LINE#         72
+  C:003EH         LINE#         73
+  C:0041H         LINE#         74
+  C:0042H         LINE#         75
+  C:0043H         LINE#         76
+  C:0045H         LINE#         77
+  C:0047H         LINE#         80
+  C:004AH         LINE#         81
+  C:004DH         LINE#         82
+  C:004EH         LINE#         83
+  C:004FH         LINE#         84
+  C:0051H         LINE#         85
+  C:0053H         LINE#         88
+  C:0056H         LINE#         89
+  C:0059H         LINE#         90
+  C:005AH         LINE#         91
+  C:005BH         LINE#         92
+  C:005DH         LINE#         93
+  C:005FH         LINE#         96
+  C:0062H         LINE#         97
+  C:0065H         LINE#         98
+  C:0067H         LINE#         100
+  C:0068H         LINE#         106
+  C:006AH         LINE#         107
+  C:006CH         LINE#         108
+  C:006EH         LINE#         109
+  C:0070H         LINE#         110
+  C:0071H         LINE#         116
+  C:0073H         LINE#         118
+  C:0075H         LINE#         119
+  -------         ENDMOD        MAIN
+
+Program Size: data=8.0 xdata=0 code=4106
+LINK/LOCATE RUN COMPLETE.  0 WARNING(S),  0 ERROR(S)

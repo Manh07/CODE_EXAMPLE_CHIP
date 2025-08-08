@@ -1,0 +1,138 @@
+A51 MACRO ASSEMBLER  7SEG                                                                 05/01/2025 22:26:57 PAGE     1
+
+
+MACRO ASSEMBLER A51 V8.2.7.0
+OBJECT MODULE PLACED IN 7seg.OBJ
+ASSEMBLER INVOKED BY: C:\Keil_v5\C51\BIN\A51.EXE 7seg.asm SET(SMALL) DEBUG EP
+
+LOC  OBJ            LINE     SOURCE
+
+0000                   1     ORG 0000H              ; Dat dia chi bat dau chuong trinh tai 0000H
+0000 8000              2     SJMP START             ; Nhay khong dieu kien den START
+                       3     
+                       4     ;------------------------------------------------------------
+                       5     ; Khoi dong he thong
+                       6     ;------------------------------------------------------------
+0002                   7     START:
+0002 7900              8         MOV R1, #00H        ; Gan R1 = 0, dung de luu bien dem san pham
+                       9     
+                      10     ;------------------------------------------------------------
+                      11     ; Vong lap chinh
+                      12     ;------------------------------------------------------------
+0004                  13     MAIN_LOOP:
+0004 110A             14         ACALL DISPLAY_TIME  ; Goi ham hien thi so dem len LED 7 doan
+0006 112B             15         ACALL CHECK_BUTTON  ; Goi ham kiem tra cam bien IR
+0008 80FA             16         SJMP MAIN_LOOP      ; Lap lai vong lap chinh
+                      17     
+                      18     ;------------------------------------------------------------
+                      19     ; DISPLAY_TIME - Hien thi so dem ra 2 LED 7 doan (LED3 va LED4)
+                      20     ;------------------------------------------------------------
+000A                  21     DISPLAY_TIME:
+000A E9               22         MOV A, R1           ; Lay gia tri bien dem vao thanh ghi A
+000B 75F00A           23         MOV B, #10          ; B = 10 de chia lay hang chuc va hang don vi
+000E 84               24         DIV AB              ; Chia A cho B ? A = hang chuc, B = hang don vi
+000F FC               25         MOV R4, A           ; Luu hang chuc vao R4
+0010 ADF0             26         MOV R5, B           ; Luu hang don vi vao R5
+                      27     
+0012 75800B           28         MOV P0, #0BH        ; Chon LED3 (hien thi hang chuc)
+0015 901000           29         MOV DPTR, #SEGMENT_CODE ; Tro DPTR den bang ma LED
+0018 EC               30         MOV A, R4           ; Lay gia tri hang chuc
+0019 93               31         MOVC A, @A+DPTR     ; Lay ma LED tu bang ma
+001A F590             32         MOV P1, A           ; Dua ma LED ra cong P1
+001C 113D             33         ACALL DELAY_2MS     ; Delay ngan de LED on dinh
+                      34     
+001E 758007           35         MOV P0, #07H        ; Chon LED4 (hien thi hang don vi)
+0021 901000           36         MOV DPTR, #SEGMENT_CODE ; Tro lai bang ma LED
+0024 ED               37         MOV A, R5           ; Lay gia tri hang don vi
+0025 93               38         MOVC A, @A+DPTR     ; Lay ma LED tu bang
+0026 F590             39         MOV P1, A           ; Dua ma LED ra cong P1
+0028 113D             40         ACALL DELAY_2MS     ; Delay ngan de LED on dinh
+                      41     
+002A 22               42         RET                 ; Ket thuc ham hien thi
+                      43     
+                      44     ;------------------------------------------------------------
+                      45     ; CHECK_BUTTON - Kiem tra cam bien IR (ket noi o P3.1)
+                      46     ;------------------------------------------------------------
+002B                  47     CHECK_BUTTON:
+002B 20B10E           48         JB P3.1, SKIP_BTN   ; Neu P3.1 = 1 (khong co vat can) thi bo qua
+002E 1142             49         ACALL DELAY_20MS    ; Delay ngan chong doi tin hieu
+0030 20B109           50         JB P3.1, SKIP_BTN   ; Kiem tra lai, neu P3.1 van = 1 thi bo qua
+                      51     
+0033 09               52         INC R1              ; Tang bien dem len 1
+0034 B93C02           53         CJNE R1, #60, SKIP_WRAP ; Neu R1 != 60 thi khong lam gi
+0037 7900             54         MOV R1, #00         ; Neu R1 = 60 thi reset ve 0
+0039                  55     SKIP_WRAP:
+0039                  56     WAIT_RELEASE:
+0039 30B1FD           57         JNB P3.1, WAIT_RELEASE ; Doi den khi cam bien khong bi che (P3.1 = 1)
+003C                  58     SKIP_BTN:
+A51 MACRO ASSEMBLER  7SEG                                                                 05/01/2025 22:26:57 PAGE     2
+
+003C 22               59         RET                 ; Ket thuc ham kiem tra cam bien
+                      60     
+                      61     ;------------------------------------------------------------
+                      62     ; DELAY_2MS - Delay ngan khoang 2ms
+                      63     ;------------------------------------------------------------
+003D                  64     DELAY_2MS:
+003D 7EFA             65         MOV R6, #250        ; Gan R6 = 250
+003F DEFE             66         DJNZ R6, $          ; Giam R6 den khi = 0
+0041 22               67         RET                 ; Ket thuc delay
+                      68     
+                      69     ;------------------------------------------------------------
+                      70     ; DELAY_20MS - Delay dai hon ~20ms de chong doi
+                      71     ;------------------------------------------------------------
+0042                  72     DELAY_20MS:
+0042 7EFA             73         MOV R6, #250        ; Vong lap ngoai
+0044                  74     D20_LOOP1:
+0044 7FFA             75         MOV R7, #250        ; Vong lap trong
+0046                  76     D20_LOOP2:
+0046 DFFE             77         DJNZ R7, D20_LOOP2  ; Lap den khi R7 = 0
+0048 DEFA             78         DJNZ R6, D20_LOOP1  ; Lap den khi R6 = 0
+004A 22               79         RET                 ; Ket thuc delay
+                      80     
+                      81     ;------------------------------------------------------------
+                      82     ; SEGMENT_CODE - Bang ma LED 7 doan cho so 0 den 9
+                      83     ;------------------------------------------------------------
+1000                  84     ORG 1000H              ; Dat bang ma tai dia chi 1000H
+1000                  85     SEGMENT_CODE:
+1000 3F               86         DB 3FH              ; So 0
+1001 06               87         DB 06H              ; So 1
+1002 5B               88         DB 5BH              ; So 2
+1003 4F               89         DB 4FH              ; So 3
+1004 66               90         DB 66H              ; So 4
+1005 6D               91         DB 6DH              ; So 5
+1006 7D               92         DB 7DH              ; So 6
+1007 07               93         DB 07H              ; So 7
+1008 7F               94         DB 7FH              ; So 8
+1009 6F               95         DB 6FH              ; So 9
+                      96     
+                      97     END                    ; Ket thuc chuong trinh
+A51 MACRO ASSEMBLER  7SEG                                                                 05/01/2025 22:26:57 PAGE     3
+
+SYMBOL TABLE LISTING
+------ ----- -------
+
+
+N A M E             T Y P E  V A L U E   ATTRIBUTES
+
+B. . . . . . . . .  D ADDR   00F0H   A   
+CHECK_BUTTON . . .  C ADDR   002BH   A   
+D20_LOOP1. . . . .  C ADDR   0044H   A   
+D20_LOOP2. . . . .  C ADDR   0046H   A   
+DELAY_20MS . . . .  C ADDR   0042H   A   
+DELAY_2MS. . . . .  C ADDR   003DH   A   
+DISPLAY_TIME . . .  C ADDR   000AH   A   
+MAIN_LOOP. . . . .  C ADDR   0004H   A   
+P0 . . . . . . . .  D ADDR   0080H   A   
+P1 . . . . . . . .  D ADDR   0090H   A   
+P3 . . . . . . . .  D ADDR   00B0H   A   
+SEGMENT_CODE . . .  C ADDR   1000H   A   
+SKIP_BTN . . . . .  C ADDR   003CH   A   
+SKIP_WRAP. . . . .  C ADDR   0039H   A   
+START. . . . . . .  C ADDR   0002H   A   
+WAIT_RELEASE . . .  C ADDR   0039H   A   
+
+
+REGISTER BANK(S) USED: 0 
+
+
+ASSEMBLY COMPLETE.  0 WARNING(S), 0 ERROR(S)

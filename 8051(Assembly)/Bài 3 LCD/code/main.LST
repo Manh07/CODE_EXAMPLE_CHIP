@@ -1,0 +1,212 @@
+A51 MACRO ASSEMBLER  MAIN                                                                 04/23/2025 18:00:23 PAGE     1
+
+
+MACRO ASSEMBLER A51 V8.2.7.0
+OBJECT MODULE PLACED IN main.OBJ
+ASSEMBLER INVOKED BY: C:\Keil_v5\C51\BIN\A51.EXE main.asm SET(SMALL) DEBUG EP
+
+LOC  OBJ            LINE     SOURCE
+
+                       1     ; ============================
+                       2     ; Chuong trinh LCD 4-bit - hien thi chu chay ngang (scroll text)
+                       3     ; ============================
+                       4     
+                       5     $mod51                  ; Khai bao chip 8051
+                       6     
+  001F                 7     U equ 31              ; Bien luu nibble cao
+  0015                 8     L equ 21              ; Bien luu nibble thap
+  0080                 9     Port equ P0           ; Ket noi LCD vao port 0
+  00A0                10     RS equ P2.0           ; Chan RS
+  00A1                11     RW equ P2.1           ; Chan RW
+  00A2                12     EN equ P2.2           ; Chan EN
+                      13     
+                      14     ; ============================
+                      15     ; Ket noi LCD:
+                      16     ; Port.4 = DB4
+                      17     ; Port.5 = DB5
+                      18     ; Port.6 = DB6
+                      19     ; Port.7 = DB7
+                      20     ; ============================
+                      21     
+                      22     ; Macro hien thi chuoi
+                      23     SS MACRO L1
+                      24         MOV R1, #0
+                      25         MOV DPTR, L1
+                      26         LCALL lcd_puts
+                      27     ENDM
+                      28     
+                      29     ; ============================
+0000                  30     ORG 0000h
+                      31     
+0000 C2A1             32     CLR RW
+0002 1168             33     ACALL init           ; Khoi tao LCD
+                      34     
+0004                  35     MAIN_LOOP:
+                      36         SS #STRING1      ; Hien thi dong 1
+000C 74C0             40         MOV A, #0C0H     ; Di chuyen xuong dong 2
+000E 114E             41         ACALL lcd_cmd
+                      42         SS #STRING2      ; Hien thi dong 2
+                      46     
+0018 7D14             47         MOV R5, #20      ; So buoc scroll
+001A                  48     SCROLL:
+001A 7418             49         MOV A, #18H      ; Lenh dich trai
+001C 114E             50         ACALL lcd_cmd
+001E 11A0             51         ACALL delay_scroll
+0020 DDF8             52         DJNZ R5, SCROLL
+                      53     
+0022 7401             54         MOV A, #01H      ; Xoa man hinh
+0024 114E             55         ACALL lcd_cmd
+0026 1197             56         ACALL delay
+0028 80DA             57         SJMP MAIN_LOOP   ; Lap lai
+                      58     
+                      59     ; ============================
+002A                  60     separator:
+002A F51F             61         MOV U, A
+002C 531FF0           62         ANL U, #0F0H
+002F C4               63         SWAP A
+0030 54F0             64         ANL A, #0F0H
+A51 MACRO ASSEMBLER  MAIN                                                                 04/23/2025 18:00:23 PAGE     2
+
+0032 F515             65         MOV L, A
+0034 22               66         RET
+                      67     
+                      68     ; ============================
+0035                  69     move_to_port:
+0035 A2E4             70         MOV C, Acc.4
+0037 9284             71         MOV port.4, C
+0039 A2E5             72         MOV C, Acc.5
+003B 9285             73         MOV port.5, C
+003D A2E6             74         MOV C, Acc.6
+003F 9286             75         MOV port.6, C
+0041 A2E7             76         MOV C, Acc.7
+0043 9287             77         MOV port.7, C
+                      78     
+0045 D2A2             79         SETB EN
+0047 1197             80         ACALL delay
+0049 C2A2             81         CLR EN
+004B 1197             82         ACALL delay
+004D 22               83         RET
+                      84     
+                      85     ; ============================
+004E                  86     lcd_cmd:
+004E C2A0             87         CLR RS
+0050 112A             88         ACALL separator
+0052 E51F             89         MOV A, U
+0054 1135             90         ACALL move_to_port
+0056 E515             91         MOV A, L
+0058 1135             92         ACALL move_to_port
+005A 22               93         RET
+                      94     
+                      95     ; ============================
+005B                  96     lcd_data:
+005B D2A0             97         SETB RS
+005D 112A             98         ACALL separator
+005F E51F             99         MOV A, U
+0061 1135            100         ACALL move_to_port
+0063 E515            101         MOV A, L
+0065 1135            102         ACALL move_to_port
+0067 22              103         RET
+                     104     
+                     105     ; ============================
+0068                 106     init:
+0068 1197            107         ACALL delay
+006A 1197            108         ACALL delay
+                     109     
+006C C284            110         CLR port.4
+006E D285            111         SETB port.5
+0070 C286            112         CLR port.6
+0072 C287            113         CLR port.7
+                     114     
+0074 C2A0            115         CLR RS
+0076 D2A2            116         SETB EN
+0078 1197            117         ACALL delay
+007A C2A2            118         CLR EN
+                     119     
+007C 7428            120         MOV A, #28H
+007E 114E            121         ACALL lcd_cmd
+0080 740C            122         MOV A, #0CH
+0082 114E            123         ACALL lcd_cmd
+0084 7406            124         MOV A, #06H
+0086 114E            125         ACALL lcd_cmd
+0088 7401            126         MOV A, #01H
+008A 114E            127         ACALL lcd_cmd
+008C 22              128         RET
+                     129     
+                     130     ; ============================
+A51 MACRO ASSEMBLER  MAIN                                                                 04/23/2025 18:00:23 PAGE     3
+
+008D                 131     lcd_puts:
+008D E9              132         MOV A, R1
+008E 93              133         MOVC A, @A+DPTR
+008F 12005B          134         LCALL lcd_data
+0092 09              135         INC R1
+0093 B90FF7          136         CJNE R1, #15, lcd_puts
+0096 22              137         RET
+                     138     
+                     139     ; ============================
+0097                 140     delay:
+0097 7E5F            141         MOV R6, #5FH
+0099 7F3F            142     L2: MOV R7,#3FH
+009B DFFE            143     L1: DJNZ R7, L1
+009D DEFA            144         DJNZ R6, L2
+009F 22              145         RET
+                     146     
+                     147     ; ============================
+                     148     ; Delay dài hon dùng khi scroll
+00A0                 149     delay_scroll:
+00A0 7EFF            150         MOV R6, #0FFH
+00A2 7FFF            151     DL2: MOV R7, #0FFH
+00A4 DFFE            152     DL1: DJNZ R7, DL1
+00A6 DEFA            153          DJNZ R6, DL2
+00A8 22              154          RET
+                     155     
+                     156     ; ============================
+00A9 4B792074        157     STRING1: DB 'Ky thuat VXL    '
+00AD 68756174                
+00B1 2056584C                
+00B5 20202020                
+00B9 4E686F6D        158     STRING2: DB 'Nhom 8          '
+00BD 20382020                
+00C1 20202020                
+00C5 20202020                
+                     159     
+                     160     END
+A51 MACRO ASSEMBLER  MAIN                                                                 04/23/2025 18:00:23 PAGE     4
+
+SYMBOL TABLE LISTING
+------ ----- -------
+
+
+N A M E             T Y P E  V A L U E   ATTRIBUTES
+
+ACC. . . . . . . .  D ADDR   00E0H   A   
+DELAY. . . . . . .  C ADDR   0097H   A   
+DELAY_SCROLL . . .  C ADDR   00A0H   A   
+DL1. . . . . . . .  C ADDR   00A4H   A   
+DL2. . . . . . . .  C ADDR   00A2H   A   
+EN . . . . . . . .  B ADDR   00A0H.2 A   
+INIT . . . . . . .  C ADDR   0068H   A   
+L. . . . . . . . .  N NUMB   0015H   A   
+L1 . . . . . . . .  C ADDR   009BH   A   
+L2 . . . . . . . .  C ADDR   0099H   A   
+LCD_CMD. . . . . .  C ADDR   004EH   A   
+LCD_DATA . . . . .  C ADDR   005BH   A   
+LCD_PUTS . . . . .  C ADDR   008DH   A   
+MAIN_LOOP. . . . .  C ADDR   0004H   A   
+MOVE_TO_PORT . . .  C ADDR   0035H   A   
+P0 . . . . . . . .  D ADDR   0080H   A   
+P2 . . . . . . . .  D ADDR   00A0H   A   
+PORT . . . . . . .  D ADDR   0080H   A   
+RS . . . . . . . .  B ADDR   00A0H.0 A   
+RW . . . . . . . .  B ADDR   00A0H.1 A   
+SCROLL . . . . . .  C ADDR   001AH   A   
+SEPARATOR. . . . .  C ADDR   002AH   A   
+STRING1. . . . . .  C ADDR   00A9H   A   
+STRING2. . . . . .  C ADDR   00B9H   A   
+U. . . . . . . . .  N NUMB   001FH   A   
+
+
+REGISTER BANK(S) USED: 0 
+
+
+ASSEMBLY COMPLETE.  0 WARNING(S), 0 ERROR(S)

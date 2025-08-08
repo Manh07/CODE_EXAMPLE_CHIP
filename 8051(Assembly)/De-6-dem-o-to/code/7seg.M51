@@ -1,0 +1,102 @@
+BL51 BANKED LINKER/LOCATER V6.22.4.0                                                    05/01/2025  23:17:22  PAGE 1
+
+
+BL51 BANKED LINKER/LOCATER V6.22.4.0, INVOKED BY:
+C:\KEIL_V5\C51\BIN\BL51.EXE 7seg.obj TO 7seg RAMSIZE (256)
+
+
+INPUT MODULES INCLUDED:
+  7seg.obj (7SEG)
+
+
+LINK MAP OF MODULE:  7seg (7SEG)
+
+
+            TYPE    BASE      LENGTH    RELOCATION   SEGMENT NAME
+            -----------------------------------------------------
+
+            * * * * * * *   D A T A   M E M O R Y   * * * * * * *
+            REG     0000H     0008H     ABSOLUTE     "REG BANK 0"
+
+            * * * * * * *   C O D E   M E M O R Y   * * * * * * *
+            CODE    0000H     100AH     ABSOLUTE     
+
+
+
+SYMBOL TABLE OF MODULE:  7seg (7SEG)
+
+  VALUE           TYPE          NAME
+  ----------------------------------
+
+  -------         MODULE        7SEG
+  D:00F0H         SYMBOL        B
+  C:002BH         SYMBOL        CHECK_BUTTON
+  C:003CH         SYMBOL        CHECK_IR2
+  C:0055H         SYMBOL        D20_LOOP1
+  C:0057H         SYMBOL        D20_LOOP2
+  C:0053H         SYMBOL        DELAY_20MS
+  C:004EH         SYMBOL        DELAY_2MS
+  C:000AH         SYMBOL        DISPLAY_TIME
+  C:0004H         SYMBOL        MAIN_LOOP
+  D:0080H         SYMBOL        P0
+  D:0090H         SYMBOL        P1
+  D:00B0H         SYMBOL        P3
+  C:1000H         SYMBOL        SEGMENT_CODE
+  C:004DH         SYMBOL        SKIP_BTN
+  C:0039H         SYMBOL        SKIP_WRAP
+  C:0002H         SYMBOL        START
+  C:0039H         SYMBOL        WAIT_RELEASE_IR1
+  C:004AH         SYMBOL        WAIT_RELEASE_IR2
+  C:0000H         LINE#         2
+  C:0002H         LINE#         8
+  C:0004H         LINE#         14
+  C:0006H         LINE#         15
+  C:0008H         LINE#         16
+  C:000AH         LINE#         22
+  C:000BH         LINE#         23
+  C:000EH         LINE#         24
+  C:000FH         LINE#         25
+  C:0010H         LINE#         26
+  C:0012H         LINE#         28
+  C:0015H         LINE#         29
+BL51 BANKED LINKER/LOCATER V6.22.4.0                                                  05/01/2025  23:17:22  PAGE 2
+
+
+  C:0018H         LINE#         30
+  C:0019H         LINE#         31
+  C:001AH         LINE#         32
+  C:001CH         LINE#         33
+  C:001EH         LINE#         35
+  C:0021H         LINE#         36
+  C:0024H         LINE#         37
+  C:0025H         LINE#         38
+  C:0026H         LINE#         39
+  C:0028H         LINE#         40
+  C:002AH         LINE#         42
+  C:002BH         LINE#         49
+  C:002EH         LINE#         50
+  C:0030H         LINE#         51
+  C:0033H         LINE#         53
+  C:0034H         LINE#         54
+  C:0037H         LINE#         55
+  C:0039H         LINE#         59
+  C:003CH         LINE#         63
+  C:003FH         LINE#         64
+  C:0041H         LINE#         65
+  C:0044H         LINE#         67
+  C:0045H         LINE#         68
+  C:0048H         LINE#         69
+  C:004AH         LINE#         72
+  C:004DH         LINE#         75
+  C:004EH         LINE#         81
+  C:0050H         LINE#         82
+  C:0052H         LINE#         83
+  C:0053H         LINE#         89
+  C:0055H         LINE#         91
+  C:0057H         LINE#         93
+  C:0059H         LINE#         94
+  C:005BH         LINE#         95
+  -------         ENDMOD        7SEG
+
+Program Size: data=8.0 xdata=0 code=4106
+LINK/LOCATE RUN COMPLETE.  0 WARNING(S),  0 ERROR(S)

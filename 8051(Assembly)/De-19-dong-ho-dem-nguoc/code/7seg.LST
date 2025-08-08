@@ -1,0 +1,262 @@
+A51 MACRO ASSEMBLER  7SEG                                                                 05/01/2025 21:47:56 PAGE     1
+
+
+MACRO ASSEMBLER A51 V8.2.7.0
+OBJECT MODULE PLACED IN 7seg.OBJ
+ASSEMBLER INVOKED BY: C:\Keil_v5\C51\BIN\A51.EXE 7seg.asm SET(SMALL) DEBUG EP
+
+LOC  OBJ            LINE     SOURCE
+
+                       1     ; 7seg.asm
+                       2     ; Countdown timer - 8051 Assembly
+                       3     
+0000                   4     ORG 0000H           ; Dia chi bat dau chuong trinh
+0000 8000              5     SJMP START_PROGRAM  ; Nhay toi START_PROGRAM
+                       6     
+                       7     ;-------------------------------------------------
+                       8     ; Dinh nghia bit
+                       9     ;-------------------------------------------------
+  0032                10     RUNNING  BIT  32H   ; Bit danh dau dang chay (bit trong RAM)
+                      11     
+                      12     ;-------------------------------------------------
+                      13     ; Khoi tao ban dau
+                      14     ;-------------------------------------------------
+0002                  15     START_PROGRAM:
+                      16     
+0002 7801             17     MOV  R0, #01H       ; minutes = 1
+0004 7900             18     MOV  R1, #00H       ; seconds = 0
+                      19     
+0006 753001           20     MOV  30H, #01H      ; Luu gia tri khoi tao minutes vao dia chi 30H
+0009 753100           21     MOV  31H, #00H      ; Luu gia tri khoi tao seconds vao dia chi 31H
+                      22     
+000C C232             23     CLR  RUNNING        ; Xoa bit RUNNING (dang dung)
+                      24     
+                      25     ;-------------------------------------------------
+                      26     ; Vong lap chinh
+                      27     ;-------------------------------------------------
+000E                  28     MAIN_LOOP:
+000E 1175             29         ACALL CHECK_BUTTONS   ; Kiem tra phim bam
+                      30     
+0010 203204           31         JB   RUNNING, RUNNING_MODE ; Neu dang chay thi nhay toi RUNNING_MODE
+                      32     
+0013                  33     NOT_RUNNING:
+0013 1123             34         ACALL DISPLAY_TIME    ; Hien thi thoi gian ra LED
+0015 80F7             35         SJMP MAIN_LOOP        ; Quay lai MAIN_LOOP
+                      36     
+0017                  37     RUNNING_MODE:
+0017 7FFF             38         MOV  R7, #255          ; Lap khoang gan 1 giay (255 lan)
+0019                  39     DISPLAY_LOOP:
+0019 1123             40         ACALL DISPLAY_TIME     ; Hien thi thoi gian
+001B 1175             41         ACALL CHECK_BUTTONS    ; Kiem tra phim bam
+001D DFFA             42         DJNZ R7, DISPLAY_LOOP  ; Giam R7, neu chua het thi quay lai
+                      43     
+001F 1166             44         ACALL COUNTDOWN        ; Giam thoi gian 1 giay
+0021 80EB             45         SJMP MAIN_LOOP         ; Quay lai MAIN_LOOP
+                      46     
+                      47     ;-------------------------------------------------
+                      48     ; DISPLAY_TIME: Hien thi thoi gian ra LED 7 doan
+                      49     ;-------------------------------------------------
+0023                  50     DISPLAY_TIME:
+                      51         ; digit[0] = minutes / 10
+0023 E8               52         MOV  A, R0
+0024 75F00A           53         MOV  B, #10
+0027 84               54         DIV  AB
+0028 FA               55         MOV  R2, A             ; so hang chuc cua minutes
+                      56     
+                      57         ; digit[1] = minutes % 10
+0029 ABF0             58         MOV  R3, B             ; so don vi cua minutes
+A51 MACRO ASSEMBLER  7SEG                                                                 05/01/2025 21:47:56 PAGE     2
+
+                      59     
+                      60         ; digit[2] = seconds / 10
+002B E9               61         MOV  A, R1
+002C 75F00A           62         MOV  B, #10
+002F 84               63         DIV  AB
+0030 FC               64         MOV  R4, A             ; so hang chuc cua seconds
+                      65     
+                      66         ; digit[3] = seconds % 10
+0031 ADF0             67         MOV  R5, B             ; so don vi cua seconds
+                      68     
+                      69         ; Hien thi tung LED
+                      70     
+                      71         ; LED1 (hang chuc cua minutes)
+0033 75800E           72         MOV  P0, #0EH          ; Chon LED1
+0036 901000           73         MOV  DPTR, #SEGMENT_CODE ; Tro toi bang ma LED
+0039 EA               74         MOV  A, R2
+003A 93               75         MOVC A, @A+DPTR        ; Lay ma hien thi tu bang ma
+003B F590             76         MOV  P1, A             ; Dua len P1
+003D 11B6             77         ACALL DELAY_2MS        ; Delay nho de LED on dinh
+                      78     
+                      79         ; LED2 (hang don vi cua minutes, kem dau '.')
+003F 75800D           80         MOV  P0, #0DH          ; Chon LED2
+0042 901000           81         MOV  DPTR, #SEGMENT_CODE
+0045 EB               82         MOV  A, R3
+0046 93               83         MOVC A, @A+DPTR
+0047 4480             84         ORL  A, #080H          ; Them dau '.' vao
+0049 F590             85         MOV  P1, A
+004B 11B6             86         ACALL DELAY_2MS
+                      87     
+                      88         ; LED3 (hang chuc cua seconds)
+004D 75800B           89         MOV  P0, #0BH          ; Chon LED3
+0050 901000           90         MOV  DPTR, #SEGMENT_CODE
+0053 EC               91         MOV  A, R4
+0054 93               92         MOVC A, @A+DPTR
+0055 F590             93         MOV  P1, A
+0057 11B6             94         ACALL DELAY_2MS
+                      95     
+                      96         ; LED4 (hang don vi cua seconds)
+0059 758007           97         MOV  P0, #07H          ; Chon LED4
+005C 901000           98         MOV  DPTR, #SEGMENT_CODE
+005F ED               99         MOV  A, R5
+0060 93              100         MOVC A, @A+DPTR
+0061 F590            101         MOV  P1, A
+0063 11B6            102         ACALL DELAY_2MS
+                     103     
+0065 22              104         RET                    ; Quay lai
+                     105     
+                     106     ;-------------------------------------------------
+                     107     ; COUNTDOWN: Giam thoi gian
+                     108     ;-------------------------------------------------
+0066                 109     COUNTDOWN:
+0066 E9              110         MOV  A, R1             ; Kiem tra seconds
+0067 6002            111         JZ   SEC_ZERO          ; Neu seconds = 0 thi xu ly giam minutes
+0069 19              112         DEC  R1                ; Giam seconds
+006A 22              113         RET
+                     114     
+006B                 115     SEC_ZERO:
+006B E8              116         MOV  A, R0             ; Kiem tra minutes
+006C 6004            117         JZ   TIME_UP           ; Neu minutes = 0 thi het gio
+006E 18              118         DEC  R0                ; Giam minutes
+006F 793B            119         MOV  R1, #59           ; Reset seconds = 59
+0071 22              120         RET
+                     121     
+0072                 122     TIME_UP:
+0072 C232            123         CLR  RUNNING           ; Het gio, dung dem
+0074 22              124         RET
+A51 MACRO ASSEMBLER  7SEG                                                                 05/01/2025 21:47:56 PAGE     3
+
+                     125     
+                     126     ;-------------------------------------------------
+                     127     ; CHECK_BUTTONS: Quet phim bam
+                     128     ;-------------------------------------------------
+0075                 129     CHECK_BUTTONS:
+                     130         ; Nut START o P3.2
+0075 20B20A          131         JB   P3.2, SKIP_START  ; Neu chua bam thi bo qua
+0078 11BB            132         ACALL DELAY_20MS       ; Chong doi phim
+007A 20B205          133         JB   P3.2, SKIP_START
+007D D232            134         SETB RUNNING           ; Bat bit RUNNING
+007F                 135     WAIT_START_RELEASE:
+007F 30B2FD          136         JNB  P3.2, WAIT_START_RELEASE ; Doi nha phim
+0082                 137     SKIP_START:
+                     138     
+                     139         ; Nut RESET o P3.3
+0082 20B30E          140         JB   P3.3, SKIP_RESET
+0085 11BB            141         ACALL DELAY_20MS
+0087 20B309          142         JB   P3.3, SKIP_RESET
+008A A830            143         MOV  R0, 30H           ; Reset minutes ve gia tri khoi tao
+008C A931            144         MOV  R1, 31H           ; Reset seconds ve gia tri khoi tao
+008E C232            145         CLR  RUNNING           ; Dung dem
+0090                 146     WAIT_RESET_RELEASE:
+0090 30B3FD          147         JNB  P3.3, WAIT_RESET_RELEASE
+0093                 148     SKIP_RESET:
+                     149     
+                     150         ; Nut tang minutes o P3.0
+0093 20B00E          151         JB   P3.0, SKIP_INC_MIN
+0096 11BB            152         ACALL DELAY_20MS
+0098 20B009          153         JB   P3.0, SKIP_INC_MIN
+009B 08              154         INC  R0                ; Tang minutes
+009C B86402          155         CJNE R0, #100, SKIP_INC_MIN_WRAP ; Gioi han 99
+009F 7800            156         MOV  R0, #00
+00A1                 157     SKIP_INC_MIN_WRAP:
+00A1                 158     WAIT_INC_MIN_RELEASE:
+00A1 30B0FD          159         JNB  P3.0, WAIT_INC_MIN_RELEASE
+00A4                 160     SKIP_INC_MIN:
+                     161     
+                     162         ; Nut tang seconds o P3.1
+00A4 20B10E          163         JB   P3.1, SKIP_INC_SEC
+00A7 11BB            164         ACALL DELAY_20MS
+00A9 20B109          165         JB   P3.1, SKIP_INC_SEC
+00AC 09              166         INC  R1                ; Tang seconds
+00AD B93C02          167         CJNE R1, #60, SKIP_INC_SEC_WRAP  ; Gioi han 59
+00B0 7900            168         MOV  R1, #00
+00B2                 169     SKIP_INC_SEC_WRAP:
+00B2                 170     WAIT_INC_SEC_RELEASE:
+00B2 30B1FD          171         JNB  P3.1, WAIT_INC_SEC_RELEASE
+00B5                 172     SKIP_INC_SEC:
+                     173     
+00B5 22              174         RET
+                     175     
+                     176     ;-------------------------------------------------
+                     177     ; DELAY nho
+                     178     ;-------------------------------------------------
+00B6                 179     DELAY_2MS:
+00B6 7EFA            180         MOV  R6, #250          ; Delay ngan
+00B8 DEFE            181         DJNZ R6, $             ; Lap cho den khi R6 = 0
+00BA 22              182         RET
+                     183     
+00BB                 184     DELAY_20MS:
+00BB 7EFA            185         MOV  R6, #250          ; Delay dai hon
+00BD                 186     DELAY_20MS_LOOP1:
+00BD 7FFA            187         MOV  R7, #250
+00BF                 188     DELAY_20MS_LOOP2:
+00BF DFFE            189         DJNZ R7, DELAY_20MS_LOOP2
+00C1 DEFA            190         DJNZ R6, DELAY_20MS_LOOP1
+A51 MACRO ASSEMBLER  7SEG                                                                 05/01/2025 21:47:56 PAGE     4
+
+00C3 22              191         RET
+                     192     
+                     193     ;-------------------------------------------------
+                     194     ; Bang ma LED 7 doan
+                     195     ;-------------------------------------------------
+1000                 196     ORG 1000H
+1000                 197     SEGMENT_CODE:
+1000 3F065B4F        198         DB 3FH,06H,5BH,4FH,66H,6DH,7DH,07H,7FH,6FH ; 0-9 ma hien thi
+1004 666D7D07                
+1008 7F6F                    
+                     199     
+                     200     ;-------------------------------------------------
+                     201     END
+A51 MACRO ASSEMBLER  7SEG                                                                 05/01/2025 21:47:56 PAGE     5
+
+SYMBOL TABLE LISTING
+------ ----- -------
+
+
+N A M E               T Y P E  V A L U E   ATTRIBUTES
+
+B. . . . . . . . . .  D ADDR   00F0H   A   
+CHECK_BUTTONS. . . .  C ADDR   0075H   A   
+COUNTDOWN. . . . . .  C ADDR   0066H   A   
+DELAY_20MS . . . . .  C ADDR   00BBH   A   
+DELAY_20MS_LOOP1 . .  C ADDR   00BDH   A   
+DELAY_20MS_LOOP2 . .  C ADDR   00BFH   A   
+DELAY_2MS. . . . . .  C ADDR   00B6H   A   
+DISPLAY_LOOP . . . .  C ADDR   0019H   A   
+DISPLAY_TIME . . . .  C ADDR   0023H   A   
+MAIN_LOOP. . . . . .  C ADDR   000EH   A   
+NOT_RUNNING. . . . .  C ADDR   0013H   A   
+P0 . . . . . . . . .  D ADDR   0080H   A   
+P1 . . . . . . . . .  D ADDR   0090H   A   
+P3 . . . . . . . . .  D ADDR   00B0H   A   
+RUNNING. . . . . . .  B ADDR   0026H.2 A   
+RUNNING_MODE . . . .  C ADDR   0017H   A   
+SEC_ZERO . . . . . .  C ADDR   006BH   A   
+SEGMENT_CODE . . . .  C ADDR   1000H   A   
+SKIP_INC_MIN . . . .  C ADDR   00A4H   A   
+SKIP_INC_MIN_WRAP. .  C ADDR   00A1H   A   
+SKIP_INC_SEC . . . .  C ADDR   00B5H   A   
+SKIP_INC_SEC_WRAP. .  C ADDR   00B2H   A   
+SKIP_RESET . . . . .  C ADDR   0093H   A   
+SKIP_START . . . . .  C ADDR   0082H   A   
+START_PROGRAM. . . .  C ADDR   0002H   A   
+TIME_UP. . . . . . .  C ADDR   0072H   A   
+WAIT_INC_MIN_RELEASE  C ADDR   00A1H   A   
+WAIT_INC_SEC_RELEASE  C ADDR   00B2H   A   
+WAIT_RESET_RELEASE .  C ADDR   0090H   A   
+WAIT_START_RELEASE .  C ADDR   007FH   A   
+
+
+REGISTER BANK(S) USED: 0 
+
+
+ASSEMBLY COMPLETE.  0 WARNING(S), 0 ERROR(S)

@@ -1,0 +1,54 @@
+BL51 BANKED LINKER/LOCATER V6.22                                                        10/06/2017  22:18:06  PAGE 1
+
+
+BL51 BANKED LINKER/LOCATER V6.22, INVOKED BY:
+C:\KEIL\C51\BIN\BL51.EXE hangled.obj TO Nháy hàng LED RAMSIZE (256)
+
+
+INPUT MODULES INCLUDED:
+  hangled.obj (HANGLED)
+
+
+LINK MAP OF MODULE:  Nháy hàng LED (HANGLED)
+
+
+            TYPE    BASE      LENGTH    RELOCATION   SEGMENT NAME
+            -----------------------------------------------------
+
+            * * * * * * *   D A T A   M E M O R Y   * * * * * * *
+            REG     0000H     0008H     ABSOLUTE     "REG BANK 0"
+
+            * * * * * * *   C O D E   M E M O R Y   * * * * * * *
+            CODE    0000H     001AH     ABSOLUTE     
+
+
+
+SYMBOL TABLE OF MODULE:  Nháy hàng LED (HANGLED)
+
+  VALUE           TYPE          NAME
+  ----------------------------------
+
+  -------         MODULE        HANGLED
+  C:000DH         SYMBOL        DELAY_500MS
+  D:00A0H         SYMBOL        LED_DATA
+  C:0010H         SYMBOL        LL
+  C:0003H         SYMBOL        LOOP
+  C:0000H         SYMBOL        MAIN
+  D:00A0H         SYMBOL        P2
+  C:0000H         LINE#         4
+  C:0002H         LINE#         5
+  C:0003H         LINE#         7
+  C:0004H         LINE#         8
+  C:0005H         LINE#         9
+  C:0007H         LINE#         10
+  C:0008H         LINE#         11
+  C:000BH         LINE#         12
+  C:000DH         LINE#         15
+  C:0010H         LINE#         16
+  C:0013H         LINE#         17
+  C:0016H         LINE#         18
+  C:0019H         LINE#         20
+  -------         ENDMOD        HANGLED
+
+Program Size: data=8.0 xdata=0 code=26
+LINK/LOCATE RUN COMPLETE.  0 WARNING(S),  0 ERROR(S)

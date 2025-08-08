@@ -1,0 +1,809 @@
+
+ASEM-51 V1.3                                         Copyright (c) 2002 by W.W. Heinz                                         PAGE 1
+
+
+
+
+
+       MCS-51 Family Macro Assembler   A S E M - 5 1   V 1.3
+       =====================================================
+
+
+
+	Source File:	C:\McsTemp\DS1307.asm
+	Object File:	C:\McsTemp\DS1307.hex
+	List File:	C:\McsTemp\DS1307.lst
+
+
+
+ Line  I  Addr  Code            Source
+
+    1:				;=====================================
+    2:				$mod51
+    3:		N	 37	TEMP DATA 37H
+    4:		N	 38	XUNG_NHAY DATA 38H ; XUNG 100ms
+    5:		N	 39	BIEN_NHAY DATA 39H ;0 = SANG TAT CA DEN , 1 = NHAY led TUONG UNG KHI set
+    6:		N	 40	GIAY DATA 40H
+    7:		N	 41	PHUT DATA 41H
+    8:		N	 42	GIO DATA 42H
+    9:		N	 47	DONVI_GIAY DATA 47H
+   10:		N	 48	CHUC_GIAY DATA 48H
+   11:		N	 49	DONVI_PHUT DATA 49H
+   12:		N	 4A	CHUC_PHUT DATA 4AH
+   13:		N	 4B	DONVI_GIO DATA 4BH
+   14:		N	 4C	CHUC_GIO DATA 4CH
+   15:		N	 4D	PHAN_TRAM_GIAY DATA 4DH
+   16:		N	 4E	FLAG_SET DATA 4EH ;0 = KHONG SET , 1 = SET PHUT , 2 = SET GIO
+   17:		B	 A0	LED_GIAY BIT P2.0
+   18:		B	 A1	LED_C_GIAY BIT P2.1
+   19:		B	 A2	LED_PHUT BIT P2.2
+   20:		B	 A3	LED_C_PHUT BIT P2.3
+   21:		B	 A4	LED_GIO BIT P2.4
+   22:		B	 A5	LED_C_GIO BIT P2.5
+   23:				;--------I2C-------
+   24:		B	 B0	SCL BIT P3.0
+   25:		B	 B1	SDA BIT P3.1
+   26:		B	 B2	SW_1 BIT P3.2
+   27:		B	 B3	SW_2 BIT P3.3
+   28:		B	 B4	SW_3 BIT P3.4
+   29:		D      0080	LED_DATA EQU P0
+   30:		N      00D0	BYTE_W EQU 11010000B
+   31:		N      00D1	BYTE_R EQU 11010001B
+   32:		N      0062	ADD_LOW EQU 62H
+   33:		N      0063	DATA_DS EQU 63H
+   34:				;=====================================
+   35:				;=====================================
+   36:		N      0000	ORG 00H
+   37:	  0000	02 00 30	LJMP MAIN
+   38:				;===========================
+   39:				;===========================
+   40:		N      000B	ORG 0BH
+   41:	  000B	02 02 14	LJMP NGAT_TIME
+   42:				;===========================
+   43:				;===========================
+
+ASEM-51 V1.3                                         Copyright (c) 2002 by W.W. Heinz                                         PAGE 2
+
+
+
+ Line  I  Addr  Code            Source
+
+   44:		N      0030	ORG 030H
+   45:	  0030			MAIN: ;reset tat ca cac bien
+   46:	  0030	75 40 00	MOV GIAY,#0
+   47:	  0033	75 41 00	MOV PHUT,#0
+   48:	  0036	75 42 00	MOV GIO,#0
+   49:	  0039	75 39 00	MOV BIEN_NHAY,#0
+   50:	  003C	75 38 00	MOV XUNG_NHAY,#0
+   51:	  003F	75 4E 00	MOV FLAG_SET,#0
+   52:	  0042	78 00		MOV R0,#0
+   53:	  0044	75 A8 8A	MOV IE,#10001010B
+   54:	  0047	75 89 11	MOV TMOD,#11H
+   55:	  004A	75 8A 00	MOV TL0,#LOW(-9216)
+   56:	  004D	75 8C DC	MOV TH0,#HIGH(-9216)
+   57:	  0050	D2 8C		SETB TR0
+   58:	  0052	74 FF		MOV A,#0FFH
+   59:	  0054	F5 80		MOV LED_DATA,A
+   60:	  0056	90 03 37	MOV DPTR,#BANGSO
+   61:	  0059	C2 B0		CLR SCL
+   62:	  005B	C2 B1		CLR SDA
+   63:	  005D	00		NOP
+   64:	  005E	D2 B0		SETB SCL
+   65:	  0060	D2 B1		SETB SDA
+   66:	  0062	00		NOP
+   67:	  0063	75 62 00	MOV ADD_LOW,#00H
+   68:	  0066	75 63 00	MOV DATA_DS,#00H
+   69:	  0069	12 00 B5	LCALL WRITE_BYTE
+   70:				;==========
+   71:
+   72:				;==========================================
+   73:	  006C			LOOP_HIEN_THI: ; chuong trinh chinh chay tai day
+   74:				;==========================================
+   75:	  006C	E5 4E		MOV A,FLAG_SET
+   76:	  006E	B4 00 03	CJNE A,#0,L_HT
+   77:	  0071	12 00 7C	CALL INIT_PORT
+   78:	  0074			L_HT:
+   79:	  0074	12 01 8E	LCALL HIEN_THI
+   80:	  0077	12 02 46	LCALL SCAN_KEY
+   81:	  007A	80 F0		SJMP LOOP_HIEN_THI
+   82:				;==========================================
+   83:
+   84:
+   85:	  007C			INIT_PORT:
+   86:				;================================================= =READS SECONDS
+   87:				;=================================================
+   88:	  007C			READ_SEC:
+   89:	  007C	75 62 00	MOV ADD_LOW,#00h
+   90:	  007F	12 01 06	LCALL READ_BYTE
+   91:	  0082	E5 63		MOV A,DATA_DS
+   92:	  0084	12 00 EA	CALL BCD_HEX
+   93:	  0087	F5 40		MOV GIAY,A
+   94:	  0089	12 00 AD	LCALL I2C_STOP
+   95:				;================================================= =READS MINUTES
+   96:	  008C	75 62 01	MOV ADD_LOW,#01h
+   97:	  008F	12 01 06	LCALL READ_BYTE
+   98:	  0092	E5 63		MOV A,DATA_DS
+   99:	  0094	12 00 EA	CALL BCD_HEX
+
+ASEM-51 V1.3                                         Copyright (c) 2002 by W.W. Heinz                                         PAGE 3
+
+
+
+ Line  I  Addr  Code            Source
+
+  100:	  0097	F5 41		MOV PHUT,A
+  101:	  0099	12 00 AD	LCALL I2C_STOP
+  102:				;================================================= =READS HOURS
+  103:	  009C	75 62 02	MOV ADD_LOW,#02h
+  104:	  009F	12 01 06	LCALL READ_BYTE
+  105:	  00A2	E5 63		MOV A,DATA_DS
+  106:	  00A4	12 00 EA	CALL BCD_HEX
+  107:	  00A7	F5 42		MOV GIO,A
+  108:	  00A9	12 00 AD	LCALL I2C_STOP
+  109:	  00AC	22		RET
+  110:				;================================================= =================================
+  111:				;=====stop I2C communication
+  112:	  00AD			I2C_Stop:
+  113:	  00AD	C2 B1		CLR SDA
+  114:	  00AF	D2 B0		SETB SCL
+  115:	  00B1	00		NOP
+  116:	  00B2	D2 B1		SETB SDA
+  117:	  00B4	22		RET
+  118:				;================================================= =================================
+  119:				;************************************************* ****
+  120:				;* WRITE DATA_DS TO DS1307 1 BYTE *
+  121:				;* INPUT : ADD_LOW *
+  122:				;* : DATA_DS *
+  123:				;************************************************* ****
+  124:	  00B5			WRITE_BYTE:
+  125:	  00B5	C2 B1		CLR SDA ;start bit
+  126:	  00B7	C2 B0		CLR SCL
+  127:	  00B9	74 D0		MOV A,#BYTE_W ;send control byte
+  128:	  00BB	12 01 4A	LCALL LOOP_BYTE
+  129:	  00BE	D2 B1		SETB SDA
+  130:	  00C0	D2 B0		SETB SCL
+  131:	  00C2	20 B1 F0	JB SDA,WRITE_BYTE ;loop until busy
+  132:	  00C5	C2 B0		CLR SCL
+  133:	  00C7	E5 62		MOV A,ADD_LOW ;send address low
+  134:	  00C9	12 01 4A	LCALL LOOP_BYTE
+  135:	  00CC	D2 B1		SETB SDA
+  136:	  00CE	D2 B0		SETB SCL
+  137:	  00D0	20 B1 E2	JB SDA,WRITE_BYTE ;loop until busy
+  138:	  00D3	C2 B0		CLR SCL
+  139:	  00D5	E5 63		MOV A,DATA_DS ;send DATA
+  140:	  00D7	12 01 4A	LCALL LOOP_BYTE
+  141:	  00DA	D2 B1		SETB SDA
+  142:	  00DC	D2 B0		SETB SCL
+  143:	  00DE	20 B1 D4	JB SDA,WRITE_BYTE ;loop until busy
+  144:	  00E1	C2 B1		CLR SDA
+  145:	  00E3	C2 B0		CLR SCL
+  146:	  00E5	D2 B0		SETB SCL ;stop bit
+  147:	  00E7	D2 B1		SETB SDA
+  148:	  00E9	22		RET
+  149:				;==========================================
+  150:	  00EA			BCD_HEX:
+  151:				;==========================================
+  152:	  00EA	75 F0 10	MOV B,#10H
+  153:	  00ED	84		DIV AB
+  154:	  00EE	85 F0 37	MOV TEMP,B ;CAT HANG DON VI
+  155:	  00F1	75 F0 0A	MOV B,#10
+
+ASEM-51 V1.3                                         Copyright (c) 2002 by W.W. Heinz                                         PAGE 4
+
+
+
+ Line  I  Addr  Code            Source
+
+  156:	  00F4	A4		MUL AB
+  157:	  00F5	25 37		ADD A,TEMP
+  158:	  00F7	22		ret
+  159:				;==========================================
+  160:	  00F8			HEX_BCD:
+  161:				;==========================================
+  162:	  00F8	75 F0 0A	MOV B,#10
+  163:	  00FB	84		DIV AB
+  164:	  00FC	85 F0 37	MOV TEMP,B ;CAT HANG DON VI
+  165:	  00FF	75 F0 10	MOV B,#10H
+  166:	  0102	A4		MUL AB
+  167:	  0103	25 37		ADD A,TEMP
+  168:	  0105	22		ret
+  169:				;==========================================
+  170:				;************************************************* *****
+  171:				;* READ DATA FROM DS1307 1 BYTE *
+  172:				;* INPUT : ADD_HIGH *
+  173:				;* : ADD_LOW *
+  174:				;* OUTPUT : DATA_DS *
+  175:				;************************************************* *****
+  176:	  0106			READ_BYTE:
+  177:	  0106	C2 B1		CLR SDA ;start bit
+  178:	  0108	C2 B0		CLR SCL
+  179:	  010A	74 D0		MOV A,#BYTE_W ;send control byte
+  180:	  010C	12 01 4A	LCALL LOOP_BYTE
+  181:	  010F	D2 B1		SETB SDA
+  182:	  0111	D2 B0		SETB SCL
+  183:	  0113	20 B1 F0	JB SDA,READ_BYTE ;loop until busy
+  184:	  0116	C2 B0		CLR SCL
+  185:	  0118	E5 62		MOV A,ADD_LOW ;send address low
+  186:	  011A	12 01 4A	LCALL LOOP_BYTE
+  187:	  011D	D2 B1		SETB SDA
+  188:	  011F	D2 B0		SETB SCL
+  189:	  0121	20 B1 E2	JB SDA,READ_BYTE ;loop until busy
+  190:	  0124	C2 B0		CLR SCL
+  191:	  0126	D2 B0		SETB SCL
+  192:	  0128	D2 B1		SETB SDA
+  193:	  012A	C2 B1		CLR SDA ;start bit
+  194:	  012C	C2 B0		CLR SCL
+  195:	  012E	74 D1		MOV A,#BYTE_R ;send control byte
+  196:	  0130	12 01 4A	LCALL LOOP_BYTE
+  197:	  0133	D2 B1		SETB SDA
+  198:	  0135	D2 B0		SETB SCL
+  199:	  0137	20 B1 CC	JB SDA,READ_BYTE ;loop until busy
+  200:	  013A	C2 B0		CLR SCL
+  201:	  013C	12 01 5A	LCALL LOOP_READ
+  202:	  013F	D2 B1		SETB SDA
+  203:	  0141	D2 B0		SETB SCL
+  204:	  0143	C2 B0		CLR SCL
+  205:	  0145	D2 B0		SETB SCL ;stop bit
+  206:	  0147	D2 B1		SETB SDA
+  207:	  0149	22		RET
+  208:
+  209:				;************************************************* ***
+  210:				;* WRITE *
+  211:				;* INPUT: ACC *
+
+ASEM-51 V1.3                                         Copyright (c) 2002 by W.W. Heinz                                         PAGE 5
+
+
+
+ Line  I  Addr  Code            Source
+
+  212:				;************************************************* ***
+  213:	  014A			LOOP_BYTE:
+  214:	  014A	C0 02		PUSH 02H
+  215:	  014C	7A 08		MOV R2,#08H
+  216:	  014E			LOOP_SEND:
+  217:	  014E	33		RLC A
+  218:	  014F	92 B1		MOV SDA,C
+  219:	  0151	D2 B0		SETB SCL
+  220:	  0153	C2 B0		CLR SCL
+  221:	  0155	DA F7		DJNZ R2,LOOP_SEND
+  222:	  0157	D0 02		POP 02H
+  223:	  0159	22		RET
+  224:				;************************************************* ****
+  225:				;* READ *
+  226:				;* OUTPUT: ACC *
+  227:				;************************************************* ****
+  228:	  015A			LOOP_READ:
+  229:	  015A	C0 02		PUSH 02H
+  230:	  015C	7A 08		MOV R2,#08H
+  231:	  015E			LOOP_READ1:
+  232:	  015E	D2 B0		SETB SCL
+  233:	  0160	A2 B1		MOV C,SDA
+  234:	  0162	C2 B0		CLR SCL
+  235:	  0164	33		RLC A
+  236:	  0165	DA F7		DJNZ R2,LOOP_READ1
+  237:	  0167	F5 63		MOV DATA_DS,A
+  238:	  0169	D0 02		POP 02H
+  239:	  016B	22		RET
+  240:				;==========================================
+  241:	  016C			TACHSO: ; tach rieng hang chuc va hang don vi bang cach chia cho 10
+  242:				;==========================================
+  243:	  016C	E5 40		MOV A,GIAY ;Lan luot chia cac Bien: Giay, Phut, Gio cho 10
+  244:	  016E	75 F0 0A	MOV B,#10 ;de tach phan Don Vi va Hang Chuc ra, de cat rieng vao cac Bien tuong ung.
+  245:	  0171	84		DIV AB ;PHAN NGUYEN trong A, PHAN DU trong B
+  246:	  0172	F5 48		MOV CHUC_GIAY,A ;Luu lai HANG CHUC Giay
+  247:	  0174	85 F0 47	MOV DONVI_GIAY,B ;luu lai DON VI Giay
+  248:				;==========
+  249:	  0177	E5 41		MOV A,PHUT
+  250:	  0179	75 F0 0A	MOV B,#10
+  251:	  017C	84		DIV AB
+  252:	  017D	F5 4A		MOV CHUC_PHUT,A
+  253:	  017F	85 F0 49	MOV DONVI_PHUT,B
+  254:				;==========
+  255:	  0182	E5 42		MOV A,GIO
+  256:	  0184	75 F0 0A	MOV B,#10
+  257:	  0187	84		DIV AB
+  258:	  0188	F5 4C		MOV CHUC_GIO,A
+  259:	  018A	85 F0 4B	MOV DONVI_GIO,B
+  260:	  018D	22		RET
+  261:				;========================================
+  262:	  018E			HIEN_THI: ; HIEN THI LED 7 DOAN
+  263:				;========================================
+  264:	  018E	E5 4E		MOV A,FLAG_SET
+  265:	  0190	B4 00 05	CJNE A,#0,CHOP_NHAY
+  266:	  0193	12 01 A8	LCALL HIENTHI
+  267:	  0196	21 A7		AJMP THOAT_HIENTHI
+
+ASEM-51 V1.3                                         Copyright (c) 2002 by W.W. Heinz                                         PAGE 6
+
+
+
+ Line  I  Addr  Code            Source
+
+  268:				;========================================
+  269:	  0198			CHOP_NHAY: ; KIEM TRA BIEN NHAY VA FLAG_SET DE TAO HIEU UNG NHAY LED DANG SETING
+  270:				;=================================
+  271:	  0198	E5 39		MOV A,BIEN_NHAY
+  272:	  019A	B4 00 05	CJNE A,#0,CHOP_NHAY1
+  273:	  019D	12 01 A8	LCALL HIENTHI
+  274:	  01A0	21 A7		AJMP THOAT_HIENTHI
+  275:	  01A2			CHOP_NHAY1:
+  276:	  01A2	12 01 B2	LCALL NHAY
+  277:	  01A5	80 F1		JMP CHOP_NHAY
+  278:	  01A7			THOAT_HIENTHI:
+  279:	  01A7	22		RET
+  280:				;=================================
+  281:	  01A8			HIENTHI:
+  282:				;=================================
+  283:	  01A8	12 01 C9	LCALL HIENTHI_S
+  284:	  01AB	12 01 E2	LCALL HIENTHI_P
+  285:	  01AE	12 01 FB	LCALL HIENTHI_G
+  286:	  01B1	22		RET
+  287:				;=================================
+  288:	  01B2			NHAY:
+  289:				;=================================
+  290:	  01B2	E5 4E		MOV A,FLAG_SET
+  291:	  01B4	B4 01 06	CJNE A,#1,KT1
+  292:	  01B7	12 01 C9	LCALL HIENTHI_S
+  293:	  01BA	12 01 FB	LCALL HIENTHI_G
+  294:	  01BD			KT1:
+  295:	  01BD	E5 4E		MOV A,FLAG_SET
+  296:	  01BF	B4 02 06	CJNE A,#2,THOAT_N
+  297:	  01C2	12 01 C9	LCALL HIENTHI_S
+  298:	  01C5	12 01 E2	LCALL HIENTHI_P
+  299:	  01C8			THOAT_N:
+  300:	  01C8	22		RET
+  301:				;=================================
+  302:	  01C9			HIENTHI_S:
+  303:				;=================================
+  304:				;hien thi hang don vi cua Giay
+  305:	  01C9	E5 47		MOV A,DONVI_GIAY
+  306:	  01CB	93		MOVC A,@A+DPTR
+  307:	  01CC	F5 80		MOV LED_DATA,A
+  308:	  01CE	C2 A0		CLR LED_GIAY
+  309:	  01D0	12 03 06	LCALL DL
+  310:	  01D3	D2 A0		SETB LED_GIAY
+  311:				;==========
+  312:	  01D5	E5 48		MOV A,CHUC_GIAY ;hien thi hang chuc cua Giay
+  313:	  01D7	93		MOVC A,@A+DPTR
+  314:	  01D8	F5 80		MOV LED_DATA,A
+  315:	  01DA	C2 A1		CLR LED_C_GIAY
+  316:	  01DC	12 03 06	LCALL DL
+  317:	  01DF	D2 A1		SETB LED_C_GIAY
+  318:	  01E1	22		RET
+  319:				;=================================
+  320:	  01E2			HIENTHI_P:
+  321:				;=================================
+  322:	  01E2	E5 49		MOV A,DONVI_PHUT ;hien thi hang don vi cua Phut
+  323:	  01E4	93		MOVC A,@A+DPTR
+
+ASEM-51 V1.3                                         Copyright (c) 2002 by W.W. Heinz                                         PAGE 7
+
+
+
+ Line  I  Addr  Code            Source
+
+  324:	  01E5	F5 80		MOV LED_DATA,A
+  325:	  01E7	C2 A2		CLR LED_PHUT
+  326:	  01E9	12 03 06	LCALL DL
+  327:	  01EC	D2 A2		SETB LED_PHUT
+  328:				;============
+  329:	  01EE	E5 4A		MOV A,CHUC_PHUT ;hien thi hang chuc cua Phut
+  330:	  01F0	93		MOVC A,@A+DPTR
+  331:	  01F1	F5 80		MOV LED_DATA,A
+  332:	  01F3	C2 A3		CLR LED_C_PHUT
+  333:	  01F5	12 03 06	LCALL DL
+  334:	  01F8	D2 A3		SETB LED_C_PHUT
+  335:	  01FA	22		RET
+  336:				;=================================
+  337:	  01FB			HIENTHI_G:
+  338:				;=================================
+  339:	  01FB	E5 4B		MOV A,DONVI_GIO ;hien thi hang don vi cua gio
+  340:	  01FD	93		MOVC A,@A+DPTR
+  341:	  01FE	F5 80		MOV LED_DATA,A
+  342:	  0200	C2 A4		CLR LED_GIO
+  343:	  0202	12 03 06	LCALL DL
+  344:	  0205	D2 A4		SETB LED_GIO
+  345:				;============
+  346:	  0207	E5 4C		MOV A,CHUC_GIO ;hien thi hang chuc cua Gio
+  347:	  0209	93		MOVC A,@A+DPTR
+  348:	  020A	F5 80		MOV LED_DATA,A
+  349:	  020C	C2 A5		CLR LED_C_GIO
+  350:	  020E	12 03 06	LCALL DL
+  351:	  0211	D2 A5		SETB LED_C_GIO
+  352:	  0213	22		RET
+  353:				;=================================
+  354:	  0214			NGAT_TIME:
+  355:				;=================================
+  356:	  0214	05 38		INC XUNG_NHAY
+  357:	  0216	05 4D		INC PHAN_TRAM_GIAY ;DAT TIMER CHAY 1/100 GIAY
+  358:	  0218	75 8A 00	MOV TL0,#LOW(-9216)
+  359:	  021B	75 8C DC	MOV TH0,#HIGH(-9216)
+  360:	  021E	D2 8C		SETB TR0
+  361:				;===============
+  362:	  0220	C0 E0		PUSH ACC
+  363:	  0222	C0 D0		PUSH PSW ;Thanh ghi trang th�i chuong tr�nh
+  364:				;==========
+  365:	  0224	E5 38		MOV A,XUNG_NHAY ;TAO XUNG NHAP NHAY = 1/4 GIAY
+  366:	  0226	B4 19 0D	CJNE A,#25,TIME1
+  367:	  0229	75 38 00	MOV XUNG_NHAY,#0
+  368:	  022C	05 39		INC BIEN_NHAY
+  369:	  022E	E5 39		MOV A,BIEN_NHAY
+  370:	  0230	B4 03 03	CJNE A,#3,TIME1
+  371:	  0233	75 39 00	MOV BIEN_NHAY,#0
+  372:				;==========
+  373:	  0236			TIME1:
+  374:	  0236	E5 4D		MOV A,PHAN_TRAM_GIAY ;Kiem tra bien PHAN_TRAM_GIAY - Thoat khoi ngat Time0 neu khong =
+  375:	  0238	B4 64 03	CJNE A,#100,THOAT_NGAT_TIME
+  376:	  023B	75 4D 00	MOV PHAN_TRAM_GIAY,#0 ;Neu = 100 th� set bien nay = 0
+  377:				;===============
+  378:	  023E			THOAT_NGAT_TIME:
+  379:	  023E	12 01 6C	LCALL TACHSO
+
+ASEM-51 V1.3                                         Copyright (c) 2002 by W.W. Heinz                                         PAGE 8
+
+
+
+ Line  I  Addr  Code            Source
+
+  380:	  0241	D0 D0		POP PSW
+  381:	  0243	D0 E0		POP ACC
+  382:	  0245	32		RETI
+  383:				;==================================
+  384:	  0246			SCAN_KEY: ;KIEM TRA PHIM NHAN
+  385:				;==================================
+  386:	  0246			SW1: ;SET TIME
+  387:	  0246	20 B2 31	JB SW_1,SW2
+  388:	  0249	05 4E		INC FLAG_SET
+  389:	  024B	E5 4E		MOV A,FLAG_SET
+  390:	  024D	B4 03 1B	CJNE A,#3,L_SW1
+  391:				;==========
+  392:	  0250	E5 41		MOV A,PHUT
+  393:	  0252	11 F8		CALL HEX_BCD
+  394:	  0254	F5 63		MOV DATA_DS,A
+  395:	  0256	75 62 01	MOV ADD_LOW,#01H
+  396:	  0259	12 00 B5	LCALL WRITE_BYTE
+  397:				;==========
+  398:	  025C	E5 42		MOV A,GIO
+  399:	  025E	11 F8		CALL HEX_BCD
+  400:	  0260	F5 63		MOV DATA_DS,A
+  401:	  0262	75 62 02	MOV ADD_LOW,#02H
+  402:	  0265	12 00 B5	LCALL WRITE_BYTE
+  403:
+  404:	  0268	75 4E 00	MOV FLAG_SET,#0
+  405:	  026B			L_SW1:
+  406:	  026B	12 03 0B	LCALL DL1
+  407:	  026E	12 03 0B	LCALL DL1
+  408:	  0271	12 03 0B	LCALL DL1
+  409:	  0274	12 03 0B	LCALL DL1
+  410:	  0277	02 03 05	LJMP NOKEY
+  411:				;===============
+  412:	  027A			SW2: ;SET_MIN
+  413:	  027A	20 B3 41	JB SW_2,SW3
+  414:	  027D	E5 4E		MOV A,FLAG_SET
+  415:	  027F	B4 00 03	CJNE A,#0,SW20
+  416:	  0282	02 03 05	LJMP NOKEY
+  417:	  0285			SW20:
+  418:	  0285	E5 4E		MOV A,FLAG_SET
+  419:	  0287	B4 01 16	CJNE A,#1,TANG_GIO ;
+  420:	  028A	20 B3 31	JB SW_2,SW3
+  421:				;===============
+  422:	  028D			TANG_PHUT:
+  423:	  028D	05 41		INC PHUT ;Roi tang Bien phut them 1
+  424:	  028F	E5 41		MOV A,PHUT
+  425:	  0291	B4 3C 03	CJNE A,#60,L_SW2 ;
+  426:	  0294	75 41 00	MOV PHUT,#0 ;Neu = 60 th� set bien nay = 0
+  427:	  0297			L_SW2:
+  428:	  0297	12 03 0B	LCALL DL1
+  429:	  029A	12 03 0B	LCALL DL1
+  430:	  029D	02 02 7A	LJMP SW2
+  431:				;===============
+  432:	  02A0			TANG_GIO: ;SET HOUR
+  433:	  02A0	20 B3 1B	JB SW_2,SW3
+  434:	  02A3	E5 4E		MOV A,FLAG_SET
+  435:	  02A5	B4 02 16	CJNE A,#2,SW3
+
+ASEM-51 V1.3                                         Copyright (c) 2002 by W.W. Heinz                                         PAGE 9
+
+
+
+ Line  I  Addr  Code            Source
+
+  436:	  02A8	20 B3 13	JB SW_2,SW3
+  437:	  02AB	05 42		INC GIO ;Roi tang Bien Gio them 1
+  438:	  02AD	E5 42		MOV A,GIO
+  439:	  02AF	B4 18 03	CJNE A,#24,L_TANG_GIO ;Bien gio = 60? - Thoat khoi ngat Time0 neu khong =
+  440:	  02B2	75 42 00	MOV GIO,#0
+  441:	  02B5			L_TANG_GIO:
+  442:	  02B5	12 03 0B	LCALL DL1
+  443:	  02B8	12 03 0B	LCALL DL1
+  444:	  02BB	02 02 A0	LJMP TANG_GIO
+  445:				;==============================
+  446:	  02BE			SW3: ;DANG NHAN SW3?
+  447:	  02BE	20 B4 44	JB SW_3,NOKEY ;KHONG NHAN SW2? KIEM TRA SW3
+  448:	  02C1	E5 4E		MOV A,FLAG_SET
+  449:	  02C3	B4 00 03	CJNE A,#0,SW30
+  450:	  02C6	02 03 05	LJMP NOKEY
+  451:	  02C9			SW30:
+  452:	  02C9	E5 4E		MOV A,FLAG_SET ;DANG NHAN SW2. KIEM TRA CHE DO CHINH GIO HAY CHINH PHUT.
+  453:	  02CB	B4 01 16	CJNE A,#1,GIAM_GIO ;
+  454:	  02CE	20 B4 34	JB SW_3,NOKEY
+  455:				;===============
+  456:	  02D1			GIAM_PHUT:
+  457:	  02D1	15 41		DEC PHUT ;Roi tang Bien phut them 1
+  458:	  02D3	E5 41		MOV A,PHUT
+  459:	  02D5	B4 FF 03	CJNE A,#-1,L_SW3 ;Bien Phut = -1? - Thoat khoi ngat Time0 neu khong =
+  460:	  02D8	75 41 3B	MOV PHUT,#59 ;Neu = -1 th� set bien nay = 60
+  461:	  02DB			L_SW3:
+  462:	  02DB	12 03 0B	LCALL DL1
+  463:	  02DE	12 03 0B	LCALL DL1
+  464:	  02E1	02 02 BE	LJMP SW3
+  465:				;===============
+  466:	  02E4			GIAM_GIO:
+  467:				;===============
+  468:	  02E4	20 B4 1E	JB SW_3,NOKEY
+  469:	  02E7	E5 4E		MOV A,FLAG_SET
+  470:	  02E9	B4 02 19	CJNE A,#2,NOKEY
+  471:
+  472:	  02EC	12 01 A8	LCALL HIENTHI
+  473:	  02EF	20 B4 13	JB SW_3,NOKEY
+  474:	  02F2	15 42		DEC GIO ;Roi Giam Bien Gio them 1
+  475:	  02F4	E5 42		MOV A,GIO
+  476:	  02F6	B4 FF 03	CJNE A,#-1,L_GIAM_GIO ;Bien gio = -1? - Thoat khoi ngat Time0 neu khong =
+  477:	  02F9	75 42 17	MOV GIO,#23
+  478:	  02FC			L_GIAM_GIO:
+  479:	  02FC	12 03 0B	LCALL DL1
+  480:	  02FF	12 03 0B	LCALL DL1
+  481:	  0302	02 02 E4	LJMP GIAM_GIO
+  482:				;===============
+  483:	  0305			NOKEY:
+  484:	  0305	22		RET
+  485:				;=================================
+  486:	  0306			DL:
+  487:				;=================================
+  488:	  0306	7F C8		MOV R7,#200
+  489:	  0308	DF FE		DJNZ R7,$
+  490:	  030A	22		RET
+  491:				;==================
+
+ASEM-51 V1.3                                        Copyright (c) 2002 by W.W. Heinz                                         PAGE 10
+
+
+
+ Line  I  Addr  Code            Source
+
+  492:	  030B			DL1:
+  493:				;==================
+  494:	  030B	C0 00		PUSH 00H
+  495:	  030D	C0 01		PUSH 01H
+  496:	  030F	79 10		MOV R1,#20O
+  497:	  0311			DEL:
+  498:	  0311	12 01 8E	LCALL HIEN_THI
+  499:	  0314	12 01 8E	LCALL HIEN_THI
+  500:	  0317	12 01 8E	LCALL HIEN_THI
+  501:	  031A	78 FA		MOV R0,#250
+  502:	  031C	D8 FE		DJNZ R0,$
+  503:	  031E	D9 F1		DJNZ R1,DEL
+  504:	  0320	D0 01		POP 01H
+  505:	  0322	D0 00		POP 00H
+  506:	  0324	22		RET
+  507:				;===================
+  508:	  0325			DELAY_1MS:
+  509:				;===================
+  510:	  0325	7F C8		MOV R7,#200
+  511:	  0327			DL_1MS_1:
+  512:	  0327	7E C8		MOV R6,#200
+  513:	  0329	DE FE		DJNZ R6,$
+  514:	  032B	DF FA		DJNZ R7,DL_1MS_1
+  515:	  032D	22		RET
+  516:				;====================
+  517:	  032E			DELAY:
+  518:				;====================
+  519:	  032E	00		NOP
+  520:	  032F	00		NOP
+  521:	  0330	00		NOP
+  522:	  0331	00		NOP
+  523:	  0332	00		NOP
+  524:	  0333	00		NOP
+  525:	  0334	00		NOP
+  526:	  0335	00		NOP
+  527:	  0336	22		RET
+  528:				;=================================
+  529:	  0337			BANGSO:
+  530:				;=================================
+  531:	  0337	C0 F9 A4 B0	DB 0C0H,0F9H,0A4H,0B0H,99H,92H,82H,0F8H,80H,90H
+	  033B	99 92 82 F8
+	  033F	80 90
+  532:	  0341	22		RET
+  533:				END
+
+
+
+
+
+                     register banks used:  ---
+
+                     no errors
+
+
+
+
+ASEM-51 V1.3                                        Copyright (c) 2002 by W.W. Heinz                                         PAGE 11
+
+
+
+
+
+	       L I S T   O F   S Y M B O L S
+	       =============================
+
+
+SYMBOL				  TYPE     VALUE	LINE
+------------------------------------------------------------
+??ASEM_51			  NUMBER    8051
+??VERSION			  NUMBER    0130
+AC				  BIT	      D6
+ACC				  DATA	      E0
+ADD_LOW				  NUMBER    0062	  32
+B				  DATA	      F0
+BANGSO				  CODE	    0337	 529
+BCD_HEX				  CODE	    00EA	 150
+BIEN_NHAY			  DATA	      39	   5
+BYTE_R				  NUMBER    00D1	  31
+BYTE_W				  NUMBER    00D0	  30
+CHOP_NHAY			  CODE	    0198	 269
+CHOP_NHAY1			  CODE	    01A2	 275
+CHUC_GIAY			  DATA	      48	  10
+CHUC_GIO			  DATA	      4C	  14
+CHUC_PHUT			  DATA	      4A	  12
+CY				  BIT	      D7
+DATA_DS				  NUMBER    0063	  33
+DEL				  CODE	    0311	 497
+DELAY				  CODE	    032E	 517
+DELAY_1MS			  CODE	    0325	 508
+DL				  CODE	    0306	 486
+DL1				  CODE	    030B	 492
+DL_1MS_1			  CODE	    0327	 511
+DONVI_GIAY			  DATA	      47	   9
+DONVI_GIO			  DATA	      4B	  13
+DONVI_PHUT			  DATA	      49	  11
+DPH				  DATA	      83
+DPL				  DATA	      82
+EA				  BIT	      AF
+ES				  BIT	      AC
+ET0				  BIT	      A9
+ET1				  BIT	      AB
+EX0				  BIT	      A8
+EX1				  BIT	      AA
+EXTI0				  CODE	    0003
+EXTI1				  CODE	    0013
+F0				  BIT	      D5
+FLAG_SET			  DATA	      4E	  16
+GIAM_GIO			  CODE	    02E4	 466
+GIAM_PHUT			  CODE	    02D1	 456
+GIAY				  DATA	      40	   6
+GIO				  DATA	      42	   8
+HEX_BCD				  CODE	    00F8	 160
+HIENTHI				  CODE	    01A8	 281
+HIENTHI_G			  CODE	    01FB	 337
+HIENTHI_P			  CODE	    01E2	 320
+HIENTHI_S			  CODE	    01C9	 302
+HIEN_THI			  CODE	    018E	 262
+I2C_STOP			  CODE	    00AD	 112
+
+ASEM-51 V1.3                                        Copyright (c) 2002 by W.W. Heinz                                         PAGE 12
+
+
+
+SYMBOL				  TYPE     VALUE	LINE
+------------------------------------------------------------
+IE				  DATA	      A8
+IE0				  BIT	      89
+IE1				  BIT	      8B
+INIT_PORT			  CODE	    007C	  85
+INT0				  BIT	      B2
+INT1				  BIT	      B3
+IP				  DATA	      B8
+IT0				  BIT	      88
+IT1				  BIT	      8A
+KT1				  CODE	    01BD	 294
+LED_C_GIAY			  BIT	      A1	  18
+LED_C_GIO			  BIT	      A5	  22
+LED_C_PHUT			  BIT	      A3	  20
+LED_DATA			  NUMBER    0080	  29
+LED_GIAY			  BIT	      A0	  17
+LED_GIO				  BIT	      A4	  21
+LED_PHUT			  BIT	      A2	  19
+LOOP_BYTE			  CODE	    014A	 213
+LOOP_HIEN_THI			  CODE	    006C	  73
+LOOP_READ			  CODE	    015A	 228
+LOOP_READ1			  CODE	    015E	 231
+LOOP_SEND			  CODE	    014E	 216
+L_GIAM_GIO			  CODE	    02FC	 478
+L_HT				  CODE	    0074	  78
+L_SW1				  CODE	    026B	 405
+L_SW2				  CODE	    0297	 427
+L_SW3				  CODE	    02DB	 461
+L_TANG_GIO			  CODE	    02B5	 441
+MAIN				  CODE	    0030	  45
+NGAT_TIME			  CODE	    0214	 354
+NHAY				  CODE	    01B2	 288
+NOKEY				  CODE	    0305	 483
+OV				  BIT	      D2
+P				  BIT	      D0
+P0				  DATA	      80
+P1				  DATA	      90
+P2				  DATA	      A0
+P3				  DATA	      B0
+PCON				  DATA	      87
+PHAN_TRAM_GIAY			  DATA	      4D	  15
+PHUT				  DATA	      41	   7
+PS				  BIT	      BC
+PSW				  DATA	      D0
+PT0				  BIT	      B9
+PT1				  BIT	      BB
+PX0				  BIT	      B8
+PX1				  BIT	      BA
+RB8				  BIT	      9A
+RD				  BIT	      B7
+READ_BYTE			  CODE	    0106	 176
+READ_SEC			  CODE	    007C	  88
+REN				  BIT	      9C
+RESET				  CODE	    0000
+RI				  BIT	      98
+RS0				  BIT	      D3
+RS1				  BIT	      D4
+
+ASEM-51 V1.3                                        Copyright (c) 2002 by W.W. Heinz                                         PAGE 13
+
+
+
+SYMBOL				  TYPE     VALUE	LINE
+------------------------------------------------------------
+RXD				  BIT	      B0
+SBUF				  DATA	      99
+SCAN_KEY			  CODE	    0246	 384
+SCL				  BIT	      B0	  24
+SCON				  DATA	      98
+SDA				  BIT	      B1	  25
+SINT				  CODE	    0023
+SM0				  BIT	      9F
+SM1				  BIT	      9E
+SM2				  BIT	      9D
+SP				  DATA	      81
+SW1				  CODE	    0246	 386
+SW2				  CODE	    027A	 412
+SW20				  CODE	    0285	 417
+SW3				  CODE	    02BE	 446
+SW30				  CODE	    02C9	 451
+SW_1				  BIT	      B2	  26
+SW_2				  BIT	      B3	  27
+SW_3				  BIT	      B4	  28
+T0				  BIT	      B4
+T1				  BIT	      B5
+TACHSO				  CODE	    016C	 241
+TANG_GIO			  CODE	    02A0	 432
+TANG_PHUT			  CODE	    028D	 422
+TB8				  BIT	      9B
+TCON				  DATA	      88
+TEMP				  DATA	      37	   3
+TF0				  BIT	      8D
+TF1				  BIT	      8F
+TH0				  DATA	      8C
+TH1				  DATA	      8D
+THOAT_HIENTHI			  CODE	    01A7	 278
+THOAT_N				  CODE	    01C8	 299
+THOAT_NGAT_TIME			  CODE	    023E	 378
+TI				  BIT	      99
+TIME1				  CODE	    0236	 373
+TIMER0				  CODE	    000B
+TIMER1				  CODE	    001B
+TL0				  DATA	      8A
+TL1				  DATA	      8B
+TMOD				  DATA	      89
+TR0				  BIT	      8C
+TR1				  BIT	      8E
+TXD				  BIT	      B1
+WR				  BIT	      B6
+WRITE_BYTE			  CODE	    00B5	 124
+XUNG_NHAY			  DATA	      38	   4

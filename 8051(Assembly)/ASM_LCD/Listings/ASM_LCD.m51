@@ -1,0 +1,57 @@
+BL51 BANKED LINKER/LOCATER V6.22.4.0                                                    04/23/2025  00:11:50  PAGE 1
+
+
+BL51 BANKED LINKER/LOCATER V6.22.4.0, INVOKED BY:
+C:\KEIL_V5\C51\BIN\BL51.EXE .\Objects\main.obj TO .\Objects\ASM_LCD PRINT (.\Listings\ASM_LCD.m51) RAMSIZE (256)
+
+
+INPUT MODULES INCLUDED:
+  .\Objects\main.obj (MAIN)
+
+
+LINK MAP OF MODULE:  .\Objects\ASM_LCD (MAIN)
+
+
+            TYPE    BASE      LENGTH    RELOCATION   SEGMENT NAME
+            -----------------------------------------------------
+
+            * * * * * * *   D A T A   M E M O R Y   * * * * * * *
+            REG     0000H     0008H     ABSOLUTE     "REG BANK 0"
+
+            * * * * * * *   C O D E   M E M O R Y   * * * * * * *
+            CODE    0000H     001CH     ABSOLUTE     
+
+
+
+SYMBOL TABLE OF MODULE:  .\Objects\ASM_LCD (MAIN)
+
+  VALUE           TYPE          NAME
+  ----------------------------------
+
+  -------         MODULE        MAIN
+  C:000FH         SYMBOL        DELAY
+  C:0015H         SYMBOL        DELAY_INNER
+  C:0013H         SYMBOL        DELAY_MIDDLE
+  C:0011H         SYMBOL        DELAY_OUTER
+  N:0BB8H         SYMBOL        DLY1MS
+  B:00A0H.7       SYMBOL        LED_PIN
+  C:0003H         SYMBOL        LOOP
+  C:0000H         SYMBOL        MAIN
+  D:00A0H         SYMBOL        P2
+  C:0000H         LINE#         12
+  C:0003H         LINE#         15
+  C:0005H         LINE#         16
+  C:0008H         LINE#         17
+  C:000AH         LINE#         18
+  C:000DH         LINE#         19
+  C:000FH         LINE#         23
+  C:0011H         LINE#         25
+  C:0013H         LINE#         27
+  C:0015H         LINE#         29
+  C:0017H         LINE#         30
+  C:0019H         LINE#         31
+  C:001BH         LINE#         32
+  -------         ENDMOD        MAIN
+
+Program Size: data=8.0 xdata=0 code=28
+LINK/LOCATE RUN COMPLETE.  0 WARNING(S),  0 ERROR(S)

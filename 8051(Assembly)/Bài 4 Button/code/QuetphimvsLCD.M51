@@ -1,0 +1,178 @@
+BL51 BANKED LINKER/LOCATER V6.22                                                        10/14/2017  14:23:03  PAGE 1
+
+
+BL51 BANKED LINKER/LOCATER V6.22, INVOKED BY:
+C:\KEIL\C51\BIN\BL51.EXE QuetphimvsLCD.obj TO QuetphimvsLCD RAMSIZE (256)
+
+
+INPUT MODULES INCLUDED:
+  QuetphimvsLCD.obj (QUETPHIMVSLCD)
+
+
+LINK MAP OF MODULE:  QuetphimvsLCD (QUETPHIMVSLCD)
+
+
+            TYPE    BASE      LENGTH    RELOCATION   SEGMENT NAME
+            -----------------------------------------------------
+
+            * * * * * * *   D A T A   M E M O R Y   * * * * * * *
+            REG     0000H     0008H     ABSOLUTE     "REG BANK 0"
+
+            * * * * * * *   C O D E   M E M O R Y   * * * * * * *
+            CODE    0000H     013DH     ABSOLUTE     
+
+
+
+SYMBOL TABLE OF MODULE:  QuetphimvsLCD (QUETPHIMVSLCD)
+
+  VALUE           TYPE          NAME
+  ----------------------------------
+
+  -------         MODULE        QUETPHIMVSLCD
+  D:00E0H         SYMBOL        ACC
+  C:00D7H         SYMBOL        DELAY
+  B:00A0H.7       SYMBOL        EN
+  C:00A8H         SYMBOL        INIT
+  C:00FDH         SYMBOL        KEY1
+  C:010DH         SYMBOL        KEY2
+  C:011DH         SYMBOL        KEY3
+  C:012DH         SYMBOL        KEY4
+  N:0015H         SYMBOL        L
+  C:00DBH         SYMBOL        L1
+  C:00D9H         SYMBOL        L2
+  C:008EH         SYMBOL        LCD_CMD
+  C:009BH         SYMBOL        LCD_DATA
+  C:00CDH         SYMBOL        LCD_PUTS
+  C:0004H         SYMBOL        MAIN
+  C:0075H         SYMBOL        MOVE_TO_PORT
+  D:0080H         SYMBOL        P0
+  D:0090H         SYMBOL        P1
+  D:00A0H         SYMBOL        P2
+  C:0026H         SYMBOL        PHIM1
+  C:0037H         SYMBOL        PHIM2
+  C:0048H         SYMBOL        PHIM3
+  C:0059H         SYMBOL        PHIM4
+  D:0080H         SYMBOL        PORT
+  C:0018H         SYMBOL        QUETPHIM
+  B:00A0H.6       SYMBOL        RS
+  B:00A0H.5       SYMBOL        RW
+  C:006AH         SYMBOL        SEPARATOR
+  C:00E0H         SYMBOL        STRING1
+  C:00EDH         SYMBOL        STRING2
+BL51 BANKED LINKER/LOCATER V6.22                                                      10/14/2017  14:23:03  PAGE 2
+
+
+  N:001FH         SYMBOL        U
+  C:0000H         LINE#         26
+  C:0002H         LINE#         27
+  C:0004H         LINE#         29
+  C:0006H         LINE#         29
+  C:0009H         LINE#         29
+  C:000CH         LINE#         30
+  C:000EH         LINE#         31
+  C:0010H         LINE#         32
+  C:0012H         LINE#         32
+  C:0015H         LINE#         32
+  C:0018H         LINE#         35
+  C:001BH         LINE#         36
+  C:001EH         LINE#         39
+  C:0021H         LINE#         40
+  C:0024H         LINE#         41
+  C:0026H         LINE#         44
+  C:0028H         LINE#         45
+  C:002AH         LINE#         46
+  C:002CH         LINE#         46
+  C:002FH         LINE#         46
+  C:0032H         LINE#         47
+  C:0035H         LINE#         48
+  C:0037H         LINE#         51
+  C:0039H         LINE#         52
+  C:003BH         LINE#         53
+  C:003DH         LINE#         53
+  C:0040H         LINE#         53
+  C:0043H         LINE#         54
+  C:0046H         LINE#         55
+  C:0048H         LINE#         58
+  C:004AH         LINE#         59
+  C:004CH         LINE#         60
+  C:004EH         LINE#         60
+  C:0051H         LINE#         60
+  C:0054H         LINE#         61
+  C:0057H         LINE#         62
+  C:0059H         LINE#         65
+  C:005BH         LINE#         66
+  C:005DH         LINE#         67
+  C:005FH         LINE#         67
+  C:0062H         LINE#         67
+  C:0065H         LINE#         68
+  C:0068H         LINE#         69
+  C:006AH         LINE#         75
+  C:006CH         LINE#         76
+  C:006FH         LINE#         77
+  C:0070H         LINE#         78
+  C:0072H         LINE#         79
+  C:0074H         LINE#         80
+  C:0075H         LINE#         88
+  C:0077H         LINE#         89
+  C:0079H         LINE#         90
+  C:007BH         LINE#         91
+  C:007DH         LINE#         92
+  C:007FH         LINE#         93
+  C:0081H         LINE#         94
+BL51 BANKED LINKER/LOCATER V6.22                                                      10/14/2017  14:23:03  PAGE 3
+
+
+  C:0083H         LINE#         95
+  C:0085H         LINE#         96
+  C:0087H         LINE#         97
+  C:0089H         LINE#         98
+  C:008BH         LINE#         99
+  C:008DH         LINE#         100
+  C:008EH         LINE#         110
+  C:0090H         LINE#         111
+  C:0092H         LINE#         112
+  C:0094H         LINE#         113
+  C:0096H         LINE#         114
+  C:0098H         LINE#         115
+  C:009AH         LINE#         116
+  C:009BH         LINE#         122
+  C:009DH         LINE#         123
+  C:009FH         LINE#         124
+  C:00A1H         LINE#         125
+  C:00A3H         LINE#         126
+  C:00A5H         LINE#         127
+  C:00A7H         LINE#         128
+  C:00A8H         LINE#         133
+  C:00AAH         LINE#         134
+  C:00ACH         LINE#         135
+  C:00AEH         LINE#         136
+  C:00B0H         LINE#         137
+  C:00B2H         LINE#         138
+  C:00B4H         LINE#         139
+  C:00B6H         LINE#         140
+  C:00B8H         LINE#         141
+  C:00BAH         LINE#         142
+  C:00BCH         LINE#         143
+  C:00BEH         LINE#         144
+  C:00C0H         LINE#         145
+  C:00C2H         LINE#         146
+  C:00C4H         LINE#         147
+  C:00C6H         LINE#         148
+  C:00C8H         LINE#         149
+  C:00CAH         LINE#         150
+  C:00CCH         LINE#         151
+  C:00CDH         LINE#         158
+  C:00CEH         LINE#         159
+  C:00CFH         LINE#         160
+  C:00D2H         LINE#         161
+  C:00D3H         LINE#         162
+  C:00D6H         LINE#         163
+  C:00D7H         LINE#         166
+  C:00D9H         LINE#         167
+  C:00DBH         LINE#         168
+  C:00DDH         LINE#         169
+  C:00DFH         LINE#         170
+  -------         ENDMOD        QUETPHIMVSLCD
+
+Program Size: data=8.0 xdata=0 code=317
+LINK/LOCATE RUN COMPLETE.  0 WARNING(S),  0 ERROR(S)

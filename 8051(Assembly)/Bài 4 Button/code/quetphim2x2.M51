@@ -1,0 +1,52 @@
+BL51 BANKED LINKER/LOCATER V6.22                                                        10/13/2017  16:19:02  PAGE 1
+
+
+BL51 BANKED LINKER/LOCATER V6.22, INVOKED BY:
+C:\KEIL\C51\BIN\BL51.EXE quetphim2x2.obj TO quetphim2x2 RAMSIZE (256)
+
+
+INPUT MODULES INCLUDED:
+  quetphim2x2.obj (QUETPHIM2X2)
+
+
+LINK MAP OF MODULE:  quetphim2x2 (QUETPHIM2X2)
+
+
+            TYPE    BASE      LENGTH    RELOCATION   SEGMENT NAME
+            -----------------------------------------------------
+
+            * * * * * * *   D A T A   M E M O R Y   * * * * * * *
+            REG     0000H     0008H     ABSOLUTE     "REG BANK 0"
+
+            * * * * * * *   C O D E   M E M O R Y   * * * * * * *
+            CODE    0000H     0019H     ABSOLUTE     
+
+
+
+SYMBOL TABLE OF MODULE:  quetphim2x2 (QUETPHIM2X2)
+
+  VALUE           TYPE          NAME
+  ----------------------------------
+
+  -------         MODULE        QUETPHIM2X2
+  C:000CH         SYMBOL        DELAY_500MS
+  C:000FH         SYMBOL        L1
+  C:0000H         SYMBOL        MAIN
+  D:0090H         SYMBOL        P1
+  D:00A0H         SYMBOL        P2
+  C:0005H         SYMBOL        PHIM1
+  C:0000H         LINE#         14
+  C:0003H         LINE#         15
+  C:0005H         LINE#         17
+  C:0007H         LINE#         18
+  C:0009H         LINE#         19
+  C:000BH         LINE#         20
+  C:000CH         LINE#         22
+  C:000FH         LINE#         23
+  C:0012H         LINE#         24
+  C:0015H         LINE#         25
+  C:0018H         LINE#         26
+  -------         ENDMOD        QUETPHIM2X2
+
+Program Size: data=8.0 xdata=0 code=25
+LINK/LOCATE RUN COMPLETE.  0 WARNING(S),  0 ERROR(S)

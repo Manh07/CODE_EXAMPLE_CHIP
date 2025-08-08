@@ -1,0 +1,130 @@
+A51 MACRO ASSEMBLER  GIAIMAPHIM_4_4                                                       10/11/2017 17:24:21 PAGE     1
+
+
+MACRO ASSEMBLER A51 V8.02
+OBJECT MODULE PLACED IN giaimaphim 4.4.OBJ
+ASSEMBLER INVOKED BY: C:\Keil\C51\BIN\A51.EXE giaimaphim 4.4.asm SET(SMALL) DEBUG EP
+
+LOC  OBJ            LINE     SOURCE
+
+                       1     ;=================================
+                       2     ; giai ma ban phim 4x4
+                       3     ;================================
+                       4     
+                       5     ;=================================
+                       6     ; Reset Vector
+0000                   7     org 0000h
+0000 2100              8     jmp Start
+0003                   9     ORG 0003H
+0003 020115           10     LJMP INT0_ISR
+                      11     ;=================================
+                      12     ; CODE SEGMENT
+                      13     ;=================================
+0100                  14     org 0100h
+0100                  15     Start:
+0100 D2AF             16     SETB EA ; Enable Interrupt
+0102 D2A8             17     SETB EX0 ; Enable INT0
+                      18     ;=================================
+                      19     ; SETB IT0 ; INT0 NGAT THEO SUON XUONG
+                      20     ;=================================
+0104 758920           21     MOV TMOD, #20H
+0107 758DB0           22     MOV TH1, #0B0H
+010A 75A00F           23     MOV P2, #0FH
+010D 759000           24     MOV P1, #0
+0110 7900             25     MOV R1, #0 ; COUNT
+0112 E4               26     CLR A
+0113 80FE             27     SJMP $
+                      28     ;=================================
+0115                  29     INT0_ISR:
+0115 316B             30     CALL DELAY
+0117 20B24B           31     JB P3.2, EXIT
+011A 75A0FE           32     MOV P2, #11111110B
+011D E5A0             33     MOV A, P2
+011F 54F0             34     ANL A, #0F0H
+0121 B4F024           35     CJNE A, #0F0H, ROW0
+0124 75A0FD           36     MOV P2, #11111101B
+0127 E5A0             37     MOV A, P2
+0129 7904             38     MOV R1, #4
+012B 54F0             39     ANL A, #0F0H
+012D B4F01E           40     CJNE A, #0F0H, ROW1
+0130 75A0FB           41     MOV P2, #11111011B
+0133 E5A0             42     MOV A, P2
+0135 7908             43     MOV R1, #8
+0137 54F0             44     ANL A, #0F0H
+0139 B4F018           45     CJNE A, #0F0H, ROW2
+013C 75A0F7           46     MOV P2, #11110111B
+013F E5A0             47     MOV A, P2
+0141 790C             48     MOV R1, #12
+0143 54F0             49     ANL A, #0F0H
+0145 B4F012           50     CJNE A, #0F0H, ROW3
+0148                  51     ROW0:
+0148 33               52     RLC A
+0149 5015             53     JNC MATCH
+014B 09               54     INC R1
+014C 80FA             55     SJMP ROW0
+014E                  56     ROW1:
+014E 33               57     RLC A
+014F 500F             58     JNC MATCH
+A51 MACRO ASSEMBLER  GIAIMAPHIM_4_4                                                       10/11/2017 17:24:21 PAGE     2
+
+0151 09               59     INC R1
+0152 80FA             60     SJMP ROW1
+0154                  61     ROW2:
+0154 33               62     RLC A
+0155 5009             63     JNC MATCH
+0157 09               64     INC R1
+0158 80FA             65     SJMP ROW2
+015A                  66     ROW3:
+015A 33               67     RLC A
+015B 5003             68     JNC MATCH
+015D 09               69     INC R1
+015E 80FA             70     SJMP ROW3
+0160                  71     MATCH:
+0160 7400             72     MOV A, #0
+0162 E9               73     MOV A, R1
+0163 F590             74     MOV P1, A
+0165                  75     EXIT:
+0165 7900             76     MOV R1, #0
+0167 75A0F0           77     MOV P2, #0F0H
+016A 32               78     RETI
+                      79     ;=================================
+016B                  80     DELAY:
+016B D28E             81     SETB TR1
+016D 308FFD           82     JNB TF1, $
+0170 C28F             83     CLR TF1
+0172 C28E             84     CLR TR1
+0174 22               85     RET
+                      86     ;=================================
+                      87     END
+A51 MACRO ASSEMBLER  GIAIMAPHIM_4_4                                                       10/11/2017 17:24:21 PAGE     3
+
+SYMBOL TABLE LISTING
+------ ----- -------
+
+
+N A M E             T Y P E  V A L U E   ATTRIBUTES
+
+DELAY. . . . . . .  C ADDR   016BH   A   
+EA . . . . . . . .  B ADDR   00A8H.7 A   
+EX0. . . . . . . .  B ADDR   00A8H.0 A   
+EXIT . . . . . . .  C ADDR   0165H   A   
+INT0_ISR . . . . .  C ADDR   0115H   A   
+MATCH. . . . . . .  C ADDR   0160H   A   
+P1 . . . . . . . .  D ADDR   0090H   A   
+P2 . . . . . . . .  D ADDR   00A0H   A   
+P3 . . . . . . . .  D ADDR   00B0H   A   
+ROW0 . . . . . . .  C ADDR   0148H   A   
+ROW1 . . . . . . .  C ADDR   014EH   A   
+ROW2 . . . . . . .  C ADDR   0154H   A   
+ROW3 . . . . . . .  C ADDR   015AH   A   
+START. . . . . . .  C ADDR   0100H   A   
+TF1. . . . . . . .  B ADDR   0088H.7 A   
+TH1. . . . . . . .  D ADDR   008DH   A   
+TMOD . . . . . . .  D ADDR   0089H   A   
+TR1. . . . . . . .  B ADDR   0088H.6 A   
+
+
+REGISTER BANK(S) USED: 0 
+
+
+ASSEMBLY COMPLETE.  0 WARNING(S), 0 ERROR(S)
